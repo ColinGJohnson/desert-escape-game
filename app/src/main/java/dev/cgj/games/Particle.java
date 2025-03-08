@@ -4,16 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Particle {
+	private final Color color;
+	private final int size;
+	private final double maxLife;
+	private final double speedReduction;
 
 	private int x;
 	private int y;
 	private double dx;
 	private double dy;
-	private int size;
 	private double life = 0;
-	private double maxLife;
-	private Color color;
-	private double speedReduction;
 
 	public Particle(int x, int y, double dx, double dy, int size, int maxLife, Color c, double speedReduction) {
 		this.x = x;
@@ -34,13 +34,10 @@ public class Particle {
 		dx -= speedReduction;
 		
 		life++;
-		if (life >= maxLife)
-			return true;
-		return false;
-	}
+        return life >= maxLife;
+    }
 
 	public void draw(Graphics2D g) {
-		
 		Graphics2D g2d = (Graphics2D) g.create();
 
 		g2d.setColor(color);
@@ -48,4 +45,4 @@ public class Particle {
 
 		g2d.dispose();
 	}
-} // Particle
+}

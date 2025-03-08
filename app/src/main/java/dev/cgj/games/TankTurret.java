@@ -33,13 +33,13 @@ public class TankTurret extends Tank {
 			rotation -= 0.7;
 		} else if (targetRotation > rotation) {
 			rotation += 0.7;
-		} // if
+		} 
 
 		// is the turret aiming at the player?
 		if (targetRotation < rotation + 2 && targetRotation > rotation - 2) {
 			targetRotation = rotation;
 			return true;
-		} // if
+		} 
 
 		// turret is not aiming at the player
 		return false;
@@ -63,10 +63,10 @@ public class TankTurret extends Tank {
 		if (aimTurret()) {
 			
 			// add a new projectile to arrayList (the tank shoots)
-			game.projectileEntities.add(new TankShot(game, "/resources/shot.jpg",
+			game.projectileEntities.add(new TankShot(game, "/sprites/shot.jpg",
 					(int) (x + getImageWidth() / 2),
 					(int) (y + getImageHeight() / 2), rotation));
-		} // if
+		} 
 	} // fire
 	
 	// update tank turret y position and aim at player

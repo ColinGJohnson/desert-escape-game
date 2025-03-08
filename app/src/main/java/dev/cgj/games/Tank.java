@@ -27,19 +27,19 @@ public class Tank extends Entity {
 			if ((System.currentTimeMillis() - 100/ Math.abs(game.gameDY)) > tankSwitch) {
 				switch (getCurrentSprite()) {
 				case 0:
-					setSprite("/resources/body4.png");
+					setSprite("/sprites/body4.png");
 					setCurrentSprite(1);
 					break;
 				case 1:
-					setSprite("/resources/body3.png");
+					setSprite("/sprites/body3.png");
 					setCurrentSprite(2);
 					break;
 				case 2:
-					setSprite("/resources/body2.png");
+					setSprite("/sprites/body2.png");
 					setCurrentSprite(3);
 					break;
 				case 3:
-					setSprite("/resources/body1.png");
+					setSprite("/sprites/body1.png");
 					setCurrentSprite(0);
 					break;
 				default:

@@ -1,19 +1,9 @@
-package dev.cgj.games;/* Entity.java
- * An entity is any object that appears in the game.
- * It is responsible for resolving collisions and movement.
- */
+package dev.cgj.games;
 
-
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public abstract class Entity {
-
-	// Java Note: the visibility modifier "protected"
-	// allows the variable to be seen by this class,
-	// any classes in the same package, and any subclasses
-	// "private" - this class only
-	// "public" - any class can see it
-
 	protected double x; // current x location
 	protected double y; // current y location
 	public Sprite sprite; // this entity's sprite
@@ -21,22 +11,20 @@ public abstract class Entity {
 	public double dy; // vertical speed (px/s) + -> down
 	public String spriteRef;
 	private int currentSprite = 0; // current sprite being drawn
-	private Rectangle me = new Rectangle(); // bounding rectangle of
-											// this entity
-	private Rectangle him = new Rectangle(); // bounding rect. of other
-												// entities
+	private final Rectangle me = new Rectangle(); // bounding rectangle of
 
-	/*
-	 * Constructor input: reference to the image for this entity, initial x and
-	 * y location to be drawn at
-	 */
+	/**
+     * Constructor input: reference to the image for this entity, initial x and
+     * y location to be drawn at
+	 *
+     */
 	public Entity(String r, int newX, int newY) {
 		x = newX;
 		y = newY;
 		
 		spriteRef = r;
 		sprite = (SpriteStore.get()).getSprite(r);
-	} // constructor
+	}
 
 	/*
 	 * move input: delta - the amount of time passed in ms output: none purpose:
@@ -88,7 +76,7 @@ public abstract class Entity {
 	 */
 	public void draw(Graphics g) {  
 		sprite.draw(g, (int) x, (int) y, this);
-	} // draw
+	}
 
 	public void setSprite(String r) {
 		spriteRef = r;
@@ -103,19 +91,20 @@ public abstract class Entity {
 		currentSprite = id;
 	}
 
-	/*
-	 * collidesWith input: the other entity to check collision against output:
-	 * true if entities collide purpose: check if this entity collides with the
-	 * other.
-	 */
+	/**
+     * collidesWith input: the other entity to check collision against output:
+     * true if entities collide purpose: check if this entity collides with the
+     * other.
+     */
 	public boolean collidesWith(Entity other) {
+		Rectangle him = new Rectangle();
 		
 		// rectangular hit box for entities 
 		me.setBounds((int) x, (int) y, sprite.getWidth(), sprite.getHeight());
 		him.setBounds(other.getX(), other.getY(), other.sprite.getWidth(), other.sprite.getHeight());
 		
 		return me.intersects(him);
-	} // collidesWith
+	}
 
 	/*
 	 * collidedWith 
@@ -125,4 +114,4 @@ public abstract class Entity {
 	 * extends this class
 	 */
 	public abstract void collidedWith(Entity other);
-} // Entity class
+}

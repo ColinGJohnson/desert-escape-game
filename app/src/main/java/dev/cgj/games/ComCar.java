@@ -18,7 +18,7 @@ public class ComCar extends Entity {
 		if (!used && other instanceof Car) {
 			((Car) other).swap(this);
 		}
-	} // collidedWith
+	}
 
 	public void move(long delta) {
 		setY(getY() - game.gameDY - 4);
@@ -26,9 +26,8 @@ public class ComCar extends Entity {
 		// if car moves off bottom of screen, remove it
 		if (y > 700) {
 			game.removeEntity(this);
-		} // if
-
-	} // move
+		}
+	}
 
 	public void setY(double newY) {
 		y = (int) newY;

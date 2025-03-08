@@ -14,8 +14,8 @@ public class TankBody extends Tank{
 		// move tank upwards if too low on screen
 		if(y > 680){
 			y--;
-		} // if
-		
+		} 
+
 		// make the tank's treads move
 		updateTankAnimations();
 	} // update

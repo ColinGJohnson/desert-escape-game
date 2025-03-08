@@ -6,8 +6,8 @@ import java.awt.Rectangle;
 public class Rocket extends Projectile {
 	EscapeGame game;
 
-	public Rocket(EscapeGame game, String r, int newX, int newY, double shotAngle) {
-		super(game, r, newX, newY, shotAngle);
+	public Rocket(EscapeGame game, String spritePath, int newX, int newY, double shotAngle) {
+		super(game, spritePath, newX, newY, shotAngle);
 		this.game = game;
 	}
 

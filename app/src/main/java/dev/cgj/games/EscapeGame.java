@@ -1,11 +1,24 @@
 package dev.cgj.games;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BasicStroke;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.*;
+import java.awt.image.BufferStrategy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -14,7 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-@SuppressWarnings("serial")
 public class EscapeGame extends Canvas {
 
 	// Images to be drawn
@@ -36,10 +48,10 @@ public class EscapeGame extends Canvas {
 	Image HUDoverlay = null;
 	Image arrow = null;
 
-	private BufferStrategy strategy; // take advantage of accelerated graphics
+	private final BufferStrategy strategy; // take advantage of accelerated graphics
 
-	private int pageHeight = 800; // height of game window
-	private int pageWidth = 800; // width of game window
+	private final int pageHeight = 800; // height of game window
+	private final int pageWidth = 800; // width of game window
 
 	private boolean showDebug = false; // debug view active?
 	private boolean gameOver = false; // player has lost?
@@ -68,7 +80,7 @@ public class EscapeGame extends Canvas {
 	private int spawnChance = 5; // chance to spawn each obstacle type on a new
 									// tile (1 in spawnChance)
 
-	private double carResistance = 8; // dx/dy reduction
+	private final double carResistance = 8; // dx/dy reduction
 	Car player; // entity for the player's car
 	TankBody body; // entity for the tank's main body
 	TankTurret turret; // entity for the tank turret (can be rotated)
@@ -85,25 +97,25 @@ public class EscapeGame extends Canvas {
 	long lastImageBlinkLoop = 0;
 
 	// obstacle entities
-	public ArrayList<Obstacle> obstacleEntities = new ArrayList<Obstacle>();
+	public ArrayList<Obstacle> obstacleEntities = new ArrayList<>();
 
 	// computer controlled car entities
-	public ArrayList<ComCar> comCarEntities = new ArrayList<ComCar>();
+	public ArrayList<ComCar> comCarEntities = new ArrayList<>();
 
 	// projectile entities
-	public ArrayList<Projectile> projectileEntities = new ArrayList<Projectile>();
+	public ArrayList<Projectile> projectileEntities = new ArrayList<>();
 
 	// power up entities
-	public ArrayList<Powerup> powerupEntities = new ArrayList<Powerup>();
+	public ArrayList<Powerup> powerupEntities = new ArrayList<>();
 
 	// entities to remove
-	private ArrayList<Entity> removeEntities = new ArrayList<Entity>();
+	private final ArrayList<Entity> removeEntities = new ArrayList<>();
 
 	// particle entities
-	private ArrayList<Particle> particles = new ArrayList<Particle>();
-	public ArrayList<ParticleEffect> particleEffects = new ArrayList<ParticleEffect>();
-	private ArrayList<Particle> removeParticleEffects = new ArrayList<Particle>();
-	private ArrayList<Particle> removeParticles = new ArrayList<Particle>();
+	private final ArrayList<Particle> particles = new ArrayList<>();
+	public ArrayList<ParticleEffect> particleEffects = new ArrayList<>();
+	private final ArrayList<Particle> removeParticleEffects = new ArrayList<>();
+	private final ArrayList<Particle> removeParticles = new ArrayList<>();
 
 	public double gameDY = 0; // movement for all entities this loop
 
@@ -187,7 +199,7 @@ public class EscapeGame extends Canvas {
 			while (!repeatGame) {
 				if (enterPressed) {
 					repeatGame = true;
-				} // if
+				} 
 
 				// prevent to loop from running too fast with a small delay
 				try {
@@ -220,7 +232,7 @@ public class EscapeGame extends Canvas {
 
 		if (score > bestscore) {
 			g.drawString("New High Score!", 345, 440);
-		} // if
+		} 
 		g.drawString("Exit: 'Esc' | New Game: 'Enter'", 300, 455);
 
 		// write high score to file
@@ -232,7 +244,7 @@ public class EscapeGame extends Canvas {
 			} catch (Exception e) {
 				System.out.println("Score Output Error");
 			} // catch
-		} // if
+		} 
 	} // drawEndScreen
 
 	public void menuLoop() {
@@ -266,31 +278,31 @@ public class EscapeGame extends Canvas {
 			g.drawImage(startGame, 232, 149, this);
 			if (System.currentTimeMillis() > lastImageBlinkLoop + 2000) {
 				lastImageBlinkLoop = System.currentTimeMillis();
-			} // if
-		} // if
+			} 
+		} 
 	} // DrawMenu
 
 	// sets image variables to their respective images
 	private void loadImages() {
 
 		try {
-			zero = ImageIO.read(EscapeGame.class.getResource("/resources/0.png"));
-			one = ImageIO.read(EscapeGame.class.getResource("/resources/1.png"));
-			two = ImageIO.read(EscapeGame.class.getResource("/resources/2.png"));
-			three = ImageIO.read(EscapeGame.class.getResource("/resources/3.png"));
-			four = ImageIO.read(EscapeGame.class.getResource("/resources/4.png"));
-			five = ImageIO.read(EscapeGame.class.getResource("/resources/5.png"));
-			six = ImageIO.read(EscapeGame.class.getResource("/resources/6.png"));
-			seven = ImageIO.read(EscapeGame.class.getResource("/resources/7.png"));
-			eight = ImageIO.read(EscapeGame.class.getResource("/resources/8.png"));
-			nine = ImageIO.read(EscapeGame.class.getResource("/resources/9.png"));
-			road = ImageIO.read(EscapeGame.class.getResource("/resources/road.jpg"));
-			startGame = ImageIO.read(EscapeGame.class.getResource("/resources/pressAnyKeyToStart.png"));
-			HUDoverlay = ImageIO.read(EscapeGame.class.getResource("/resources/HUD.png"));
-			arrow = ImageIO.read(EscapeGame.class.getResource("/resources/arrow.png"));
-			ground = ImageIO.read(EscapeGame.class.getResource("/resources/ground.jpg"));
-			startGround2 = ImageIO.read(EscapeGame.class.getResource("/resources/startGround2.jpg"));
-			startGround = ImageIO.read(EscapeGame.class.getResource("/resources/startGround1.jpg"));
+			zero = ImageIO.read(EscapeGame.class.getResource("/sprites/0.png"));
+			one = ImageIO.read(EscapeGame.class.getResource("/sprites/1.png"));
+			two = ImageIO.read(EscapeGame.class.getResource("/sprites/2.png"));
+			three = ImageIO.read(EscapeGame.class.getResource("/sprites/3.png"));
+			four = ImageIO.read(EscapeGame.class.getResource("/sprites/4.png"));
+			five = ImageIO.read(EscapeGame.class.getResource("/sprites/5.png"));
+			six = ImageIO.read(EscapeGame.class.getResource("/sprites/6.png"));
+			seven = ImageIO.read(EscapeGame.class.getResource("/sprites/7.png"));
+			eight = ImageIO.read(EscapeGame.class.getResource("/sprites/8.png"));
+			nine = ImageIO.read(EscapeGame.class.getResource("/sprites/9.png"));
+			road = ImageIO.read(EscapeGame.class.getResource("/sprites/road.jpg"));
+			startGame = ImageIO.read(EscapeGame.class.getResource("/sprites/pressAnyKeyToStart.png"));
+			HUDoverlay = ImageIO.read(EscapeGame.class.getResource("/sprites/HUD.png"));
+			arrow = ImageIO.read(EscapeGame.class.getResource("/sprites/arrow.png"));
+			ground = ImageIO.read(EscapeGame.class.getResource("/sprites/ground.jpg"));
+			startGround2 = ImageIO.read(EscapeGame.class.getResource("/sprites/startGround2.jpg"));
+			startGround = ImageIO.read(EscapeGame.class.getResource("/sprites/startGround1.jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} // catch
@@ -335,9 +347,9 @@ public class EscapeGame extends Canvas {
 		projectileEntities.clear();
 
 		// Initialize player car and enemy tank objects
-		player = new Car(this, "/resources/sc1.png", 400, 500);
-		body = new TankBody(this, "/resources/body1.png", (pageWidth / 2) - 38, pageHeight);
-		turret = new TankTurret(this, "/resources/turret.png", (pageWidth / 2) - 84, pageHeight - 21, player);
+		player = new Car(this, "/sprites/sc1.png", 400, 500);
+		body = new TankBody(this, "/sprites/body1.png", (pageWidth / 2) - 38, pageHeight);
+		turret = new TankTurret(this, "/sprites/turret.png", (pageWidth / 2) - 84, pageHeight - 21, player);
 
 		// get HighScore from text file
 		try {
@@ -351,15 +363,15 @@ public class EscapeGame extends Canvas {
 		} // catch
 
 		// preload sprites to avoid lag during game start
-		Obstacle preload1 = new Obstacle(this, "/resources/skull.png", -100, -100, "preload");
-		Obstacle preload2 = new Obstacle(this, "/resources/cactus.png", -100, -100, "preload");
-		Obstacle preload3 = new Obstacle(this, "/resources/cone.png", -100, -100, "preload");
-		Obstacle preload5 = new Obstacle(this, "/resources/shot.jpg", -100, -100, "preload");
-		Obstacle preload6 = new Obstacle(this, "/resources/health.png", -100, -100, "preload");
-		Obstacle preload7 = new Obstacle(this, "/resources/rocket.png", -100, -100, "preload");
-		Obstacle preload8 = new Obstacle(this, "/resources/nitro.png", -100, -100, "preload");
-		Obstacle preload9 = new Obstacle(this, "/resources/body2.png", -100, -100, "preload");
-		Obstacle preload10 = new Obstacle(this, "/resources/body3.png", -100, -100, "preload");
+		Obstacle preload1 = new Obstacle(this, "/sprites/skull.png", -100, -100, "preload");
+		Obstacle preload2 = new Obstacle(this, "/sprites/cactus.png", -100, -100, "preload");
+		Obstacle preload3 = new Obstacle(this, "/sprites/cone.png", -100, -100, "preload");
+		Obstacle preload5 = new Obstacle(this, "/sprites/shot.jpg", -100, -100, "preload");
+		Obstacle preload6 = new Obstacle(this, "/sprites/health.png", -100, -100, "preload");
+		Obstacle preload7 = new Obstacle(this, "/sprites/rocket.png", -100, -100, "preload");
+		Obstacle preload8 = new Obstacle(this, "/sprites/nitro.png", -100, -100, "preload");
+		Obstacle preload9 = new Obstacle(this, "/sprites/body2.png", -100, -100, "preload");
+		Obstacle preload10 = new Obstacle(this, "/sprites/body3.png", -100, -100, "preload");
 	} // init
 
 	public void gameLoop() {
@@ -408,7 +420,7 @@ public class EscapeGame extends Canvas {
 			if (System.currentTimeMillis() - lastFuelLoop > 500) {
 				player.useFuel();
 				lastFuelLoop = System.currentTimeMillis();
-			} // if
+			} 
 
 			// track progress
 			distanceTravelled += gameDY;
@@ -423,11 +435,11 @@ public class EscapeGame extends Canvas {
 
 			if ((score -= totalHealthLost / 10) > 0) {
 				score -= totalHealthLost / 10;
-			} // if
+			} 
 
 			if (score < 0) {
 				score = 0;
-			} // if
+			} 
 
 			// draw frame
 			drawFrame(g);
@@ -435,7 +447,7 @@ public class EscapeGame extends Canvas {
 			// show debug if requested
 			if (showDebug) {
 				drawTestInfo(g);
-			} // if
+			} 
 
 			// clear graphics and flip buffer
 			g.dispose();
@@ -444,15 +456,14 @@ public class EscapeGame extends Canvas {
 			// exit the game loop if the player has lost or won
 			if (gameOver || gameWin) {
 				return;
-			} // if
+			} 
 
 			// pause
 			try {
 				Thread.sleep(10);
 			} catch (Exception e) {
 				e.printStackTrace();
-				;
-			} // catch
+            } // catch
 		} // while
 	} // gameLoop
 
@@ -467,7 +478,7 @@ public class EscapeGame extends Canvas {
 		if (gameDY < 0) {
 			// randomize particle parameters
 			double randomDX = (-6 + (Math.random() * ((6 + 6) + 1)));
-			double randomDY = (6 + (Math.random() * ((6 - 6) + 1)));
+			double randomDY = (6 + (Math.random() * (1)));
 			int randomLifespan = (int) (10 + (Math.random() * ((20 - 10) + 1)));
 			int randColor = (int) (20 + (Math.random() * ((100 - 20) + 1)));
 
@@ -475,7 +486,7 @@ public class EscapeGame extends Canvas {
 			particles.add(
 					new Particle(player.getX() + player.getImageWidth() / 2, player.getY() + player.getImageHeight(),
 							randomDX, randomDY, 4, randomLifespan, new Color(randColor, randColor, randColor), 0.1));
-		} // if
+		} 
 
 		// remove spent particles and effects
 		particles.removeAll(removeParticles);
@@ -492,7 +503,7 @@ public class EscapeGame extends Canvas {
 		if (System.currentTimeMillis() - lastFireLoop > 1000) {
 			turret.fire();
 			lastFireLoop = System.currentTimeMillis();
-		} // if
+		} 
 	} // updateTank
 
 	private void moveEntities() {
@@ -531,7 +542,7 @@ public class EscapeGame extends Canvas {
 		if (Math.abs(distanceTravelled / 20) > distancegoal) {
 			System.out.println("you win");
 			gameWin = true;
-		} // if
+		} 
 	} // checkWin
 
 	private void checkCollisions() {
@@ -545,7 +556,7 @@ public class EscapeGame extends Canvas {
 				// that a collision has occurred
 				me.collidedWith(player);
 				player.collidedWith(me);
-			} // if
+			} 
 		} // for
 
 		// check collisions with shells
@@ -557,7 +568,7 @@ public class EscapeGame extends Canvas {
 				// that a collision has occurred
 				me.collidedWith(player);
 				player.collidedWith(me);
-			} // if
+			} 
 		} // for
 
 		// check collisions with power ups
@@ -569,7 +580,7 @@ public class EscapeGame extends Canvas {
 				// that a collision has occurred
 				me.collidedWith(player);
 				player.collidedWith(me);
-			} // if
+			} 
 		} // for
 
 		// check collisions with comCars and notify entities if true
@@ -578,7 +589,7 @@ public class EscapeGame extends Canvas {
 			if (me.collidesWith(player)) {
 				me.collidedWith(player);
 				player.collidedWith(me);
-			} // if
+			} 
 		} // for
 
 		// check projectile collisions with obstacles
@@ -592,7 +603,7 @@ public class EscapeGame extends Canvas {
 					// collision
 					me.collidedWith(other);
 					other.collidedWith(me);
-				} // if
+				} 
 			} // for
 		} // for
 	} // checkCollisions
@@ -604,31 +615,31 @@ public class EscapeGame extends Canvas {
 
 				switch (toSpawn) {
 				case "health":
-					spawn = new Powerup(this, "/resources/health.png",
+					spawn = new Powerup(this, "/sprites/health.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "health");
 					break;
 
 				case "fuel":
-					spawn = new Powerup(this, "/resources/fuel.png",
+					spawn = new Powerup(this, "/sprites/fuel.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "fuel");
 					break;
 
 				case "nitro":
-					spawn = new Powerup(this, "/resources/nitro.png",
+					spawn = new Powerup(this, "/sprites/nitro.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "nitro");
 					break;
 
 				case "shield":
-					spawn = new Powerup(this, "/resources/shield.png",
+					spawn = new Powerup(this, "/sprites/shield.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "shield");
 					break;
 
 				case "rocket":
-					spawn = new Powerup(this, "/resources/rocket.png",
+					spawn = new Powerup(this, "/sprites/rocket.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "rocket");
 					break;
@@ -646,28 +657,28 @@ public class EscapeGame extends Canvas {
 
 				switch (toSpawn) {
 				case "cactus":
-					spawn = new Obstacle(this, "/resources/cactus.png",
+					spawn = new Obstacle(this, "/sprites/cactus.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
 					break;
 
 				case "skull":
-					spawn = new Obstacle(this, "/resources/skull.png",
+					spawn = new Obstacle(this, "/sprites/skull.png",
 							ThreadLocalRandom.current().nextInt(minX, maxX + 1),
 							ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
 					break;
 
 				case "roadworks":
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 454, maxY, "cone"));
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 430, maxY, "cone"));
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 406, maxY, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, maxY, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, maxY, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, maxY, "cone"));
 
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 406, -164, "cone"));
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 406, -188, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -164, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -188, "cone"));
 
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 454, -212, "cone"));
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 430, -212, "cone"));
-					obstacleEntities.add(new Obstacle(this, "/resources/cone.png", 406, -212, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, -212, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, -212, "cone"));
+					obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -212, "cone"));
 					break;
 
 				case "oil":
@@ -681,47 +692,45 @@ public class EscapeGame extends Canvas {
 				// add the new Obstacle to arrayList
 				if (spawn != null) {
 					obstacleEntities.add(spawn);
-				} // if
+				} 
 			} else if (type.equals("comCar")) {
 				switch (ThreadLocalRandom.current().nextInt(0, 9 + 1)) {
 				case 0:
-					comCarEntities.add(new ComCar(this, "/resources/sc1.png", minX - 30, minY, 0));
+					comCarEntities.add(new ComCar(this, "/sprites/sc1.png", minX - 30, minY, 0));
 					break;
 				case 1:
-					comCarEntities.add(new ComCar(this, "/resources/sc2.png", minX - 30, minY, 1));
+					comCarEntities.add(new ComCar(this, "/sprites/sc2.png", minX - 30, minY, 1));
 					break;
 				case 2:
-					comCarEntities.add(new ComCar(this, "/resources/sc3.png", minX - 30, minY, 2));
+					comCarEntities.add(new ComCar(this, "/sprites/sc3.png", minX - 30, minY, 2));
 					break;
 				case 3:
-					comCarEntities.add(new ComCar(this, "/resources/fc1.png", minX - 30, minY, 3));
+					comCarEntities.add(new ComCar(this, "/sprites/fc1.png", minX - 30, minY, 3));
 					break;
 				case 4:
-					comCarEntities.add(new ComCar(this, "/resources/fc2.png", minX - 30, minY, 4));
+					comCarEntities.add(new ComCar(this, "/sprites/fc2.png", minX - 30, minY, 4));
 					break;
 				case 5:
-					comCarEntities.add(new ComCar(this, "/resources/fc3.png", minX - 30, minY, 5));
+					comCarEntities.add(new ComCar(this, "/sprites/fc3.png", minX - 30, minY, 5));
 					break;
 				case 6:
-					comCarEntities.add(new ComCar(this, "/resources/tr1.png", minX - 70, minY, 6));
+					comCarEntities.add(new ComCar(this, "/sprites/tr1.png", minX - 70, minY, 6));
 					break;
 				case 7:
-					comCarEntities.add(new ComCar(this, "/resources/tr2.png", minX - 70, minY, 7));
+					comCarEntities.add(new ComCar(this, "/sprites/tr2.png", minX - 70, minY, 7));
 					break;
 				case 8:
-					comCarEntities.add(new ComCar(this, "/resources/tr3.png", minX - 70, minY, 8));
+					comCarEntities.add(new ComCar(this, "/sprites/tr3.png", minX - 70, minY, 8));
 					break;
 				case 9:
-					comCarEntities.add(new ComCar(this, "/resources/va1.png", minX - 30, minY, 9));
+					comCarEntities.add(new ComCar(this, "/sprites/va1.png", minX - 30, minY, 9));
 					break;
-
 				default:
 					break;
-				} // switch
-
-			} // else if
-		} // for
-	} // spawn
+				}
+			}
+		}
+	}
 
 	private void updateControls() {
 
@@ -751,7 +760,7 @@ public class EscapeGame extends Canvas {
 			} else {
 				player.speed = 0;
 			}
-		} // if
+		} 
 
 		// respond to user turning car left and right
 		if ((leftPressed) && (!rightPressed) && (player.getRotation() > -90)) {
@@ -766,25 +775,21 @@ public class EscapeGame extends Canvas {
 		}
 
 		// if the player is not on the road, half maximum speed
-		if (player.getX() > 470 || player.getX() < 330) {
-			player.offRoad = true;
-		} else {
-			player.offRoad = false;
-		} // if
+        player.offRoad = player.getX() > 470 || player.getX() < 330;
 
 		// fire a rocket if 'e' pressed
 		if (ePressed) {
 			player.useRocket();
 
 			ePressed = false;
-		} // if
+		} 
 
 		// use Nitro if 'r' pressed
 		if (rPressed && player.getNumNitro() > 0) {
 			if (player.useNitro()) {
 				rPressed = false;
-			} // if
-		} // if
+			} 
+		} 
 
 		if (player.speed > player.maxSpeedDefault && !player.nitroActive) {
 			player.speed = player.speed - player.speed / 200;
@@ -800,21 +805,21 @@ public class EscapeGame extends Canvas {
 		// draw obstacles
 		for (int i = 0; i < obstacleEntities.size(); i++) {
 			if (obstacleEntities.get(i) instanceof Obstacle) {
-				((Entity) obstacleEntities.get(i)).draw(g);
+				obstacleEntities.get(i).draw(g);
 			}
 		}
 
 		// draw comCars
 		for (int i = 0; i < comCarEntities.size(); i++) {
 			if (comCarEntities.get(i) instanceof ComCar) {
-				((Entity) comCarEntities.get(i)).draw(g);
+				comCarEntities.get(i).draw(g);
 			}
 		}
 
 		// draw powerups
 		for (int i = 0; i < powerupEntities.size(); i++) {
 			if (powerupEntities.get(i) instanceof Powerup) {
-				((Entity) powerupEntities.get(i)).draw(g);
+				powerupEntities.get(i).draw(g);
 			}
 		}
 
@@ -869,7 +874,7 @@ public class EscapeGame extends Canvas {
 
 			// car is no longer on unique initial tile
 			firstTile = false;
-		} // if
+		} 
 
 		// draw bottom road
 		if (firstTile) {
@@ -896,32 +901,32 @@ public class EscapeGame extends Canvas {
 			spawn(470, 700, -800, 0, 1, "cactus", "Obstacle");
 			spawn(470, 700, 0, -140, 1, "roadworks", "Obstacle");
 
-			if (comCarEntities.size() == 0) {
+			if (comCarEntities.isEmpty()) {
 				if (ThreadLocalRandom.current().nextInt(0, spawnChance * 2 + 1) == 0) {
 					spawn(360, -500, 0, 0, 1, null, "comCar");
-				} // if
-			} // if
+				}
+			} 
 
 			if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
 				spawn(100, 300, -800, 0, 1, "health", "Powerup");
 				spawn(470, 700, -800, 0, 1, "health", "Powerup");
-			} // if
+			} 
 			if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
 				spawn(100, 300, -800, 0, 1, "fuel", "Powerup");
 				spawn(470, 700, -800, 0, 1, "fuel", "Powerup");
-			} // if
+			} 
 			if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
 				spawn(300, 470, -800, 0, 1, "rocket", "Powerup");
-			} // if
+			} 
 			if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
 				spawn(100, 300, -800, 0, 1, "nitro", "Powerup");
 				spawn(470, 700, -800, 0, 1, "nitro", "Powerup");
-			} // if
+			} 
 			if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
 				spawn(100, 300, -800, 0, 1, "shield", "Powerup");
 				spawn(470, 700, -800, 0, 1, "shield", "Powerup");
-			} // if
-		} // if
+			} 
+		} 
 
 	} // updateSpawns
 
@@ -957,7 +962,7 @@ public class EscapeGame extends Canvas {
 			g.setStroke(new BasicStroke(5));
 			g.drawRect(10, 238, 80, 75);
 			g.setStroke(new BasicStroke(1));
-		} // if
+		} 
 	} // drawHUD
 
 	// draw health and fuel bars
@@ -967,7 +972,7 @@ public class EscapeGame extends Canvas {
 		if (player.getHealth() > 0) {
 			g.setColor(new Color(184, 0, 0));
 			g.fillRect(20, 56, 18, player.getHealth());
-		} // if
+		} 
 
 		// fuel bar
 		g.setColor(new Color(154, 91, 11));
@@ -990,7 +995,7 @@ public class EscapeGame extends Canvas {
 		g.setColor(Color.yellow);
 		if (delta > 0) {
 			g.drawString(1000 / delta + "FPS", 110, 754);
-		} // if
+		} 
 
 		// draw some collision boxes
 		int degree = (int) player.getRotation(); // desired degree
@@ -1059,7 +1064,7 @@ public class EscapeGame extends Canvas {
 		for (int i = 0; i < numberStr.length(); i++) {
 
 			switch (numberStr.charAt(i)) {
-			case (0 + 48):
+			case (48):
 				g.drawImage(zero, x + pos, y, this);
 				break;
 			case (1 + 48):
@@ -1113,15 +1118,15 @@ public class EscapeGame extends Canvas {
 			// respond to move left, right and up keys being pressed
 			if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 				leftPressed = true;
-			} // if
+			} 
 
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 				rightPressed = true;
-			} // if
+			} 
 
 			if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
 				upPressed = true;
-			} // if
+			} 
 		} // keyPressed
 
 		public void keyReleased(KeyEvent e) {
@@ -1132,27 +1137,27 @@ public class EscapeGame extends Canvas {
 			// enter key to restart game
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				enterPressed = true;
-			} // if
+			} 
 
 			// left arrow or a to turn car left
 			if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 				leftPressed = false;
-			} // if
+			} 
 
 			// right arrow or d to turn car right
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 				rightPressed = false;
-			} // if
+			} 
 
 			// up arrow or w to move car forward
 			if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
 				upPressed = false;
-			} // if
+			} 
 
 			// r key to use nitro
 			if (e.getKeyCode() == KeyEvent.VK_R) {
 				rPressed = true;
-			} // if
+			} 
 
 			// if ']' is pressed, show debug
 			if (e.getKeyChar() == KeyEvent.VK_CLOSE_BRACKET) {
@@ -1162,7 +1167,7 @@ public class EscapeGame extends Canvas {
 			// e key to use a rocket
 			if (e.getKeyCode() == KeyEvent.VK_E) {
 				ePressed = !ePressed;
-			} // if
+			} 
 		} // keyReleased
 
 		public void keyTyped(KeyEvent e) {

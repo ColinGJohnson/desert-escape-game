@@ -24,7 +24,7 @@ public class Powerup extends Entity{
 		// if power up moves off bottom of screen, remove it from PowerupEntity list
 		if (y > 800) {
 			game.removeEntity(this);
-		} // if
+		} 
 	} // move
 
 	public void setY(double newY) {
