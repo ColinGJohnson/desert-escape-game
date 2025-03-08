@@ -1,4 +1,4 @@
-
+package dev.cgj.games;
 
 import javax.swing.JFrame;
 

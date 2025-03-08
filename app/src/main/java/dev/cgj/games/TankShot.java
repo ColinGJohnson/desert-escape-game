@@ -1,4 +1,4 @@
-/* ShotEntity.java
+package dev.cgj.games;/* ShotEntity.java
  * March 27, 2006
  * Represents player's ship
  */

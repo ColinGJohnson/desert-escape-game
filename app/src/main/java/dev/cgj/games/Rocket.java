@@ -1,4 +1,4 @@
-
+package dev.cgj.games;
 
 import java.awt.Color;
 import java.awt.Rectangle;

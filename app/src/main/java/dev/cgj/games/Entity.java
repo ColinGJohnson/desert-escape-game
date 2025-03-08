@@ -1,4 +1,4 @@
-/* Entity.java
+package dev.cgj.games;/* Entity.java
  * An entity is any object that appears in the game.
  * It is responsible for resolving collisions and movement.
  */

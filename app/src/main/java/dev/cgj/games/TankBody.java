@@ -1,4 +1,4 @@
-
+package dev.cgj.games;
 
 // Specialized Entity for the body of enemy tank.
 public class TankBody extends Tank{

@@ -1,3 +1,5 @@
+package dev.cgj.games;
+
 public class TankTurret extends Tank {
 	private double rotation = 0;
 	Car player;

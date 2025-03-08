@@ -1,3 +1,5 @@
+package dev.cgj.games;
+
 public class Tank extends Entity {
 	
 	private long tankSwitch = 0;

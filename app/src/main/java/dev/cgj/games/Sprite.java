@@ -1,4 +1,4 @@
-/* Sprite.java
+package dev.cgj.games;/* Sprite.java
  * March 23, 2006
  * Store no state information, this allows the image to be stored only
  * once, but to be used in many different places.

@@ -1,4 +1,4 @@
-
+package dev.cgj.games;
 
 // an obstacle is an entity that can damage the player
 public class Obstacle extends Entity {

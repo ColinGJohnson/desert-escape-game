@@ -1,4 +1,4 @@
-/* ShipEntity.java
+package dev.cgj.games;/* ShipEntity.java
  * March 27, 2006
  * Represents player's ship
  */

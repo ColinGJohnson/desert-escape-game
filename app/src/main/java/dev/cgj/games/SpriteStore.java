@@ -1,4 +1,4 @@
-/* SpriteStore.java
+package dev.cgj.games;/* SpriteStore.java
  * Manages the sprites in the game.  
  * Caches them for future use.
  */

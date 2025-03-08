@@ -1,4 +1,4 @@
-
+package dev.cgj.games;
 
 public class Powerup extends Entity{
 	private EscapeGame game;
