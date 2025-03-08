@@ -1,78 +1,37 @@
-package dev.cgj.games;/* SpriteStore.java
- * Manages the sprites in the game.  
- * Caches them for future use.
- */
+package dev.cgj.games;
 
-
-import java.awt.*;
+import java.awt.Image;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 public class SpriteStore {
+	private static final SpriteStore INSTANCE = new SpriteStore();
+	private final HashMap<String, Sprite> sprites = new HashMap<>();
 
-	// one instance of this class will exist
-	private static SpriteStore single = new SpriteStore();
-	private HashMap<String, Sprite> sprites = new HashMap<String, Sprite>();
-
-	// returns the single instance of this class
 	public static SpriteStore get() {
-		return single;
-	} // get
+		return INSTANCE;
+	}
 
-	/*
-	 * getSprite input: a string specifying which sprite image is required
-	 * output: a sprite instance containing an accelerated image of the
-	 * requested image purpose: to return a specific sprite
-	 */
-	public Sprite getSprite(String ref) {
+	public Sprite getSprite(String path) {
+		if (sprites.get(path) != null) {
+			return sprites.get(path);
+		}
 
-		// if the sprite is already in the HashMap
-		// then return it
-		if (sprites.get(ref) != null) {
-			return (Sprite) sprites.get(ref);
-		} // if
-
-		// else, load the image into the HashMap off the
-		// hard drive (and hence, into memory)
-
-		
-
-		Image sourceImage = null;
-
-		try {
-			System.out.println("loading image from: " + ref);
-			sourceImage = ImageIO.read(SpriteStore.class.getResource(ref));
-			System.out.println("loaded image from: " + ref);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} // get image
-		
-		System.out.println();
-		
-		
-
-		/*
-		 * // create an accelerated image to store our sprite in
-		 * GraphicsConfiguration gc =
-		 * GraphicsEnvironment.getLocalGraphicsEnvironment().
-		 * getDefaultScreenDevice().getDefaultConfiguration(); Image image =
-		 * gc.createCompatibleImage(sourceImage.getWidth(),
-		 * sourceImage.getHeight(), Transparency.BITMASK);
-		 * 
-		 * // draw our source image into the accelerated image
-		 * image.getGraphics().drawImage(sourceImage, 0, 0, null);
-		 * 
-		 * // create a sprite, add it to the cache and return it Sprite sprite =
-		 * new Sprite(image);
-		 */
-
-		// create a sprite, add it to the cache and return it
-		Sprite sprite = new Sprite(sourceImage);
-		sprites.put(ref, sprite);
-
+		Sprite sprite = new Sprite(getImageResource(path));
+		sprites.put(path, sprite);
 		return sprite;
-	} // getSprite
+	}
 
-} // SpriteStore
+	public Image getImageResource(String path) {
+		try (InputStream imageStream = Main.class.getResourceAsStream(path)) {
+			if (imageStream == null) {
+				throw new IllegalArgumentException("Image resource not found: " + path);
+			}
+			return ImageIO.read(imageStream);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to load image resource: " + path, e);
+		}
+	}
+}
