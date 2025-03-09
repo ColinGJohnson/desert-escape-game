@@ -26,7 +26,7 @@ public abstract class Entity {
         this.y = y;
 
         this.spritePath = spritePath;
-        sprite = (SpriteStore.get()).getSprite(spritePath);
+        sprite = (SpriteStore.getInstance()).getSprite(spritePath);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class Entity {
 
     public void setSprite(String spritePath) {
         this.spritePath = spritePath;
-        sprite = (SpriteStore.get()).getSprite(spritePath);
+        sprite = (SpriteStore.getInstance()).getSprite(spritePath);
     }
 
     public int getCurrentSprite() {

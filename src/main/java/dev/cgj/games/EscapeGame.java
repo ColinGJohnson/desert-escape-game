@@ -30,18 +30,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EscapeGame extends Canvas {
-
-    // Images to be drawn
-    Image zero = null;
-    Image one = null;
-    Image two = null;
-    Image three = null;
-    Image four = null;
-    Image five = null;
-    Image six = null;
-    Image seven = null;
-    Image eight = null;
-    Image nine = null;
     Image road = null;
     Image ground = null;
     Image startGround = null;
@@ -52,6 +40,7 @@ public class EscapeGame extends Canvas {
 
     private final BufferStrategy strategy; // take advantage of accelerated graphics
     private final KeyInputHandler keyInputHandler;
+    private final DigitRenderer digitRenderer;
 
     private final int pageHeight = 800; // height of game window
     private final int pageWidth = 800; // width of game window
@@ -74,7 +63,6 @@ public class EscapeGame extends Canvas {
     private int spawnChance = 5; // chance to spawn each obstacle type on a new
     // tile (1 in spawnChance)
 
-    private final double carResistance = 8; // dx/dy reduction
     Car player; // entity for the player's car
     TankBody body; // entity for the tank's main body
     TankTurret turret; // entity for the tank turret (can be rotated)
@@ -86,9 +74,9 @@ public class EscapeGame extends Canvas {
     long delta = 0;
     long lastSpawnLoop = 0;
     long lastFuelLoop = 0;
-    long gameStartTime = 0;
     long lastFireLoop = 0;
     long lastImageBlinkLoop = 0;
+    long gameStartTime;
 
     // obstacle entities
     public ArrayList<Obstacle> obstacleEntities = new ArrayList<>();
@@ -118,6 +106,8 @@ public class EscapeGame extends Canvas {
      */
     public EscapeGame(JFrame container) {
         gameStartTime = System.currentTimeMillis();
+        keyInputHandler = new KeyInputHandler();
+        digitRenderer = new DigitRenderer();
 
         // get hold the content of the frame
         JPanel gamePanel = (JPanel) container.getContentPane();
@@ -149,7 +139,6 @@ public class EscapeGame extends Canvas {
         });
 
         // add key listener to this canvas
-        keyInputHandler = new KeyInputHandler();
         addKeyListener(keyInputHandler);
 
         // request focus so key events are handled by this canvas
@@ -163,8 +152,6 @@ public class EscapeGame extends Canvas {
             init();
             loadImages();
             menuLoop();
-
-
             gameLoop();
 
             // get graphics context and turn on antialiasing
@@ -272,16 +259,6 @@ public class EscapeGame extends Canvas {
      */
     private void loadImages() {
         try {
-            zero = ImageIO.read(EscapeGame.class.getResource("/sprites/0.png"));
-            one = ImageIO.read(EscapeGame.class.getResource("/sprites/1.png"));
-            two = ImageIO.read(EscapeGame.class.getResource("/sprites/2.png"));
-            three = ImageIO.read(EscapeGame.class.getResource("/sprites/3.png"));
-            four = ImageIO.read(EscapeGame.class.getResource("/sprites/4.png"));
-            five = ImageIO.read(EscapeGame.class.getResource("/sprites/5.png"));
-            six = ImageIO.read(EscapeGame.class.getResource("/sprites/6.png"));
-            seven = ImageIO.read(EscapeGame.class.getResource("/sprites/7.png"));
-            eight = ImageIO.read(EscapeGame.class.getResource("/sprites/8.png"));
-            nine = ImageIO.read(EscapeGame.class.getResource("/sprites/9.png"));
             road = ImageIO.read(EscapeGame.class.getResource("/sprites/road.jpg"));
             startGame = ImageIO.read(EscapeGame.class.getResource("/sprites/pressAnyKeyToStart.png"));
             HUDoverlay = ImageIO.read(EscapeGame.class.getResource("/sprites/HUD.png"));
@@ -339,18 +316,7 @@ public class EscapeGame extends Canvas {
         } catch (Exception e) {
             System.out.println("Scores File Not Found\n");
             bestscore = 0;
-        } // catch
-
-        // preload sprites to avoid lag during game start
-        Obstacle preload1 = new Obstacle(this, "/sprites/skull.png", -100, -100, "preload");
-        Obstacle preload2 = new Obstacle(this, "/sprites/cactus.png", -100, -100, "preload");
-        Obstacle preload3 = new Obstacle(this, "/sprites/cone.png", -100, -100, "preload");
-        Obstacle preload5 = new Obstacle(this, "/sprites/shot.jpg", -100, -100, "preload");
-        Obstacle preload6 = new Obstacle(this, "/sprites/health.png", -100, -100, "preload");
-        Obstacle preload7 = new Obstacle(this, "/sprites/rocket.png", -100, -100, "preload");
-        Obstacle preload8 = new Obstacle(this, "/sprites/nitro.png", -100, -100, "preload");
-        Obstacle preload9 = new Obstacle(this, "/sprites/body2.png", -100, -100, "preload");
-        Obstacle preload10 = new Obstacle(this, "/sprites/body3.png", -100, -100, "preload");
+        }
     }
 
     public void gameLoop() {
@@ -560,17 +526,15 @@ public class EscapeGame extends Canvas {
         }
 
         // check collisions with comCars and notify entities if true
-        for (int i = 0; i < comCarEntities.size(); i++) {
-            ComCar me = comCarEntities.get(i);
+        for (ComCar me : comCarEntities) {
             if (me.collidesWith(player)) {
                 me.collidedWith(player);
                 player.collidedWith(me);
             }
-        } // for
+        }
 
         // check projectile collisions with obstacles
-        for (int i = 0; i < projectileEntities.size(); i++) {
-            Projectile me = projectileEntities.get(i);
+        for (Projectile me : projectileEntities) {
             for (int j = 0; j < obstacleEntities.size(); j++) {
                 Obstacle other = obstacleEntities.get(j);
                 if (me.collidesWith(other) && !me.getPastCollision()) {
@@ -580,9 +544,9 @@ public class EscapeGame extends Canvas {
                     me.collidedWith(other);
                     other.collidedWith(me);
                 }
-            } // for
-        } // for
-    } // checkCollisions
+            }
+        }
+    }
 
     private void spawn(int minX, int maxX, int minY, int maxY, int numToSpawn, String toSpawn, String type) {
         for (int i = 0; i < numToSpawn; i++) {
@@ -622,7 +586,7 @@ public class EscapeGame extends Canvas {
                     default:
                         System.err.println("tried to spawn unknown object");
                         break;
-                } // switch
+                }
 
                 // add the new Power up to arrayList
                 if (spawn != null) {
@@ -663,7 +627,7 @@ public class EscapeGame extends Canvas {
                     default:
                         System.err.println("tried to spawn unknown object");
                         break;
-                } // switch
+                }
 
                 // add the new Obstacle to arrayList
                 if (spawn != null) {
@@ -678,6 +642,8 @@ public class EscapeGame extends Canvas {
     private void updateControls() {
 
         // car should slow down once it starts going a certain speed
+        // dx/dy reduction
+        double carResistance = 8;
         if (player.getHorizontalMovement() > 5) {
             player.setHorizontalMovement(player.getHorizontalMovement() - (player.getHorizontalMovement() / carResistance));
         } else if (player.getHorizontalMovement() < 5) {
@@ -883,18 +849,18 @@ public class EscapeGame extends Canvas {
         drawBars(g);
 
         // inventory numbers
-        drawImageNumber(g, player.getNumRocket(), 60, 436);
-        drawImageNumber(g, player.getNumNitro(), 60, 476);
-        drawImageNumber(g, player.getNumShield(), 60, 520);
+        digitRenderer.drawImageNumber(g, this, player.getNumRocket(), 60, 436);
+        digitRenderer.drawImageNumber(g, this, player.getNumNitro(), 60, 476);
+        digitRenderer.drawImageNumber(g, this, player.getNumShield(), 60, 520);
 
         // stats
-        drawImageNumber(g, player.getCarStats("speed"), 64, 320);
-        drawImageNumber(g, player.getCarStats("health"), 64, 344);
-        drawImageNumber(g, player.getCarStats("storage"), 64, 368);
+        digitRenderer.drawImageNumber(g, this, player.getCarStats("speed"), 64, 320);
+        digitRenderer.drawImageNumber(g, this, player.getCarStats("health"), 64, 344);
+        digitRenderer.drawImageNumber(g, this, player.getCarStats("storage"), 64, 368);
 
         // scores
-        drawImageNumber(g, score, 708, 72);
-        drawImageNumber(g, bestscore, 708, 136);
+        digitRenderer.drawImageNumber(g, this, score, 708, 72);
+        digitRenderer.drawImageNumber(g, this, bestscore, 708, 136);
 
         // progressArrow
         g.drawImage(arrow, 750 - 14, (int) (((double) (distanceTravelled / 20) / distancegoal * 315) + 586 - 14), this);
@@ -1001,58 +967,6 @@ public class EscapeGame extends Canvas {
         // rotate rectangle
         playerCollisions = transform.createTransformedShape(playerCollisions);
         return playerCollisions;
-    }
-
-    /**
-     * draws a number made of images for each digit given a number to draw and a starting point.
-     */
-    private void drawImageNumber(Graphics2D g, int number, int x, int y) {
-
-        // make a string from the number
-        String numberStr = number + "";
-
-        // draw number images starting at x, y coords
-        int pos = 0;
-        for (int i = 0; i < numberStr.length(); i++) {
-
-            switch (numberStr.charAt(i)) {
-                case (48):
-                    g.drawImage(zero, x + pos, y, this);
-                    break;
-                case (1 + 48):
-                    g.drawImage(one, x + pos, y, this);
-                    break;
-                case (2 + 48):
-                    g.drawImage(two, x + pos, y, this);
-                    break;
-                case (3 + 48):
-                    g.drawImage(three, x + pos, y, this);
-                    break;
-                case (4 + 48):
-                    g.drawImage(four, x + pos, y, this);
-                    break;
-                case (5 + 48):
-                    g.drawImage(five, x + pos, y, this);
-                    break;
-                case (6 + 48):
-                    g.drawImage(six, x + pos, y, this);
-                    break;
-                case (7 + 48):
-                    g.drawImage(seven, x + pos, y, this);
-                    break;
-                case (8 + 48):
-                    g.drawImage(eight, x + pos, y, this);
-                    break;
-                case (9 + 48):
-                    g.drawImage(nine, x + pos, y, this);
-                    break;
-                default:
-                    break;
-            }
-
-            // increment drawing position according to character width
-            pos += 16;
-        }
     }
 
     /**
