@@ -1,4 +1,6 @@
-package dev.cgj.games;
+package dev.cgj.games.entity;
+
+import dev.cgj.games.EscapeGame;
 
 import java.awt.Color;
 import java.awt.Rectangle;

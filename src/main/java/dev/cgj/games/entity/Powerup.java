@@ -1,6 +1,8 @@
-package dev.cgj.games;
+package dev.cgj.games.entity;
 
-public class Powerup extends Entity{
+import dev.cgj.games.EscapeGame;
+
+public class Powerup extends Entity {
 	private EscapeGame game;
 	private boolean pastCollision = false; // the car cannot collide with a powerup twice.
 	String type;

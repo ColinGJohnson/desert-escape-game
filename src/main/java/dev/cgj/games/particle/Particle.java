@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.particle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

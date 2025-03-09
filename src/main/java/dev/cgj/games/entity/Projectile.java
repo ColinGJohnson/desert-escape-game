@@ -1,4 +1,6 @@
-package dev.cgj.games;
+package dev.cgj.games.entity;
+
+import dev.cgj.games.EscapeGame;
 
 public class Projectile extends Entity {
 	private EscapeGame game;

@@ -1,4 +1,6 @@
-package dev.cgj.games;
+package dev.cgj.games.entity;
+
+import dev.cgj.games.EscapeGame;
 
 /**
  * An obstacle is an entity that can damage the player.

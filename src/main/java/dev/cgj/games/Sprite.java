@@ -1,5 +1,10 @@
 package dev.cgj.games;
 
+import dev.cgj.games.entity.Car;
+import dev.cgj.games.entity.Entity;
+import dev.cgj.games.entity.Projectile;
+import dev.cgj.games.entity.TankTurret;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
