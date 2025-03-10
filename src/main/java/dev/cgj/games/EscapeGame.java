@@ -4,46 +4,16 @@ import dev.cgj.games.entity.*;
 import dev.cgj.games.particle.Particle;
 import dev.cgj.games.particle.ParticleEffect;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BasicStroke;
-import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferStrategy;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EscapeGame extends Canvas {
-    Image road = null;
-    Image ground = null;
-    Image startGround = null;
-    Image startGround2 = null;
-    Image startGame = null;
-    Image HUDoverlay = null;
-    Image arrow = null;
-
-    private final BufferStrategy strategy; // take advantage of accelerated graphics
+public class EscapeGame {
     private final KeyInputHandler keyInputHandler;
-    private final DigitRenderer digitRenderer;
-
-    private final int pageHeight = 800; // height of game window
-    private final int pageWidth = 800; // width of game window
+    private final EscapeGameRenderer renderer;
 
     private boolean gameOver = false; // player has lost?
     private boolean gameWin = false; // player has won?
@@ -57,11 +27,9 @@ public class EscapeGame extends Canvas {
 
     public int totalHealthLost = 0; // used to calculate score
     public int obstaclesDestroyed = 0; // used to calculate score
-    private int score = 0; // score this game
-    private int bestscore = 0; // best score (read from
-    // "DesertEscapeScores.txt")
-    private int spawnChance = 5; // chance to spawn each obstacle type on a new
-    // tile (1 in spawnChance)
+    public int score = 0; // score this game
+    public int bestscore = 0; // best score (read from "DesertEscapeScores.txt")
+    public int spawnChance = 5; // chance to spawn each obstacle type on a new tile (1 in spawnChance)
 
     Car player; // entity for the player's car
     TankBody body; // entity for the tank's main body
@@ -94,10 +62,10 @@ public class EscapeGame extends Canvas {
     private final ArrayList<Entity> removeEntities = new ArrayList<>();
 
     // particle entities
-    private final ArrayList<Particle> particles = new ArrayList<>();
+    public final ArrayList<Particle> particles = new ArrayList<>();
     public ArrayList<ParticleEffect> particleEffects = new ArrayList<>();
-    private final ArrayList<Particle> removeParticleEffects = new ArrayList<>();
-    private final ArrayList<Particle> removeParticles = new ArrayList<>();
+    public final ArrayList<Particle> removeParticleEffects = new ArrayList<>();
+    public final ArrayList<Particle> removeParticles = new ArrayList<>();
 
     public double gameDY = 0; // movement for all entities this loop
 
@@ -107,63 +75,19 @@ public class EscapeGame extends Canvas {
     public EscapeGame(JFrame container) {
         gameStartTime = System.currentTimeMillis();
         keyInputHandler = new KeyInputHandler();
-        digitRenderer = new DigitRenderer();
-
-        // get hold the content of the frame
-        JPanel gamePanel = (JPanel) container.getContentPane();
-
-        // set up the resolution of the game
-        gamePanel.setPreferredSize(new Dimension(800, 800));
-        gamePanel.setLayout(null);
-
-        // set up canvas size (this) and add to frame
-        setBounds(0, 0, 800, 800);
-        gamePanel.add(this);
-
-        // Tell AWT not to bother repainting canvas since that will be done using graphics acceleration
-        setIgnoreRepaint(true);
-
-        // center window on screen
-        container.pack();
-        container.setLocationRelativeTo(null);
-
-        // make the window visible
-        container.setResizable(false);
-        container.setVisible(true);
-
-        // if user closes window, shutdown game and jre
-        container.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-
-        // add key listener to this canvas
-        addKeyListener(keyInputHandler);
-
-        // request focus so key events are handled by this canvas
-        requestFocus();
-
-        // create buffer strategy to take advantage of accelerated graphics
-        createBufferStrategy(2);
-        strategy = getBufferStrategy();
+        renderer = new EscapeGameRenderer(container);
+        renderer.addKeyListener(keyInputHandler);
 
         do {
             init();
-            loadImages();
             menuLoop();
             gameLoop();
 
-            // get graphics context and turn on antialiasing
-            Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
             // show gameOver/gameWin screens
-            drawEndScreen(g);
+            renderer.drawEndScreen(bestscore, distanceTravelledMeters, gameOver, gameWin, score);
 
             // clear graphics and flip buffer
-            g.dispose();
-            strategy.show();
+            renderer.renderFrame();
 
             // wait until user presses 'esc' to exit or presses enter for a new game
             repeatGame = false;
@@ -183,91 +107,14 @@ public class EscapeGame extends Canvas {
         } while (repeatGame);
     }
 
-    public void drawEndScreen(Graphics2D g) {
-        if (gameOver) {
-            g.setColor(new Color(204, 0, 0));
-            g.fillRect(100, 350, 600, 125);
-            g.setColor(Color.white);
-            g.setFont(new Font("Arial", Font.PLAIN, 40));
-            g.drawString("Game Over!", 290, 400);
-            g.setFont(new Font("Arial", Font.PLAIN, 14));
-            g.drawString("Distance Travelled: " + distanceTravelledMeters + "m", 320, 425);
-        } else if (gameWin) {
-            g.setColor(new Color(0, 204, 0));
-            g.fillRect(100, 350, 600, 125);
-            g.setColor(Color.white);
-            g.setFont(new Font("Arial", Font.PLAIN, 40));
-            g.drawString("You Win!", 315, 400);
-            g.setFont(new Font("Arial", Font.PLAIN, 14));
-            g.drawString("You scored: " + score + " points", 320, 425);
-        }
-
-        if (score > bestscore) {
-            g.drawString("New High Score!", 345, 440);
-        }
-        g.drawString("Exit: 'Esc' | New Game: 'Enter'", 300, 455);
-
-        // write high score to file
-        if (score > bestscore) {
-            try {
-                BufferedWriter out = new BufferedWriter(new FileWriter("DesertEscapeScores.txt"));
-                out.write(String.valueOf(score));
-                out.close();
-            } catch (Exception e) {
-                System.out.println("Score Output Error");
-            } // catch
-        }
-    } // drawEndScreen
-
     public void menuLoop() {
         while (showMenu) {
+            renderer.drawMenu(this);
+            renderer.renderFrame();
 
-            // get graphics context for the accelerated surface and make it red
-            Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-            g.setColor(Color.red);
-
-            // draw the menu
-            drawMenu(g);
-
-            // clear graphics and flip buffer
-            g.dispose();
-            strategy.show();
-
-            // end the menu on enter press
             if (keyInputHandler.isEnterPressed()) {
                 showMenu = false;
             }
-        }
-    }
-
-    private void drawMenu(Graphics2D g) {
-
-        // menu background
-        g.drawImage(startGround, 0, 0, this);
-
-        // draw "start game" image for one second, then hide for another second
-        if (System.currentTimeMillis() > lastImageBlinkLoop + 1000) {
-            g.drawImage(startGame, 232, 149, this);
-            if (System.currentTimeMillis() > lastImageBlinkLoop + 2000) {
-                lastImageBlinkLoop = System.currentTimeMillis();
-            }
-        }
-    }
-
-    /**
-     * sets image variables to their respective images
-     */
-    private void loadImages() {
-        try {
-            road = ImageIO.read(EscapeGame.class.getResource("/sprites/road.jpg"));
-            startGame = ImageIO.read(EscapeGame.class.getResource("/sprites/pressAnyKeyToStart.png"));
-            HUDoverlay = ImageIO.read(EscapeGame.class.getResource("/sprites/HUD.png"));
-            arrow = ImageIO.read(EscapeGame.class.getResource("/sprites/arrow.png"));
-            ground = ImageIO.read(EscapeGame.class.getResource("/sprites/ground.jpg"));
-            startGround2 = ImageIO.read(EscapeGame.class.getResource("/sprites/startGround2.jpg"));
-            startGround = ImageIO.read(EscapeGame.class.getResource("/sprites/startGround1.jpg"));
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading images", e);
         }
     }
 
@@ -304,8 +151,8 @@ public class EscapeGame extends Canvas {
 
         // Initialize player car and enemy tank objects
         player = new Car(this, "/sprites/sc1.png", 400, 500);
-        body = new TankBody(this, "/sprites/body1.png", (pageWidth / 2) - 38, pageHeight);
-        turret = new TankTurret(this, "/sprites/turret.png", (pageWidth / 2) - 84, pageHeight - 21, player);
+        body = new TankBody(this, "/sprites/body1.png", (EscapeGameRenderer.PAGE_WIDTH / 2) - 38, EscapeGameRenderer.PAGE_HEIGHT);
+        turret = new TankTurret(this, "/sprites/turret.png", (EscapeGameRenderer.PAGE_WIDTH / 2) - 84, EscapeGameRenderer.PAGE_HEIGHT - 21, player);
 
         // get HighScore from text file
         try {
@@ -332,9 +179,7 @@ public class EscapeGame extends Canvas {
             lastLoopTime = System.currentTimeMillis();
 
             // get graphics context for the accelerated surface and make it red
-            Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-            g.setColor(Color.red);
-            g.fillRect(0, 0, 800, 800);
+            renderer.drawRed();
 
             // remove dead entities
             obstacleEntities.removeAll(removeEntities);
@@ -387,16 +232,24 @@ public class EscapeGame extends Canvas {
             }
 
             // draw frame
-            drawFrame(g);
+            renderer.drawFrame(this);
 
             // show debug if requested
             if (keyInputHandler.isEnterPressed()) {
-                drawTestInfo(g);
+                renderer.drawTestInfo(
+                        delta,
+                        distanceTravelledMeters,
+                        gameDY,
+                        gameStartTime,
+                        obstacleEntities,
+                        player,
+                        powerupEntities,
+                        projectileEntities,
+                        turret
+                );
             }
 
-            // clear graphics and flip buffer
-            g.dispose();
-            strategy.show();
+            renderer.renderFrame();
 
             // exit the game loop if the player has lost or won
             if (gameOver || gameWin) {
@@ -408,9 +261,9 @@ public class EscapeGame extends Canvas {
                 Thread.sleep(10);
             } catch (Exception e) {
                 e.printStackTrace();
-            } // catch
-        } // while
-    } // gameLoop
+            }
+        }
+    }
 
     public void spawnParticleEffects(int x, int y, int dx, int dy, Color effectColor, int life, int numParticles,
                                      String type, int size) {
@@ -495,31 +348,22 @@ public class EscapeGame extends Canvas {
         // check collisions with obstacles
         for (Obstacle me : obstacleEntities) {
             if (me.collidesWith(player) && !me.getPastCollision()) {
-
-                // let the car and obstacle objects know
-                // that a collision has occurred
                 me.collidedWith(player);
                 player.collidedWith(me);
             }
-        } // for
+        }
 
         // check collisions with shells
         for (Projectile me : projectileEntities) {
             if (me.collidesWith(player) && !me.getPastCollision()) {
-
-                // let the car and obstacle objects know
-                // that a collision has occurred
                 me.collidedWith(player);
                 player.collidedWith(me);
             }
-        } // for
+        }
 
         // check collisions with power ups
         for (Powerup me : powerupEntities) {
             if (me.collidesWith(player) && !me.getPastCollision()) {
-
-                // let the car and power up objects know
-                // that a collision has occurred
                 me.collidedWith(player);
                 player.collidedWith(me);
             }
@@ -535,12 +379,8 @@ public class EscapeGame extends Canvas {
 
         // check projectile collisions with obstacles
         for (Projectile me : projectileEntities) {
-            for (int j = 0; j < obstacleEntities.size(); j++) {
-                Obstacle other = obstacleEntities.get(j);
+            for (Obstacle other : obstacleEntities) {
                 if (me.collidesWith(other) && !me.getPastCollision()) {
-
-                    // let the projectiles and obstacle entities know about
-                    // collision
                     me.collidedWith(other);
                     other.collidedWith(me);
                 }
@@ -548,95 +388,91 @@ public class EscapeGame extends Canvas {
         }
     }
 
-    private void spawn(int minX, int maxX, int minY, int maxY, int numToSpawn, String toSpawn, String type) {
-        for (int i = 0; i < numToSpawn; i++) {
-            if (type.equals("Powerup")) {
-                Powerup spawn = null;
-
-                switch (toSpawn) {
-                    case "health":
-                        spawn = new Powerup(this, "/sprites/health.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "health");
-                        break;
-
-                    case "fuel":
-                        spawn = new Powerup(this, "/sprites/fuel.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "fuel");
-                        break;
-
-                    case "nitro":
-                        spawn = new Powerup(this, "/sprites/nitro.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "nitro");
-                        break;
-
-                    case "shield":
-                        spawn = new Powerup(this, "/sprites/shield.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "shield");
-                        break;
-
-                    case "rocket":
-                        spawn = new Powerup(this, "/sprites/rocket.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "rocket");
-                        break;
-                    default:
-                        System.err.println("tried to spawn unknown object");
-                        break;
-                }
-
-                // add the new Power up to arrayList
+    private void spawn(int minX, int maxX, int minY, int maxY, String toSpawn, String type) {
+        switch (type) {
+            case "Powerup" -> {
+                Powerup spawn = spawnPowerup(minX, maxX, minY, maxY, toSpawn);
                 if (spawn != null) {
                     powerupEntities.add(spawn);
                 }
-            } else if (type.equals("Obstacle")) {
-                Obstacle spawn = null;
-
-                switch (toSpawn) {
-                    case "cactus":
-                        spawn = new Obstacle(this, "/sprites/cactus.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
-                        break;
-
-                    case "skull":
-                        spawn = new Obstacle(this, "/sprites/skull.png",
-                                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                                ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
-                        break;
-
-                    case "roadworks":
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, maxY, "cone"));
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, maxY, "cone"));
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, maxY, "cone"));
-
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -164, "cone"));
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -188, "cone"));
-
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, -212, "cone"));
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, -212, "cone"));
-                        obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -212, "cone"));
-                        break;
-
-                    case "oil":
-                        break;
-
-                    default:
-                        System.err.println("tried to spawn unknown object");
-                        break;
-                }
-
-                // add the new Obstacle to arrayList
+            }
+            case "Obstacle" -> {
+                Obstacle spawn = spawnObstacle(minX, maxX, minY, maxY, toSpawn);
                 if (spawn != null) {
                     obstacleEntities.add(spawn);
                 }
-            } else if (type.equals("comCar")) {
-                comCarEntities.add(new ComCar(this, minX - 30, minY, CarType.getRandomCarType()));
             }
+            case "comCar" -> comCarEntities.add(new ComCar(this, minX - 30, minY, CarType.getRandomCarType()));
         }
+    }
+
+    private Obstacle spawnObstacle(int minX, int maxX, int minY, int maxY, String toSpawn) {
+        switch (toSpawn) {
+            case "cactus":
+                return new Obstacle(this, "/sprites/cactus.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
+            case "skull":
+                return new Obstacle(this, "/sprites/skull.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
+
+            case "roadworks":
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, maxY, "cone"));
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, maxY, "cone"));
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, maxY, "cone"));
+
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -164, "cone"));
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -188, "cone"));
+
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, -212, "cone"));
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, -212, "cone"));
+                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -212, "cone"));
+                return null;
+
+            case "oil":
+                return null;
+        }
+        throw new IllegalArgumentException("Obstacle type not found");
+    }
+
+    private Powerup spawnPowerup(int minX, int maxX, int minY, int maxY, String toSpawn) {
+        Powerup spawn = null;
+        switch (toSpawn) {
+            case "health":
+                spawn = new Powerup(this, "/sprites/health.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "health");
+                break;
+
+            case "fuel":
+                spawn = new Powerup(this, "/sprites/fuel.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "fuel");
+                break;
+
+            case "nitro":
+                spawn = new Powerup(this, "/sprites/nitro.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "nitro");
+                break;
+
+            case "shield":
+                spawn = new Powerup(this, "/sprites/shield.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "shield");
+                break;
+
+            case "rocket":
+                spawn = new Powerup(this, "/sprites/rocket.png",
+                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "rocket");
+                break;
+            default:
+                System.err.println("tried to spawn unknown object");
+                break;
+        }
+        return spawn;
     }
 
     private void updateControls() {
@@ -703,270 +539,44 @@ public class EscapeGame extends Canvas {
     }
 
     /**
-     * Draw everything onto the game window.
-     */
-    private void drawFrame(Graphics2D g) {
-
-        // draw background
-        drawBg(g);
-
-        // draw obstacles
-        for (Obstacle obstacleEntity : obstacleEntities) {
-            obstacleEntity.draw(g);
-        }
-
-        // draw comCars
-        for (ComCar comCarEntity : comCarEntities) {
-            comCarEntity.draw(g);
-        }
-
-        // draw powerups
-        for (Powerup powerupEntity : powerupEntities) {
-            powerupEntity.draw(g);
-        }
-
-        // draw projectiles
-        for (Projectile projectileEntity : projectileEntities) {
-            projectileEntity.draw(g);
-        }
-
-        // draw player's car
-        player.draw(g);
-
-        // draw the tank
-        body.draw(g);
-        turret.draw(g);
-
-        // draw particles
-        drawParticles(g);
-
-        // overlay HUD
-        drawHUD(g);
-    }
-
-    /**
-     * Draw all particles.
-     */
-    private void drawParticles(Graphics2D g) {
-        for (Particle particle : particles) {
-            if (particle.update()) {
-                removeParticles.add(particle);
-            }
-            particle.draw(g);
-        }
-
-        for (ParticleEffect particleEffect : particleEffects) {
-            particleEffect.draw(g);
-        }
-    }
-
-    /**
-     * Draw background dirt and road images and update locations of background "tiles" to create an endless background
-     * to drive on.
-     */
-    private void drawBg(Graphics2D g) {
-
-        // update location of entities based on car movement
-        Bgy -= gameDY;
-
-        // if the top tile is all that's left
-        if (Bgy - 800 > 0) {
-
-            // show bottom tile
-            Bgy = 0;
-
-            // spawn stuff on new tile
-            updateSpawns();
-
-            // car is no longer on unique initial tile
-            firstTile = false;
-        }
-
-        // draw bottom road
-        if (firstTile) {
-            g.drawImage(startGround2, 0, Bgy, this);
-        } else {
-            g.drawImage(ground, 0, Bgy, this);
-        }
-
-        g.drawImage(road, 330, Bgy, this);
-
-        // draw top road
-        g.drawImage(ground, 0, Bgy - 800, this);
-        g.drawImage(road, 330, Bgy - 800, this);
-    }
-
-    /**
      * Spawn obstacles, cars and powerups randomly.
      */
-    private void updateSpawns() {
+    public void updateSpawns() {
         if (firstTile) {
             return;
         }
 
-        spawn(100, 300, -800, 0, 1, "skull", "Obstacle");
-        spawn(470, 700, -800, 0, 1, "skull", "Obstacle");
-        spawn(100, 300, -800, 0, 1, "cactus", "Obstacle");
-        spawn(470, 700, -800, 0, 1, "cactus", "Obstacle");
-        spawn(470, 700, 0, -140, 1, "roadworks", "Obstacle");
+        spawn(100, 300, -800, 0, "skull", "Obstacle");
+        spawn(470, 700, -800, 0, "skull", "Obstacle");
+        spawn(100, 300, -800, 0, "cactus", "Obstacle");
+        spawn(470, 700, -800, 0, "cactus", "Obstacle");
+        spawn(470, 700, 0, -140, "roadworks", "Obstacle");
 
         if (comCarEntities.isEmpty()) {
             if (ThreadLocalRandom.current().nextInt(0, spawnChance * 2 + 1) == 0) {
-                spawn(360, -500, 0, 0, 1, null, "comCar");
+                spawn(360, -500, 0, 0, null, "comCar");
             }
         }
 
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, 1, "health", "Powerup");
-            spawn(470, 700, -800, 0, 1, "health", "Powerup");
+            spawn(100, 300, -800, 0, "health", "Powerup");
+            spawn(470, 700, -800, 0, "health", "Powerup");
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, 1, "fuel", "Powerup");
-            spawn(470, 700, -800, 0, 1, "fuel", "Powerup");
+            spawn(100, 300, -800, 0, "fuel", "Powerup");
+            spawn(470, 700, -800, 0, "fuel", "Powerup");
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(300, 470, -800, 0, 1, "rocket", "Powerup");
+            spawn(300, 470, -800, 0, "rocket", "Powerup");
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, 1, "nitro", "Powerup");
-            spawn(470, 700, -800, 0, 1, "nitro", "Powerup");
+            spawn(100, 300, -800, 0, "nitro", "Powerup");
+            spawn(470, 700, -800, 0, "nitro", "Powerup");
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, 1, "shield", "Powerup");
-            spawn(470, 700, -800, 0, 1, "shield", "Powerup");
+            spawn(100, 300, -800, 0, "shield", "Powerup");
+            spawn(470, 700, -800, 0, "shield", "Powerup");
         }
-    }
-
-    /**
-     * Draw the HUD.
-     */
-    private void drawHUD(Graphics2D g) {
-
-        // draw HUD graphics
-        g.drawImage(HUDoverlay, 0, 0, this);
-
-        // health and fuel bars
-        drawBars(g);
-
-        // inventory numbers
-        digitRenderer.drawImageNumber(g, this, player.getNumRocket(), 60, 436);
-        digitRenderer.drawImageNumber(g, this, player.getNumNitro(), 60, 476);
-        digitRenderer.drawImageNumber(g, this, player.getNumShield(), 60, 520);
-
-        // stats
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("speed"), 64, 320);
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("health"), 64, 344);
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("storage"), 64, 368);
-
-        // scores
-        digitRenderer.drawImageNumber(g, this, score, 708, 72);
-        digitRenderer.drawImageNumber(g, this, bestscore, 708, 136);
-
-        // progressArrow
-        g.drawImage(arrow, 750 - 14, (int) (((double) (distanceTravelled / 20) / distancegoal * 315) + 586 - 14), this);
-
-        // draw shielded overlay
-        if (player.getShieldActive()) {
-            g.setColor(Color.yellow);
-            g.setStroke(new BasicStroke(5));
-            g.drawRect(10, 238, 80, 75);
-            g.setStroke(new BasicStroke(1));
-        }
-    }
-
-    /**
-     * draw health and fuel bars
-     */
-    private void drawBars(Graphics2D g) {
-
-        // health bar
-        if (player.getHealth() > 0) {
-            g.setColor(new Color(184, 0, 0));
-            g.fillRect(20, 56, 18, player.getHealth());
-        }
-
-        // fuel bar
-        g.setColor(new Color(154, 91, 11));
-        g.fillRect(68, 56, 18, player.getFuel());
-    }
-
-    /**
-     * draw debug view when requested, includes entity hitboxes and game info
-     */
-    private void drawTestInfo(Graphics2D g) {
-
-        // black box
-        g.setColor(Color.black);
-        g.fillRect(100, 700, 180, 70);
-
-        // text
-        g.setColor(Color.white);
-        g.drawString(distanceTravelledMeters + "m, Current Speed: " + (int) ((Math.abs(gameDY) / 20) * delta) + "m/s",
-                110, 715);
-        g.drawString(Math.round((System.currentTimeMillis() - gameStartTime) / 1000) + "s", 110, 728);
-        g.drawString(player.getHealth() + "/" + player.healthStat * 25 + " HP", 110, 741);
-        g.setColor(Color.yellow);
-        if (delta > 0) {
-            g.drawString(1000 / delta + "FPS", 110, 754);
-        }
-
-        // draw some collision boxes
-        Shape playerCollisions = getPlayerHitbox();
-
-        // Draw new rectangle on screen
-        g.setColor(Color.green);
-        g.draw(playerCollisions);
-
-        // draw all obstacle collision boxes
-        for (Obstacle obstacleEntity : obstacleEntities) {
-            g.setColor(Color.red);
-            g.drawRect(obstacleEntity.getX(), obstacleEntity.getY(),
-                    obstacleEntity.getImageWidth(), obstacleEntity.getImageHeight());
-        }
-
-        // draw all projectile collision boxes
-        for (Projectile projectileEntity : projectileEntities) {
-            if (projectileEntity instanceof Rocket) {
-                g.setColor(Color.green);
-            } else {
-                g.setColor(Color.red);
-            }
-            g.drawRect(projectileEntity.getX(), projectileEntity.getY(),
-                    projectileEntity.getImageWidth(), projectileEntity.getImageHeight());
-        }
-
-        // draw all power up collision boxes
-        for (Powerup powerupEntity : powerupEntities) {
-            g.setColor(Color.green);
-            g.drawRect(powerupEntity.getX(), powerupEntity.getY(),
-                    powerupEntity.getImageWidth(), powerupEntity.getImageHeight());
-        }
-
-        // draw optimal targeting line between tank turret and player
-        g.setColor(Color.red);
-        g.drawLine(player.getX() + player.getImageWidth() / 2, player.getY() + player.getImageHeight() / 2,
-                turret.getX() + turret.getImageWidth() / 2, turret.getY() + turret.getImageHeight() / 2);
-    }
-
-    private Shape getPlayerHitbox() {
-        int degree = (int) player.getRotation();
-        int rectX = player.getX() + player.currentCar.getBorder();
-        int rectY = player.getY();
-        int rectWidth = player.currentCar.getWidth();
-        int rectHeight = player.getImageHeight();
-
-        // creating the rectangle to rotate
-        Shape playerCollisions = new Rectangle(rectX, rectY, rectWidth, rectHeight);
-
-        // Affine transform Object for hit box rotations
-        AffineTransform transform = new AffineTransform();
-
-        // specify rotation amount
-        transform.rotate(Math.toRadians(degree), rectX + rectWidth / 2, rectY + rectHeight / 2);
-
-        // rotate rectangle
-        playerCollisions = transform.createTransformedShape(playerCollisions);
-        return playerCollisions;
     }
 
     /**
