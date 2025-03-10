@@ -15,11 +15,7 @@ public class EscapeGame {
     private final KeyInputHandler keyInputHandler;
     private final EscapeGameRenderer renderer;
 
-    private boolean gameOver = false; // player has lost?
-    private boolean gameWin = false; // player has won?
-    private boolean repeatGame = false; // player wants to play another game?
-    public boolean gameRunning = true; // game should be running?
-    public boolean showMenu = true; // menu is being shown?
+    private EscapeGameState gameState;
 
     int distanceTravelled; // distance traveled in pixels
     public int distanceTravelledMeters; // distance traveled in meters
@@ -28,7 +24,7 @@ public class EscapeGame {
     public int totalHealthLost = 0; // used to calculate score
     public int obstaclesDestroyed = 0; // used to calculate score
     public int score = 0; // score this game
-    public int bestscore = 0; // best score (read from "DesertEscapeScores.txt")
+    public int bestScore = 0; // best score (read from "DesertEscapeScores.txt")
     public int spawnChance = 5; // chance to spawn each obstacle type on a new tile (1 in spawnChance)
 
     Car player; // entity for the player's car
@@ -46,22 +42,12 @@ public class EscapeGame {
     long lastImageBlinkLoop = 0;
     long gameStartTime;
 
-    // obstacle entities
     public ArrayList<Obstacle> obstacleEntities = new ArrayList<>();
-
-    // computer controlled car entities
     public ArrayList<ComCar> comCarEntities = new ArrayList<>();
-
-    // projectile entities
     public ArrayList<Projectile> projectileEntities = new ArrayList<>();
-
-    // power up entities
     public ArrayList<Powerup> powerupEntities = new ArrayList<>();
-
-    // entities to remove
     private final ArrayList<Entity> removeEntities = new ArrayList<>();
 
-    // particle entities
     public final ArrayList<Particle> particles = new ArrayList<>();
     public ArrayList<ParticleEffect> particleEffects = new ArrayList<>();
     public final ArrayList<Particle> removeParticleEffects = new ArrayList<>();
@@ -77,20 +63,22 @@ public class EscapeGame {
         keyInputHandler = new KeyInputHandler();
         renderer = new EscapeGameRenderer(container);
         renderer.addKeyListener(keyInputHandler);
+    }
 
-        do {
+    public void run() {
+        while (true) {
             init();
             menuLoop();
             gameLoop();
 
             // show gameOver/gameWin screens
-            renderer.drawEndScreen(bestscore, distanceTravelledMeters, gameOver, gameWin, score);
+            renderer.drawEndScreen(bestScore, distanceTravelledMeters, gameState, score);
 
             // clear graphics and flip buffer
             renderer.renderFrame();
 
             // wait until user presses 'esc' to exit or presses enter for a new game
-            repeatGame = false;
+            boolean repeatGame = false;
             keyInputHandler.setEnterPressed(false);
             while (!repeatGame) {
                 if (keyInputHandler.isEnterPressed()) {
@@ -104,16 +92,16 @@ public class EscapeGame {
                     e1.printStackTrace();
                 }
             }
-        } while (repeatGame);
+        }
     }
 
     public void menuLoop() {
-        while (showMenu) {
+        while (gameState == EscapeGameState.MENU) {
             renderer.drawMenu(this);
             renderer.renderFrame();
 
             if (keyInputHandler.isEnterPressed()) {
-                showMenu = false;
+                gameState = EscapeGameState.RUNNING;
             }
         }
     }
@@ -124,13 +112,8 @@ public class EscapeGame {
     private void init() {
 
         // reset all variables to default values
-        gameOver = false;
-        gameWin = false;
-        repeatGame = false;
         distanceTravelled = 0;
         distanceTravelledMeters = 0;
-        gameRunning = true;
-        showMenu = true;
         totalHealthLost = 0;
         obstaclesDestroyed = 0;
         score = 0;
@@ -158,11 +141,11 @@ public class EscapeGame {
         try {
             BufferedReader in = new BufferedReader(new FileReader("DesertEscapeScores.txt"));
             in.mark(Short.MAX_VALUE);
-            bestscore = Integer.parseInt(in.readLine());
+            bestScore = Integer.parseInt(in.readLine());
             in.close();
         } catch (Exception e) {
             System.out.println("Scores File Not Found\n");
-            bestscore = 0;
+            bestScore = 0;
         }
     }
 
@@ -172,7 +155,7 @@ public class EscapeGame {
         long lastLoopTime = System.currentTimeMillis();
 
         // keep loop running until game ends
-        while (gameRunning) {
+        while (gameState == EscapeGameState.RUNNING) {
 
             // calculate time since last update
             delta = System.currentTimeMillis() - lastLoopTime;
@@ -250,11 +233,6 @@ public class EscapeGame {
             }
 
             renderer.renderFrame();
-
-            // exit the game loop if the player has lost or won
-            if (gameOver || gameWin) {
-                return;
-            }
 
             // pause
             try {
@@ -338,8 +316,7 @@ public class EscapeGame {
 
     private void checkWin() {
         if (Math.abs(distanceTravelled / 20) > distancegoal) {
-            System.out.println("you win");
-            gameWin = true;
+            gameState = EscapeGameState.WON;
         }
     }
 
@@ -437,42 +414,39 @@ public class EscapeGame {
     }
 
     private Powerup spawnPowerup(int minX, int maxX, int minY, int maxY, String toSpawn) {
-        Powerup spawn = null;
+        String spritePath;
+        String powerupType;
+
         switch (toSpawn) {
-            case "health":
-                spawn = new Powerup(this, "/sprites/health.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "health");
-                break;
-
-            case "fuel":
-                spawn = new Powerup(this, "/sprites/fuel.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "fuel");
-                break;
-
-            case "nitro":
-                spawn = new Powerup(this, "/sprites/nitro.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "nitro");
-                break;
-
-            case "shield":
-                spawn = new Powerup(this, "/sprites/shield.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "shield");
-                break;
-
-            case "rocket":
-                spawn = new Powerup(this, "/sprites/rocket.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "rocket");
-                break;
-            default:
+            case "health" -> {
+                spritePath = "/sprites/health.png";
+                powerupType = "health";
+            }
+            case "fuel" -> {
+                spritePath = "/sprites/fuel.png";
+                powerupType = "fuel";
+            }
+            case "nitro" -> {
+                spritePath = "/sprites/nitro.png";
+                powerupType = "nitro";
+            }
+            case "shield" -> {
+                spritePath = "/sprites/shield.png";
+                powerupType = "shield";
+            }
+            case "rocket" -> {
+                spritePath = "/sprites/rocket.png";
+                powerupType = "rocket";
+            }
+            default -> {
                 System.err.println("tried to spawn unknown object");
-                break;
+                return null;
+            }
         }
-        return spawn;
+
+        return new Powerup(this, spritePath,
+                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
+                ThreadLocalRandom.current().nextInt(minY, maxY + 1), powerupType);
     }
 
     private void updateControls() {
@@ -542,10 +516,6 @@ public class EscapeGame {
      * Spawn obstacles, cars and powerups randomly.
      */
     public void updateSpawns() {
-        if (firstTile) {
-            return;
-        }
-
         spawn(100, 300, -800, 0, "skull", "Obstacle");
         spawn(470, 700, -800, 0, "skull", "Obstacle");
         spawn(100, 300, -800, 0, "cactus", "Obstacle");
@@ -590,6 +560,6 @@ public class EscapeGame {
      * Called after any event that should lose the game.
      */
     public void gameOver() {
-        gameOver = true;
+        gameState = EscapeGameState.LOST;
     }
 }

@@ -10,7 +10,7 @@ public class Main {
 		JFrame container = new JFrame("Desert escape");
 		
 		// make a new game.
-		@SuppressWarnings("unused")
 		EscapeGame game = new EscapeGame(container);
+		game.run();
 	}
 }

@@ -134,7 +134,7 @@ public class EscapeGameRenderer extends Canvas {
         drawParticles(escapeGame.particleEffects, escapeGame.particles, escapeGame.removeParticles, g);
 
         // overlay HUD
-        drawHUD(escapeGame.bestscore, escapeGame.distanceTravelled, escapeGame.distancegoal, escapeGame.player, escapeGame.score, g);
+        drawHUD(escapeGame.bestScore, escapeGame.distanceTravelled, escapeGame.distancegoal, escapeGame.player, escapeGame.score, g);
     }
 
     /**
@@ -235,8 +235,8 @@ public class EscapeGameRenderer extends Canvas {
         return playerCollisions;
     }
 
-    public void drawEndScreen(int bestscore, int distanceTravelledMeters, boolean gameOver, boolean gameWin, int score) {
-        if (gameOver) {
+    public void drawEndScreen(int bestscore, int distanceTravelledMeters, EscapeGameState gameState, int score) {
+        if (gameState == EscapeGameState.LOST) {
             g.setColor(new Color(204, 0, 0));
             g.fillRect(100, 350, 600, 125);
             g.setColor(Color.white);
@@ -244,7 +244,7 @@ public class EscapeGameRenderer extends Canvas {
             g.drawString("Game Over!", 290, 400);
             g.setFont(new Font("Arial", Font.PLAIN, 14));
             g.drawString("Distance Travelled: " + distanceTravelledMeters + "m", 320, 425);
-        } else if (gameWin) {
+        } else if (gameState == EscapeGameState.WON) {
             g.setColor(new Color(0, 204, 0));
             g.fillRect(100, 350, 600, 125);
             g.setColor(Color.white);
@@ -307,7 +307,9 @@ public class EscapeGameRenderer extends Canvas {
             escapeGame.Bgy = 0;
 
             // spawn stuff on new tile
-            escapeGame.updateSpawns();
+            if (!escapeGame.firstTile) {
+                escapeGame.updateSpawns();
+            }
 
             // car is no longer on unique initial tile
             escapeGame.firstTile = false;
