@@ -2,6 +2,7 @@ package dev.cgj.games.entity;
 
 import dev.cgj.games.CarType;
 import dev.cgj.games.EscapeGame;
+import dev.cgj.games.PowerupType;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -152,13 +153,13 @@ public class Car extends Entity {
         // power up pickups do not check rotated hit box as they are too small
         // to drive the car at well
         if (other instanceof Powerup) {
-            switch (((Powerup) other).type) {
-                case "nitro":
+            switch (((Powerup) other).getType()) {
+                case PowerupType.NITRO:
                     if (numNitro <= storageStat) {
                         numNitro++;
                     }
                     break;
-                case "shield":
+                case PowerupType.SHIELD:
                     if (numShield <= storageStat) {
                         numShield++;
                         if (!shieldActive) {
@@ -167,19 +168,17 @@ public class Car extends Entity {
                         }
                     }
                     break;
-                case "rocket":
+                case PowerupType.ROCKET:
                     if (numRocket <= storageStat) {
                         numRocket++;
                     }
                     break;
-
-                case "fuel":
+                case PowerupType.FUEL:
                     fuel += 10;
                     break;
-                case "health":
+                case PowerupType.HEALTH:
                     health += 20;
                     break;
-
                 default:
                     break;
             }
@@ -240,10 +239,9 @@ public class Car extends Entity {
     }
 
     public void useRocket() {
-
         if (numRocket > 0) {
-            game.projectileEntities.add(new Rocket(game, "/sprites/rocket.png", (int) (x + getImageWidth() / 2), (int) (y + getImageHeight() / 2), rotation));
-
+            Rocket rocket = new Rocket(game, (int) (x + getImageWidth() / 2f), (int) (y + getImageHeight() / 2f), rotation);
+            game.projectileEntities.add(rocket);
             numRocket--;
         }
     }
@@ -283,15 +281,6 @@ public class Car extends Entity {
     public boolean getShieldActive() {
         return shieldActive;
     } // getShieldActive
-
-    public int getCarStats(String stat) {
-        return switch (stat) {
-            case "health" -> healthStat;
-            case "speed" -> speedStat;
-            case "storage" -> storageStat;
-            default -> 0;
-        };
-    }
 
     public double getRotation() {
         return rotation;

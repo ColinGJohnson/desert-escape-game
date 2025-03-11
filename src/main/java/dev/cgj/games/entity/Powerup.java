@@ -1,13 +1,14 @@
 package dev.cgj.games.entity;
 
 import dev.cgj.games.EscapeGame;
+import dev.cgj.games.PowerupType;
 
 public class Powerup extends Entity {
-	private EscapeGame game;
+	private final EscapeGame game;
 	private boolean pastCollision = false; // the car cannot collide with a powerup twice.
-	String type;
+	private PowerupType type;
 
-	public Powerup(EscapeGame g, String r, int newX, int newY, String powerupType) {
+	public Powerup(EscapeGame g, String r, int newX, int newY, PowerupType powerupType) {
 		super(r, newX, newY);
 		type = powerupType;
 		game = g;
@@ -27,15 +28,17 @@ public class Powerup extends Entity {
 		if (y > 800) {
 			game.removeEntity(this);
 		} 
-	} // move
+	}
 
 	public void setY(double newY) {
-		
-		//TODO: move method to entity
 		y = (int)newY;
 	}
 	
 	public boolean getPastCollision(){
 		return pastCollision;
+	}
+
+	public PowerupType getType() {
+		return type;
 	}
 }

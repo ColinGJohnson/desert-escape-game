@@ -9,13 +9,15 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EscapeGame {
     private final KeyInputHandler keyInputHandler;
     private final EscapeGameRenderer renderer;
-
-    private EscapeGameState gameState;
+    private GamePhase gameState;
 
     int distanceTravelled; // distance traveled in pixels
     public int distanceTravelledMeters; // distance traveled in meters
@@ -35,7 +37,6 @@ public class EscapeGame {
     int Bgy = 0; // y position to draw the background at
     public boolean firstTile = true; // is the player on the unique first tile?
 
-    long delta = 0;
     long lastSpawnLoop = 0;
     long lastFuelLoop = 0;
     long lastFireLoop = 0;
@@ -84,6 +85,9 @@ public class EscapeGame {
                 if (keyInputHandler.isEnterPressed()) {
                     repeatGame = true;
                 }
+                if (keyInputHandler.isEnterPressed()) {
+                    repeatGame = true;
+                }
 
                 // prevent to loop from running too fast with a small delay
                 try {
@@ -96,12 +100,12 @@ public class EscapeGame {
     }
 
     public void menuLoop() {
-        while (gameState == EscapeGameState.MENU) {
+        while (gameState == GamePhase.MENU) {
             renderer.drawMenu(this);
             renderer.renderFrame();
 
             if (keyInputHandler.isEnterPressed()) {
-                gameState = EscapeGameState.RUNNING;
+                gameState = GamePhase.RUNNING;
             }
         }
     }
@@ -121,7 +125,6 @@ public class EscapeGame {
         Bgx = 0;
         Bgy = 0;
         firstTile = true;
-        delta = 0;
         lastSpawnLoop = 0;
         lastFuelLoop = 0;
         gameStartTime = 0;
@@ -155,10 +158,10 @@ public class EscapeGame {
         long lastLoopTime = System.currentTimeMillis();
 
         // keep loop running until game ends
-        while (gameState == EscapeGameState.RUNNING) {
+        while (gameState == GamePhase.RUNNING) {
 
             // calculate time since last update
-            delta = System.currentTimeMillis() - lastLoopTime;
+            long delta = System.currentTimeMillis() - lastLoopTime;
             lastLoopTime = System.currentTimeMillis();
 
             // get graphics context for the accelerated surface and make it red
@@ -178,7 +181,7 @@ public class EscapeGame {
             updateControls();
 
             // update movement
-            moveEntities();
+            moveEntities(delta);
 
             // update tank turret and body
             updateTank();
@@ -282,7 +285,7 @@ public class EscapeGame {
         }
     }
 
-    private void moveEntities() {
+    private void moveEntities(long delta) {
         // update entity movement relative to player
         if (player.speed > 0) {
             gameDY = (delta * player.getVerticalMovement()) / 1000;
@@ -316,7 +319,7 @@ public class EscapeGame {
 
     private void checkWin() {
         if (Math.abs(distanceTravelled / 20) > distancegoal) {
-            gameState = EscapeGameState.WON;
+            gameState = GamePhase.WON;
         }
     }
 
@@ -365,88 +368,34 @@ public class EscapeGame {
         }
     }
 
-    private void spawn(int minX, int maxX, int minY, int maxY, String toSpawn, String type) {
-        switch (type) {
-            case "Powerup" -> {
-                Powerup spawn = spawnPowerup(minX, maxX, minY, maxY, toSpawn);
-                if (spawn != null) {
-                    powerupEntities.add(spawn);
-                }
-            }
-            case "Obstacle" -> {
-                Obstacle spawn = spawnObstacle(minX, maxX, minY, maxY, toSpawn);
-                if (spawn != null) {
-                    obstacleEntities.add(spawn);
-                }
-            }
-            case "comCar" -> comCarEntities.add(new ComCar(this, minX - 30, minY, CarType.getRandomCarType()));
-        }
+    private List<Obstacle> spawnObstaclesOfType(int minX, int maxX, int minY, int maxY, ObstacleType type) {
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        return switch (type) {
+            case ObstacleType.CACTUS -> Collections.singletonList(new Obstacle(this,
+                    random.nextInt(minX, maxX + 1), random.nextInt(minY, maxY + 1), ObstacleType.CACTUS));
+            case ObstacleType.SKULL -> Collections.singletonList(new Obstacle(this,
+                    random.nextInt(minX, maxX + 1), random.nextInt(minY, maxY + 1), ObstacleType.SKULL));
+            case ObstacleType.CONE -> Arrays.asList(
+                    new Obstacle(this, 454, maxY, ObstacleType.CONE),
+                    new Obstacle(this, 430, maxY, ObstacleType.CONE),
+                    new Obstacle(this, 406, maxY, ObstacleType.CONE),
+                    new Obstacle(this, 406, -164, ObstacleType.CONE),
+                    new Obstacle(this, 406, -188, ObstacleType.CONE),
+                    new Obstacle(this, 454, -212, ObstacleType.CONE),
+                    new Obstacle(this, 430, -212, ObstacleType.CONE),
+                    new Obstacle(this, 406, -212, ObstacleType.CONE)
+            );
+            case ObstacleType.OIL ->
+                // TODO: Add oil obstacle type
+                Collections.emptyList();
+        };
     }
 
-    private Obstacle spawnObstacle(int minX, int maxX, int minY, int maxY, String toSpawn) {
-        switch (toSpawn) {
-            case "cactus":
-                return new Obstacle(this, "/sprites/cactus.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
-            case "skull":
-                return new Obstacle(this, "/sprites/skull.png",
-                        ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                        ThreadLocalRandom.current().nextInt(minY, maxY + 1), "cactus");
-
-            case "roadworks":
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, maxY, "cone"));
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, maxY, "cone"));
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, maxY, "cone"));
-
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -164, "cone"));
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -188, "cone"));
-
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 454, -212, "cone"));
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 430, -212, "cone"));
-                obstacleEntities.add(new Obstacle(this, "/sprites/cone.png", 406, -212, "cone"));
-                return null;
-
-            case "oil":
-                return null;
-        }
-        throw new IllegalArgumentException("Obstacle type not found");
-    }
-
-    private Powerup spawnPowerup(int minX, int maxX, int minY, int maxY, String toSpawn) {
-        String spritePath;
-        String powerupType;
-
-        switch (toSpawn) {
-            case "health" -> {
-                spritePath = "/sprites/health.png";
-                powerupType = "health";
-            }
-            case "fuel" -> {
-                spritePath = "/sprites/fuel.png";
-                powerupType = "fuel";
-            }
-            case "nitro" -> {
-                spritePath = "/sprites/nitro.png";
-                powerupType = "nitro";
-            }
-            case "shield" -> {
-                spritePath = "/sprites/shield.png";
-                powerupType = "shield";
-            }
-            case "rocket" -> {
-                spritePath = "/sprites/rocket.png";
-                powerupType = "rocket";
-            }
-            default -> {
-                System.err.println("tried to spawn unknown object");
-                return null;
-            }
-        }
-
-        return new Powerup(this, spritePath,
-                ThreadLocalRandom.current().nextInt(minX, maxX + 1),
-                ThreadLocalRandom.current().nextInt(minY, maxY + 1), powerupType);
+    private Powerup spawnPowerupOfType(int minX, int maxX, int minY, int maxY, PowerupType type) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int x = random.nextInt(minX, maxX + 1);
+        int y = random.nextInt(minY, maxY + 1);
+        return new Powerup(this, type.getSpritePath(), x, y, type);
     }
 
     private void updateControls() {
@@ -516,36 +465,36 @@ public class EscapeGame {
      * Spawn obstacles, cars and powerups randomly.
      */
     public void updateSpawns() {
-        spawn(100, 300, -800, 0, "skull", "Obstacle");
-        spawn(470, 700, -800, 0, "skull", "Obstacle");
-        spawn(100, 300, -800, 0, "cactus", "Obstacle");
-        spawn(470, 700, -800, 0, "cactus", "Obstacle");
-        spawn(470, 700, 0, -140, "roadworks", "Obstacle");
+        obstacleEntities.addAll(spawnObstaclesOfType(100, 300, -800, 0, ObstacleType.SKULL));
+        obstacleEntities.addAll(spawnObstaclesOfType(470, 700, -800, 0, ObstacleType.SKULL));
+        obstacleEntities.addAll(spawnObstaclesOfType(100, 300, -800, 0, ObstacleType.CACTUS));
+        obstacleEntities.addAll(spawnObstaclesOfType(470, 700, -800, 0, ObstacleType.CACTUS));
+        obstacleEntities.addAll(spawnObstaclesOfType(470, 700, 0, -140, ObstacleType.CONE));
 
         if (comCarEntities.isEmpty()) {
             if (ThreadLocalRandom.current().nextInt(0, spawnChance * 2 + 1) == 0) {
-                spawn(360, -500, 0, 0, null, "comCar");
+                comCarEntities.add(new ComCar(this, 360 - 30, -500, CarType.getRandomCarType()));
             }
         }
 
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, "health", "Powerup");
-            spawn(470, 700, -800, 0, "health", "Powerup");
+            powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.HEALTH));
+            powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.HEALTH));
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, "fuel", "Powerup");
-            spawn(470, 700, -800, 0, "fuel", "Powerup");
+            powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.FUEL));
+            powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.FUEL));
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(300, 470, -800, 0, "rocket", "Powerup");
+            powerupEntities.add(spawnPowerupOfType(300, 470, -800, 0, PowerupType.ROCKET));
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, "nitro", "Powerup");
-            spawn(470, 700, -800, 0, "nitro", "Powerup");
+            powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.NITRO));
+            powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.NITRO));
         }
         if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
-            spawn(100, 300, -800, 0, "shield", "Powerup");
-            spawn(470, 700, -800, 0, "shield", "Powerup");
+            powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.SHIELD));
+            powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.SHIELD));
         }
     }
 
@@ -560,6 +509,6 @@ public class EscapeGame {
      * Called after any event that should lose the game.
      */
     public void gameOver() {
-        gameState = EscapeGameState.LOST;
+        gameState = GamePhase.LOST;
     }
 }

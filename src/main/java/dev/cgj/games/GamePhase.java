@@ -1,6 +1,6 @@
 package dev.cgj.games;
 
-public enum EscapeGameState {
+public enum GamePhase {
     MENU,
     RUNNING,
     WON,

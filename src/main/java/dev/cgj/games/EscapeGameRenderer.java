@@ -101,7 +101,7 @@ public class EscapeGameRenderer extends Canvas {
     public void drawFrame(EscapeGame escapeGame) {
 
         // draw background
-        drawBg(escapeGame, escapeGame.gameDY, g);
+        drawBg(escapeGame, escapeGame.gameDY);
 
         // draw obstacles
         for (Obstacle obstacleEntity : escapeGame.obstacleEntities) {
@@ -134,7 +134,7 @@ public class EscapeGameRenderer extends Canvas {
         drawParticles(escapeGame.particleEffects, escapeGame.particles, escapeGame.removeParticles, g);
 
         // overlay HUD
-        drawHUD(escapeGame.bestScore, escapeGame.distanceTravelled, escapeGame.distancegoal, escapeGame.player, escapeGame.score, g);
+        drawHUD(escapeGame.bestScore, escapeGame.distanceTravelled, escapeGame.distancegoal, escapeGame.player, escapeGame.score);
     }
 
     /**
@@ -169,7 +169,7 @@ public class EscapeGameRenderer extends Canvas {
         g.setColor(Color.white);
         g.drawString(distanceTravelledMeters + "m, Current Speed: " + (int) ((Math.abs(gameDY) / 20) * delta) + "m/s",
                 110, 715);
-        g.drawString(Math.round((System.currentTimeMillis() - gameStartTime) / 1000) + "s", 110, 728);
+        g.drawString(Math.round((System.currentTimeMillis() - gameStartTime) / 1000f) + "s", 110, 728);
         g.drawString(player.getHealth() + "/" + player.healthStat * 25 + " HP", 110, 741);
         g.setColor(Color.yellow);
         if (delta > 0) {
@@ -228,15 +228,15 @@ public class EscapeGameRenderer extends Canvas {
         AffineTransform transform = new AffineTransform();
 
         // specify rotation amount
-        transform.rotate(Math.toRadians(degree), rectX + rectWidth / 2, rectY + rectHeight / 2);
+        transform.rotate(Math.toRadians(degree), rectX + rectWidth / 2f, rectY + rectHeight / 2f);
 
         // rotate rectangle
         playerCollisions = transform.createTransformedShape(playerCollisions);
         return playerCollisions;
     }
 
-    public void drawEndScreen(int bestscore, int distanceTravelledMeters, EscapeGameState gameState, int score) {
-        if (gameState == EscapeGameState.LOST) {
+    public void drawEndScreen(int bestscore, int distanceTravelledMeters, GamePhase gameState, int score) {
+        if (gameState == GamePhase.LOST) {
             g.setColor(new Color(204, 0, 0));
             g.fillRect(100, 350, 600, 125);
             g.setColor(Color.white);
@@ -244,7 +244,7 @@ public class EscapeGameRenderer extends Canvas {
             g.drawString("Game Over!", 290, 400);
             g.setFont(new Font("Arial", Font.PLAIN, 14));
             g.drawString("Distance Travelled: " + distanceTravelledMeters + "m", 320, 425);
-        } else if (gameState == EscapeGameState.WON) {
+        } else if (gameState == GamePhase.WON) {
             g.setColor(new Color(0, 204, 0));
             g.fillRect(100, 350, 600, 125);
             g.setColor(Color.white);
@@ -295,7 +295,7 @@ public class EscapeGameRenderer extends Canvas {
      * Draw background dirt and road images and update locations of background "tiles" to create an endless background
      * to drive on.
      */
-    void drawBg(EscapeGame escapeGame, double gameDY, Graphics2D g) {
+    void drawBg(EscapeGame escapeGame, double gameDY) {
 
         // update location of entities based on car movement
         escapeGame.Bgy -= gameDY;
@@ -332,13 +332,13 @@ public class EscapeGameRenderer extends Canvas {
     /**
      * Draw the HUD.
      */
-    void drawHUD(int bestscore, int distanceTravelled, int distancegoal, Car player, int score, Graphics2D g) {
+    void drawHUD(int bestscore, int distanceTravelled, int distancegoal, Car player, int score) {
 
         // draw HUD graphics
         g.drawImage(HUDoverlay, 0, 0, this);
 
         // health and fuel bars
-        drawBars(player, g);
+        drawBars(player);
 
         // inventory numbers
         digitRenderer.drawImageNumber(g, this, player.getNumRocket(), 60, 436);
@@ -346,9 +346,9 @@ public class EscapeGameRenderer extends Canvas {
         digitRenderer.drawImageNumber(g, this, player.getNumShield(), 60, 520);
 
         // stats
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("speed"), 64, 320);
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("health"), 64, 344);
-        digitRenderer.drawImageNumber(g, this, player.getCarStats("storage"), 64, 368);
+        digitRenderer.drawImageNumber(g, this, player.speedStat, 64, 320);
+        digitRenderer.drawImageNumber(g, this, player.healthStat, 64, 344);
+        digitRenderer.drawImageNumber(g, this, player.storageStat, 64, 368);
 
         // scores
         digitRenderer.drawImageNumber(g, this, score, 708, 72);
@@ -369,7 +369,7 @@ public class EscapeGameRenderer extends Canvas {
     /**
      * draw health and fuel bars
      */
-    private static void drawBars(Car player, Graphics2D g) {
+    private void drawBars(Car player) {
 
         // health bar
         if (player.getHealth() > 0) {

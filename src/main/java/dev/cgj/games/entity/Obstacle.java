@@ -1,6 +1,7 @@
 package dev.cgj.games.entity;
 
 import dev.cgj.games.EscapeGame;
+import dev.cgj.games.ObstacleType;
 
 /**
  * An obstacle is an entity that can damage the player.
@@ -8,11 +9,11 @@ import dev.cgj.games.EscapeGame;
 public class Obstacle extends Entity {
 	private final EscapeGame game;
 	private boolean pastCollision = false; // the car cannot collide with an obstacle twice.
-	String type;
+	ObstacleType type;
 
-	public Obstacle(EscapeGame g, String r, int newX, int newY, String obstacleType) {
-		super(r, newX, newY);
-		type = obstacleType;
+	public Obstacle(EscapeGame g, int newX, int newY, ObstacleType type) {
+		super(type.getSpritePath(), newX, newY);
+		this.type = type;
 		game = g;
 	}
 

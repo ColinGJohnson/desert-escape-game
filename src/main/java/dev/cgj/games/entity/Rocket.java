@@ -8,8 +8,8 @@ import java.awt.Rectangle;
 public class Rocket extends Projectile {
 	EscapeGame game;
 
-	public Rocket(EscapeGame game, String spritePath, int newX, int newY, double shotAngle) {
-		super(game, spritePath, newX, newY, shotAngle);
+	public Rocket(EscapeGame game, int newX, int newY, double shotAngle) {
+		super(game, "/sprites/rocket.png", newX, newY, shotAngle);
 		this.game = game;
 	}
 
@@ -22,7 +22,7 @@ public class Rocket extends Projectile {
 			// create particle effect
 			game.spawnParticleEffects((int) x, (int) y, (int) dx, (int) dy, Color.orange, 50, 100, "rocket", 10);
 
-			Rectangle explosionBounds = new Rectangle((int) (x - ROCKET_POWER / 2), (int) (y - ROCKET_POWER / 2),
+			Rectangle explosionBounds = new Rectangle((int) (x - ROCKET_POWER / 2f), (int) (y - ROCKET_POWER / 2f),
 					ROCKET_POWER, ROCKET_POWER);
 
 			// remove all obstacles in range
