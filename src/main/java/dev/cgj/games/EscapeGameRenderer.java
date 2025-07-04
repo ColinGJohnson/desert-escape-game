@@ -1,6 +1,12 @@
 package dev.cgj.games;
 
-import dev.cgj.games.entity.*;
+import dev.cgj.games.entity.Car;
+import dev.cgj.games.entity.ComCar;
+import dev.cgj.games.entity.Obstacle;
+import dev.cgj.games.entity.Powerup;
+import dev.cgj.games.entity.Projectile;
+import dev.cgj.games.entity.Rocket;
+import dev.cgj.games.entity.TankTurret;
 import dev.cgj.games.particle.Particle;
 import dev.cgj.games.particle.ParticleEffect;
 
@@ -91,7 +97,6 @@ public class EscapeGameRenderer extends Canvas {
      * clear graphics and flip buffer
      */
     public void renderFrame() {
-        g.dispose();
         strategy.show();
     }
 
@@ -282,7 +287,7 @@ public class EscapeGameRenderer extends Canvas {
         g.setColor(Color.red);
         g.drawImage(startGround, 0, 0, this);
 
-        // draw "start game" image for one second, then hide for another second
+        // draw the "start game" image for one second, then hide it for another second
         if (System.currentTimeMillis() > escapeGame.lastImageBlinkLoop + 1000) {
             g.drawImage(startGame, 232, 149, this);
             if (System.currentTimeMillis() > escapeGame.lastImageBlinkLoop + 2000) {

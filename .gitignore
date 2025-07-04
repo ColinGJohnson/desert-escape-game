@@ -3,3 +3,4 @@ build/
 .idea
 .iml
 DesertEscapeScores.txt
+.DS_Store

@@ -27,8 +27,8 @@ public class Particle {
 	}
 
 	public boolean update() {
-		x += dx / 10 * Math.random();
-		y += dy * Math.random();
+		x += (int) (dx / 10 * Math.random());
+		y += (int) (dy * Math.random());
 		
 		dy -= speedReduction;
 		dx -= speedReduction;

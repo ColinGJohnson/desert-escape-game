@@ -5,6 +5,7 @@ import java.awt.Canvas;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
+import java.net.URL;
 
 public class DigitRenderer {
     private static final int DIGIT_COUNT = 10;
@@ -22,7 +23,8 @@ public class DigitRenderer {
     private void loadDigitImages() {
         for (int i = 0; i < DIGIT_COUNT; i++) {
             try {
-                digitImages[i] = ImageIO.read(EscapeGame.class.getResource(SPRITE_PATH + i + ".png"));
+                URL resource = EscapeGame.class.getResource("%s%d.png".formatted(SPRITE_PATH, i));
+                digitImages[i] = ImageIO.read(resource);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to load digit image: " + i, e);
             }

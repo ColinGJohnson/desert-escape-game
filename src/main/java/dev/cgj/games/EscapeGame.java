@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EscapeGame {
     private final KeyInputHandler keyInputHandler;
     private final EscapeGameRenderer renderer;
-    private GamePhase gameState;
+    private GamePhase phase;
 
     int distanceTravelled; // distance traveled in pixels
     public int distanceTravelledMeters; // distance traveled in meters
@@ -67,13 +67,14 @@ public class EscapeGame {
     }
 
     public void run() {
+        phase = GamePhase.MENU;
         while (true) {
             init();
             menuLoop();
             gameLoop();
 
             // show gameOver/gameWin screens
-            renderer.drawEndScreen(bestScore, distanceTravelledMeters, gameState, score);
+            renderer.drawEndScreen(bestScore, distanceTravelledMeters, phase, score);
 
             // clear graphics and flip buffer
             renderer.renderFrame();
@@ -100,12 +101,11 @@ public class EscapeGame {
     }
 
     public void menuLoop() {
-        while (gameState == GamePhase.MENU) {
+        while (phase == GamePhase.MENU) {
             renderer.drawMenu(this);
             renderer.renderFrame();
-
             if (keyInputHandler.isEnterPressed()) {
-                gameState = GamePhase.RUNNING;
+                phase = GamePhase.RUNNING;
             }
         }
     }
@@ -158,7 +158,7 @@ public class EscapeGame {
         long lastLoopTime = System.currentTimeMillis();
 
         // keep loop running until game ends
-        while (gameState == GamePhase.RUNNING) {
+        while (phase == GamePhase.RUNNING) {
 
             // calculate time since last update
             long delta = System.currentTimeMillis() - lastLoopTime;
@@ -178,7 +178,7 @@ public class EscapeGame {
             player.updateStats();
 
             // update stuff according to user input
-            updateControls();
+            updateControls(player, keyInputHandler);
 
             // update movement
             moveEntities(delta);
@@ -221,7 +221,7 @@ public class EscapeGame {
             renderer.drawFrame(this);
 
             // show debug if requested
-            if (keyInputHandler.isEnterPressed()) {
+            if (keyInputHandler.isShowDebug()) {
                 renderer.drawTestInfo(
                         delta,
                         distanceTravelledMeters,
@@ -319,7 +319,7 @@ public class EscapeGame {
 
     private void checkWin() {
         if (Math.abs(distanceTravelled / 20) > distancegoal) {
-            gameState = GamePhase.WON;
+            phase = GamePhase.WON;
         }
     }
 
@@ -398,7 +398,7 @@ public class EscapeGame {
         return new Powerup(this, type.getSpritePath(), x, y, type);
     }
 
-    private void updateControls() {
+    private void updateControls(Car player, KeyInputHandler inputHandler) {
 
         // car should slow down once it starts going a certain speed
         // dx/dy reduction
@@ -420,7 +420,7 @@ public class EscapeGame {
         }
 
         // car should lose speed without input
-        if (!keyInputHandler.isUpPressed()) {
+        if (!inputHandler.isUpPressed()) {
             if (player.speed > 15) {
                 player.speed = player.speed - player.speed / 16;
             } else {
@@ -429,14 +429,14 @@ public class EscapeGame {
         }
 
         // respond to user turning car left and right
-        if ((keyInputHandler.isLeftPressed()) && (!keyInputHandler.isRightPressed()) && (player.getRotation() > -90)) {
+        if ((inputHandler.isLeftPressed()) && (!inputHandler.isRightPressed()) && (player.getRotation() > -90)) {
             player.setRotation(player.getRotation() - 1);
-        } else if ((keyInputHandler.isRightPressed()) && (!keyInputHandler.isLeftPressed()) && (player.getRotation() < 90)) {
+        } else if ((inputHandler.isRightPressed()) && (!inputHandler.isLeftPressed()) && (player.getRotation() < 90)) {
             player.setRotation(player.getRotation() + 1);
         }
 
         // respond to user moving car up and down
-        if (keyInputHandler.isUpPressed() && player.speed < player.getMaxSpeed()) {
+        if (inputHandler.isUpPressed() && player.speed < player.getMaxSpeed()) {
             player.speed += 15;
         }
 
@@ -444,15 +444,15 @@ public class EscapeGame {
         player.offRoad = player.getX() > 470 || player.getX() < 330;
 
         // fire a rocket if 'e' pressed
-        if (keyInputHandler.isePressed()) {
+        if (inputHandler.isePressed()) {
             player.useRocket();
-            keyInputHandler.setePressed(false);
+            inputHandler.setePressed(false);
         }
 
         // use Nitro if 'r' pressed
-        if (keyInputHandler.isrPressed() && player.getNumNitro() > 0) {
+        if (inputHandler.isrPressed() && player.getNumNitro() > 0) {
             if (player.useNitro()) {
-                keyInputHandler.setrPressed(false);
+                inputHandler.setrPressed(false);
             }
         }
 
@@ -471,28 +471,29 @@ public class EscapeGame {
         obstacleEntities.addAll(spawnObstaclesOfType(470, 700, -800, 0, ObstacleType.CACTUS));
         obstacleEntities.addAll(spawnObstaclesOfType(470, 700, 0, -140, ObstacleType.CONE));
 
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         if (comCarEntities.isEmpty()) {
-            if (ThreadLocalRandom.current().nextInt(0, spawnChance * 2 + 1) == 0) {
+            if (random.nextInt(0, spawnChance * 2 + 1) == 0) {
                 comCarEntities.add(new ComCar(this, 360 - 30, -500, CarType.getRandomCarType()));
             }
         }
 
-        if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
+        if (random.nextInt(0, spawnChance + 1) == 0) {
             powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.HEALTH));
             powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.HEALTH));
         }
-        if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
+        if (random.nextInt(0, spawnChance + 1) == 0) {
             powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.FUEL));
             powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.FUEL));
         }
-        if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
+        if (random.nextInt(0, spawnChance + 1) == 0) {
             powerupEntities.add(spawnPowerupOfType(300, 470, -800, 0, PowerupType.ROCKET));
         }
-        if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
+        if (random.nextInt(0, spawnChance + 1) == 0) {
             powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.NITRO));
             powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.NITRO));
         }
-        if (ThreadLocalRandom.current().nextInt(0, spawnChance + 1) == 0) {
+        if (random.nextInt(0, spawnChance + 1) == 0) {
             powerupEntities.add(spawnPowerupOfType(100, 300, -800, 0, PowerupType.SHIELD));
             powerupEntities.add(spawnPowerupOfType(470, 700, -800, 0, PowerupType.SHIELD));
         }
@@ -509,6 +510,6 @@ public class EscapeGame {
      * Called after any event that should lose the game.
      */
     public void gameOver() {
-        gameState = GamePhase.LOST;
+        phase = GamePhase.LOST;
     }
 }

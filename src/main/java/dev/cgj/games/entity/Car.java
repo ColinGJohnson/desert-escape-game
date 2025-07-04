@@ -9,6 +9,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 public class Car extends Entity {
+    public static final double OFF_ROAD_PENALTY = 0.75;
     private final EscapeGame game;
 
     private int health = 100;
@@ -66,7 +67,7 @@ public class Car extends Entity {
                 x = 650;
                 return;
             }
-        } // else
+        }
 
         // set x and y velocities based on car angle
         dx = -speed * Math.cos(Math.toRadians(rotation + 90));
@@ -76,12 +77,7 @@ public class Car extends Entity {
         if (offRoad) {
             x += (delta * (dx)) / 1000;
         } else {
-            x += (delta * (dx)) / 1000;
-        }
-
-        // move car to correct y position if too high/low
-        if (y > 502 && y < 502) {
-            y = 500;
+            x += (delta * (dx * OFF_ROAD_PENALTY)) / 1000;
         }
 
         if (y > 502) {
@@ -272,15 +268,15 @@ public class Car extends Entity {
 
     public int getNumShield() {
         return numShield;
-    } // getNumShield
+    }
 
     public void toggleShieldStatus() {
         shieldActive = !shieldActive;
-    } // toggleShieldStatus
+    }
 
     public boolean getShieldActive() {
         return shieldActive;
-    } // getShieldActive
+    }
 
     public double getRotation() {
         return rotation;
@@ -311,10 +307,8 @@ public class Car extends Entity {
     }
 
     public void swap(ComCar newCar) {
-        double newx = newCar.x;
-        double newy = newCar.y;
-        x = newx;
-        y = newy;
+        x = newCar.x;
+        y = newCar.y;
         currentCar = newCar.type;
         game.removeEntity(newCar);
         health = 50;
