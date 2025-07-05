@@ -1,9 +1,9 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
-import dev.cgj.games.entity.Car;
-import dev.cgj.games.entity.Entity;
-import dev.cgj.games.entity.Projectile;
-import dev.cgj.games.entity.TankTurret;
+import dev.cgj.games.old.entity.Car;
+import dev.cgj.games.old.entity.Entity;
+import dev.cgj.games.old.entity.Projectile;
+import dev.cgj.games.old.entity.TankTurret;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -58,7 +58,7 @@ public class Sprite {
 				locationY = image.getHeight(null)/2;
 				rotationRadians = Math.toRadians(((Projectile) source).getShotAngle());
 			}
-			
+
 			AffineTransform tx = AffineTransform.getRotateInstance(rotationRadians, locationX, locationY);
 			AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 

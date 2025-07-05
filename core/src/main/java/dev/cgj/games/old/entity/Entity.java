@@ -1,7 +1,7 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.Sprite;
-import dev.cgj.games.SpriteStore;
+import dev.cgj.games.old.Sprite;
+import dev.cgj.games.old.SpriteStore;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;

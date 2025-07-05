@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
 public enum PowerupType {
     HEALTH("/sprites/health.png"),

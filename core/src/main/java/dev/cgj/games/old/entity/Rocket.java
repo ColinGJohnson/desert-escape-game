@@ -1,6 +1,6 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.EscapeGame;
+import dev.cgj.games.old.EscapeGame;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -15,7 +15,7 @@ public class Rocket extends Projectile {
 
 	@Override
 	public void collidedWith(Entity other) {
-		
+
 		// player rockets can destroy only obstacles
 		if (other instanceof Obstacle) {
 

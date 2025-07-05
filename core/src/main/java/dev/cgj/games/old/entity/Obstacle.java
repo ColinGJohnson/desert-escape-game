@@ -1,7 +1,7 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.EscapeGame;
-import dev.cgj.games.ObstacleType;
+import dev.cgj.games.old.EscapeGame;
+import dev.cgj.games.old.ObstacleType;
 
 /**
  * An obstacle is an entity that can damage the player.
@@ -22,7 +22,7 @@ public class Obstacle extends Entity {
 		pastCollision = true;
 	}
 
-	public void move(long delta) {	
+	public void move(long delta) {
 		setY(getY() - game.gameDY);
 		if (y > 800) {
 			game.removeEntity(this);
@@ -32,7 +32,7 @@ public class Obstacle extends Entity {
 	public void setY(double newY) {
 		y = (int)newY;
 	}
-	
+
 	public boolean getPastCollision(){
 		return pastCollision;
 	}

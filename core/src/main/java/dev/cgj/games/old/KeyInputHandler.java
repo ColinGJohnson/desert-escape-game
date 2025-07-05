@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
 import javax.imageio.ImageIO;
 import java.awt.Canvas;

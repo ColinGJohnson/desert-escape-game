@@ -1,6 +1,6 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.EscapeGame;
+import dev.cgj.games.old.EscapeGame;
 
 /**
  * Specialized Entity for the body of enemy tank.

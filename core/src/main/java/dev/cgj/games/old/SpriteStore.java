@@ -1,4 +1,6 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
+
+import dev.cgj.games.Main;
 
 import java.awt.Image;
 import java.io.IOException;

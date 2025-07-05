@@ -1,14 +1,14 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
-import dev.cgj.games.entity.Car;
-import dev.cgj.games.entity.ComCar;
-import dev.cgj.games.entity.Obstacle;
-import dev.cgj.games.entity.Powerup;
-import dev.cgj.games.entity.Projectile;
-import dev.cgj.games.entity.Rocket;
-import dev.cgj.games.entity.TankTurret;
-import dev.cgj.games.particle.Particle;
-import dev.cgj.games.particle.ParticleEffect;
+import dev.cgj.games.old.entity.Car;
+import dev.cgj.games.old.entity.ComCar;
+import dev.cgj.games.old.entity.Obstacle;
+import dev.cgj.games.old.entity.Powerup;
+import dev.cgj.games.old.entity.Projectile;
+import dev.cgj.games.old.entity.Rocket;
+import dev.cgj.games.old.entity.TankTurret;
+import dev.cgj.games.old.particle.Particle;
+import dev.cgj.games.old.particle.ParticleEffect;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;

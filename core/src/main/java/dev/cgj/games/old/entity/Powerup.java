@@ -1,7 +1,7 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.EscapeGame;
-import dev.cgj.games.PowerupType;
+import dev.cgj.games.old.EscapeGame;
+import dev.cgj.games.old.PowerupType;
 
 public class Powerup extends Entity {
 	private final EscapeGame game;
@@ -27,13 +27,13 @@ public class Powerup extends Entity {
 		// if power up moves off bottom of screen, remove it from PowerupEntity list
 		if (y > 800) {
 			game.removeEntity(this);
-		} 
+		}
 	}
 
 	public void setY(double newY) {
 		y = (int)newY;
 	}
-	
+
 	public boolean getPastCollision(){
 		return pastCollision;
 	}

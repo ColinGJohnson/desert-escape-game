@@ -1,4 +1,4 @@
-package dev.cgj.games.particle;
+package dev.cgj.games.old.particle;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -29,10 +29,10 @@ public class Particle {
 	public boolean update() {
 		x += (int) (dx / 10 * Math.random());
 		y += (int) (dy * Math.random());
-		
+
 		dy -= speedReduction;
 		dx -= speedReduction;
-		
+
 		life++;
         return life >= maxLife;
     }
@@ -41,7 +41,7 @@ public class Particle {
 		Graphics2D g2d = (Graphics2D) g.create();
 
 		g2d.setColor(color);
-		g2d.fillRect(x - (size / 2), y - (size / 2), (int) (size * (life/maxLife)), (int)(size * (life/maxLife))); 
+		g2d.fillRect(x - (size / 2), y - (size / 2), (int) (size * (life/maxLife)), (int)(size * (life/maxLife)));
 
 		g2d.dispose();
 	}

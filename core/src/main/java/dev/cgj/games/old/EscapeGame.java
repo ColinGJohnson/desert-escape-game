@@ -1,8 +1,8 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
-import dev.cgj.games.entity.*;
-import dev.cgj.games.particle.Particle;
-import dev.cgj.games.particle.ParticleEffect;
+import dev.cgj.games.old.entity.*;
+import dev.cgj.games.old.particle.Particle;
+import dev.cgj.games.old.particle.ParticleEffect;
 
 import javax.swing.JFrame;
 import java.awt.Color;

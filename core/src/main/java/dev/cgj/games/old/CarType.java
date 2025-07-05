@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
 import java.util.List;
 

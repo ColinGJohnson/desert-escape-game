@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.old;
 
 public enum ObstacleType {
     CACTUS("/sprites/cactus.png"),

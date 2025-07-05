@@ -1,7 +1,7 @@
-package dev.cgj.games.entity;
+package dev.cgj.games.old.entity;
 
-import dev.cgj.games.CarType;
-import dev.cgj.games.EscapeGame;
+import dev.cgj.games.old.CarType;
+import dev.cgj.games.old.EscapeGame;
 
 public class ComCar extends Entity {
     private final EscapeGame game;
