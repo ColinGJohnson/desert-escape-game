@@ -1,6 +1,6 @@
 package dev.cgj.games.old;
 
-import dev.cgj.games.Main;
+import dev.cgj.games.DesertEscape;
 
 import java.awt.Image;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class SpriteStore {
 	}
 
 	public Image getImageResource(String path) {
-		try (InputStream imageStream = Main.class.getResourceAsStream(path)) {
+		try (InputStream imageStream = DesertEscape.class.getResourceAsStream(path)) {
 			if (imageStream == null) {
 				throw new IllegalArgumentException("Image resource not found: " + path);
 			}
