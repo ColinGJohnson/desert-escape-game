@@ -36,6 +36,14 @@ public enum CarType {
         this.sprites = sprites;
     }
 
+    public String getRandomSprite() {
+        return sprites.get((int) (Math.random() * sprites.size()));
+    }
+
+    public static CarType getRandomCarType(){
+        return CarType.values()[(int) (Math.random() * CarType.values().length)];
+    }
+
     public int getStorage() {
         return storage;
     }
@@ -58,13 +66,5 @@ public enum CarType {
 
     public List<String> getSprites() {
         return sprites;
-    }
-
-    public String getRandomSprite() {
-        return sprites.get((int) (Math.random() * sprites.size()));
-    }
-
-    public static CarType getRandomCarType(){
-        return CarType.values()[(int) (Math.random() * CarType.values().length)];
     }
 }

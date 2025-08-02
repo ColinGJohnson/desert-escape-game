@@ -11,15 +11,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import dev.cgj.games.escape.entity.Car;
+import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
     final DesertEscape game;
     private float accumulator = 0;
 
     Texture backgroundTexture;
-    Texture bucketTexture;
+
     Texture dropTexture;
-    Sprite bucketSprite;
     Vector2 touchPos;
     Array<Sprite> dropSprites;
     float dropTimer;
@@ -27,16 +28,17 @@ public class GameScreen implements Screen {
     Rectangle dropRectangle;
     int dropsGathered;
 
+    Car car;
+
     public GameScreen(final DesertEscape game) {
         this.game = game;
 
         // load the images for the background, bucket and droplet
-        backgroundTexture = new Texture("sprites/startGround2.png");
-        bucketTexture = new Texture("sprites/fc1.png");
-        dropTexture = new Texture("sprites/skull.png");
+        backgroundTexture = new Texture("sprites/terrain/startGround2.png");
+        System.out.println("Background texture loaded: " + backgroundTexture.getWidth() + "x" + backgroundTexture.getHeight());
 
-        bucketSprite = new Sprite(bucketTexture);
-        bucketSprite.setSize(1, 1);
+        dropTexture = new Texture("sprites/obstacles/skull.png");
+        System.out.println("Drop texture loaded: " + dropTexture.getWidth() + "x" + dropTexture.getHeight());
 
         touchPos = new Vector2();
 
@@ -44,6 +46,8 @@ public class GameScreen implements Screen {
         dropRectangle = new Rectangle();
 
         dropSprites = new Array<>();
+
+        car = new Car(CarType.SPORTS, game.world);
     }
 
     @Override
@@ -76,16 +80,16 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime();
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            bucketSprite.translateX(speed * delta);
+            car.sprite.translateX(speed * delta);
         }
         else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            bucketSprite.translateX(-speed * delta);
+            car.sprite.translateX(-speed * delta);
         }
 
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.unproject(touchPos);
-            bucketSprite.setCenterX(touchPos.x);
+            car.sprite.setCenterX(touchPos.x);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -97,12 +101,12 @@ public class GameScreen implements Screen {
 
     private void logic() {
         float worldWidth = game.viewport.getWorldWidth();
-        float bucketWidth = bucketSprite.getWidth();
-        float bucketHeight = bucketSprite.getHeight();
+        float bucketWidth = car.sprite.getWidth();
+        float bucketHeight = car.sprite.getHeight();
         float delta = Gdx.graphics.getDeltaTime();
 
-        bucketSprite.setX(MathUtils.clamp(bucketSprite.getX(), 0, worldWidth - bucketWidth));
-        bucketRectangle.set(bucketSprite.getX(), bucketSprite.getY(), bucketWidth, bucketHeight);
+        car.sprite.setX(MathUtils.clamp(car.sprite.getX(), 0, worldWidth - bucketWidth));
+        bucketRectangle.set(car.sprite.getX(), car.sprite.getY(), bucketWidth, bucketHeight);
 
         for (int i = dropSprites.size - 1; i >= 0; i--) {
             Sprite dropSprite = dropSprites.get(i);
@@ -135,30 +139,30 @@ public class GameScreen implements Screen {
         float worldWidth = game.viewport.getWorldWidth();
         float worldHeight = game.viewport.getWorldHeight();
 
+        // Draw all sprites first (same texture binding)
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
-        bucketSprite.draw(game.batch);
-
-        game.font.draw(game.batch, "Drops collected: " + dropsGathered, 0, worldHeight);
+        car.sprite.draw(game.batch);
 
         for (Sprite dropSprite : dropSprites) {
             dropSprite.draw(game.batch);
         }
 
-        game.debugRenderer.render(game.world, game.viewport.getCamera().combined);
+        // Flush batch before switching to font rendering
+        game.batch.flush();
 
+        // Now draw text
+        game.font.draw(game.batch, "Drops collected: " + dropsGathered, 0, worldHeight);
         game.batch.end();
+
+        // Render Box2D debug AFTER batch.end()
+        game.debugRenderer.render(game.world, game.viewport.getCamera().combined);
     }
 
     private void createDroplet() {
-        float dropWidth = 1;
-        float dropHeight = 1;
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
-
         Sprite dropSprite = new Sprite(dropTexture);
-        dropSprite.setSize(dropWidth, dropHeight);
-        dropSprite.setX(MathUtils.random(0F, worldWidth - dropWidth));
-        dropSprite.setY(worldHeight);
+        dropSprite.setSize(dropTexture.getWidth() * Constants.PIXEL_SCALE, dropTexture.getHeight() * Constants.PIXEL_SCALE);
+        dropSprite.setX(MathUtils.random(0F, game.viewport.getWorldWidth() - dropSprite.getWidth()));
+        dropSprite.setY(game.viewport.getWorldHeight());
         dropSprites.add(dropSprite);
     }
 
@@ -183,6 +187,6 @@ public class GameScreen implements Screen {
     public void dispose() {
         backgroundTexture.dispose();
         dropTexture.dispose();
-        bucketTexture.dispose();
+        car.sprite.getTexture().dispose();
     }
 }
