@@ -1,11 +1,11 @@
 package dev.cgj.games.escape.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -14,7 +14,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.games.Constants;
 import dev.cgj.games.old.CarType;
 
+/// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
 public class Car {
+    float speed = 4f;
+    float maxForwardSpeed = 10f;
+    float maxBackwardSpeed = -2f;
+    float maxDriveForce = 1e10f;
+
     private Texture texture;
     public Sprite sprite;
     private CarType carType;
@@ -46,15 +52,13 @@ public class Car {
     }
 
     public void handleInput(Input input) {
-        float speed = 4f;
-        float delta = Gdx.graphics.getDeltaTime();
-
-        if (input.isKeyPressed(Input.Keys.RIGHT)) {
-            sprite.translateX(speed * delta);
-        }
-
-        else if (input.isKeyPressed(Input.Keys.LEFT)) {
-            sprite.translateX(-speed * delta);
+        if (input.isKeyPressed(Input.Keys.UP) || input.isKeyPressed(Input.Keys.W)) {
+            Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1));
+            float currentSpeed = getForwardVelocity().dot(forwardNormal);
+            if (currentSpeed != maxForwardSpeed) {
+                float force = (currentSpeed < maxForwardSpeed) ?  maxDriveForce : -maxDriveForce;
+                body.applyForceToCenter(forwardNormal.scl(force), true);
+            }
         }
     }
 
@@ -77,5 +81,15 @@ public class Car {
         body.createFixture(fixtureDef);
 
         return body;
+    }
+
+    private Vector2 getForwardVelocity() {
+        Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1));
+        return forwardNormal.scl(forwardNormal.dot(body.getLinearVelocity()));
+    }
+
+    private Vector2 getLateralVelocity() {
+        Vector2 rightNormal = body.getWorldVector(new Vector2(1, 0));
+        return rightNormal.scl(rightNormal.dot(body.getLinearVelocity()));
     }
 }
