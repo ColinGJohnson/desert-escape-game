@@ -11,111 +11,109 @@ import dev.cgj.games.escape.entity.Car;
 import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
-    final DesertEscape game;
-    private float accumulator = 0;
+  final DesertEscape game;
+  private float accumulator = 0;
 
-    Texture backgroundTexture;
-    Texture dropTexture;
-    Vector2 touchPos;
-    Car car;
+  Texture backgroundTexture;
+  Texture dropTexture;
+  Vector2 touchPos;
+  Car car;
 
-    public GameScreen(final DesertEscape game) {
-        this.game = game;
+  public GameScreen(final DesertEscape game) {
+    this.game = game;
 
-        backgroundTexture = new Texture("sprites/terrain/startGround2.png");
-        dropTexture = new Texture("sprites/obstacles/skull.png");
-        touchPos = new Vector2();
+    backgroundTexture = new Texture("sprites/terrain/startGround2.png");
+    dropTexture = new Texture("sprites/obstacles/skull.png");
+    touchPos = new Vector2();
 
-        car = new Car(CarType.SPORTS, game.world);
+    car = new Car(CarType.SPORTS, game.world);
+  }
+
+  @Override
+  public void show() {
+
+  }
+
+  @Override
+  public void render(float delta) {
+    handleInput();
+    updateLogic();
+    stepPhysics(delta);
+    draw();
+  }
+
+  /**
+   * Fixed time step with max frame time to avoid a spiral of death on slow devices.
+   *
+   * @param delta Amount of time that has elapsed since the last frame, in milliseconds.
+   */
+  private void stepPhysics(float delta) {
+    float frameTime = Math.min(delta, 0.25f);
+    accumulator += frameTime;
+    while (accumulator >= Constants.TIME_STEP) {
+      game.world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
+      accumulator -= Constants.TIME_STEP;
     }
+  }
 
-    @Override
-    public void show() {
+  private void handleInput() {
+    car.handleInput(Gdx.input);
 
+    if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+      System.out.println("Ending game...");
+      game.setScreen(new MainMenuScreen(game));
+      dispose();
     }
+  }
 
-    @Override
-    public void render(float delta) {
-        handleInput();
-        updateLogic();
-        updatePhysics(delta);
-        draw();
-    }
+  private void updateLogic() {
+    car.updatePhysics();
+  }
 
-    /**
-     * Fixed time step with max frame time to avoid a spiral of death on slow devices.
-     *
-     * @param delta Amount of time that has elapsed since the last frame, in milliseconds.
-     */
-    private void updatePhysics(float delta) {
-        float frameTime = Math.min(delta, 0.25f);
-        accumulator += frameTime;
-        while (accumulator >= Constants.TIME_STEP) {
-            game.world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
-            accumulator -= Constants.TIME_STEP;
-        }
-    }
+  private void draw() {
+    ScreenUtils.clear(Color.BLACK);
+    game.viewport.apply();
+    game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+    game.batch.begin();
 
-    private void handleInput() {
-        car.handleInput(Gdx.input);
+    float worldWidth = game.viewport.getWorldWidth();
+    float worldHeight = game.viewport.getWorldHeight();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            System.out.println("Ending game...");
-            game.setScreen(new MainMenuScreen(game));
-            dispose();
-        }
-    }
+    // Draw all sprites first (same texture binding)
+    game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
+    car.render(game.batch);
 
-    private void updateLogic() {
-        float delta = Gdx.graphics.getDeltaTime();
+    // Flush batch before switching to font rendering
+    game.batch.flush();
 
-//        car.sprite.setX(MathUtils.clamp(car.sprite.getX(), 0, worldWidth - bucketWidth));
-    }
+    game.font.draw(game.batch, "Test", 0, worldHeight);
+    game.batch.end();
 
-    private void draw() {
-        ScreenUtils.clear(Color.BLACK);
-        game.viewport.apply();
-        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
-        game.batch.begin();
+    // Render Box2D debug AFTER batch.end()
+    game.debugRenderer.render(game.world, game.viewport.getCamera().combined);
+  }
 
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
+  @Override
+  public void resize(int width, int height) {
+    game.viewport.update(width, height, true);
+  }
 
-        // Draw all sprites first (same texture binding)
-        game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
-        car.render(game.batch);
+  @Override
+  public void hide() {
+  }
 
-        // Flush batch before switching to font rendering
-        game.batch.flush();
+  @Override
+  public void pause() {
+  }
 
-        game.font.draw(game.batch, "Test", 0, worldHeight);
-        game.batch.end();
+  @Override
+  public void resume() {
+  }
 
-        // Render Box2D debug AFTER batch.end()
-        game.debugRenderer.render(game.world, game.viewport.getCamera().combined);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        game.viewport.update(width, height, true);
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        backgroundTexture.dispose();
-        dropTexture.dispose();
-        car.sprite.getTexture().dispose();
-    }
+  @Override
+  public void dispose() {
+    backgroundTexture.dispose();
+    dropTexture.dispose();
+    car.sprite.getTexture().dispose();
+  }
 }
