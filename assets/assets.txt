@@ -1,0 +1,33 @@
+fonts/Kenney Mini Square.ttf
+fonts/Kenney Mini.ttf
+fonts/Kenney Pixel Square.ttf
+fonts/Kenney Pixel.ttf
+libgdx.png
+sprites/apollo.pal
+sprites/enemies/body1.png
+sprites/enemies/body2.png
+sprites/enemies/body3.png
+sprites/enemies/body4.png
+sprites/enemies/shot.jpg
+sprites/enemies/turret.png
+sprites/obstacles/cactus.png
+sprites/obstacles/cone.png
+sprites/obstacles/skull.png
+sprites/pickups/fuel.png
+sprites/pickups/health.png
+sprites/pickups/nitro.png
+sprites/pickups/rocket.png
+sprites/pickups/shield.png
+sprites/terrain/ground.jpg
+sprites/terrain/road.jpg
+sprites/terrain/startGround1.png
+sprites/terrain/startGround2.png
+sprites/ui/DesertEscapeBanner.jpg
+sprites/ui/HUD.png
+sprites/ui/arrow.png
+sprites/ui/pressAnyKeyToStart.png
+sprites/vehicles/sedan.png
+sprites/vehicles/sports_car.png
+sprites/vehicles/truck.png
+sprites/vehicles/truck_empty.png
+sprites/vehicles/van.png

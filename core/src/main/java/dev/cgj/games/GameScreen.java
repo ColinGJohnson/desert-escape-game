@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
 import dev.cgj.games.old.CarType;
@@ -15,17 +14,11 @@ public class GameScreen implements Screen {
   private float accumulator = 0;
 
   Texture backgroundTexture;
-  Texture dropTexture;
-  Vector2 touchPos;
   Car car;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
-
     backgroundTexture = new Texture("sprites/terrain/startGround2.png");
-    dropTexture = new Texture("sprites/obstacles/skull.png");
-    touchPos = new Vector2();
-
     car = new Car(CarType.SPORTS, game.world);
   }
 
@@ -59,8 +52,7 @@ public class GameScreen implements Screen {
   private void handleInput() {
     car.handleInput(Gdx.input);
 
-    if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-      System.out.println("Ending game...");
+    if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
       game.setScreen(new MainMenuScreen(game));
       dispose();
     }
@@ -113,7 +105,6 @@ public class GameScreen implements Screen {
   @Override
   public void dispose() {
     backgroundTexture.dispose();
-    dropTexture.dispose();
-    car.sprite.getTexture().dispose();
+    car.dispose();
   }
 }
