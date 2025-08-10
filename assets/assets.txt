@@ -1,7 +1,3 @@
-fonts/Kenney Mini Square.ttf
-fonts/Kenney Mini.ttf
-fonts/Kenney Pixel Square.ttf
-fonts/Kenney Pixel.ttf
 libgdx.png
 sprites/apollo.pal
 sprites/enemies/body1.png
@@ -18,8 +14,8 @@ sprites/pickups/health.png
 sprites/pickups/nitro.png
 sprites/pickups/rocket.png
 sprites/pickups/shield.png
-sprites/terrain/ground.jpg
-sprites/terrain/road.jpg
+sprites/terrain/ground.aseprite
+sprites/terrain/ground.png
 sprites/terrain/startGround1.png
 sprites/terrain/startGround2.png
 sprites/ui/DesertEscapeBanner.jpg

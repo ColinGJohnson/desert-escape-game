@@ -12,13 +12,12 @@ import dev.cgj.games.old.CarType;
 public class GameScreen implements Screen {
   final DesertEscape game;
   private float accumulator = 0;
-
-  Texture backgroundTexture;
+  Texture dirtTexture;
   Car car;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
-    backgroundTexture = new Texture("sprites/terrain/startGround2.png");
+    dirtTexture = new Texture("sprites/terrain/ground.png");
     car = new Car(CarType.SPORTS, game.world);
   }
 
@@ -72,7 +71,7 @@ public class GameScreen implements Screen {
     float worldHeight = game.viewport.getWorldHeight();
 
     // Draw all sprites first (same texture binding)
-    game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
+    game.batch.draw(dirtTexture, 0, 0, worldWidth, worldHeight);
     car.render(game.batch);
 
     // Flush batch before switching to font rendering
@@ -104,7 +103,7 @@ public class GameScreen implements Screen {
 
   @Override
   public void dispose() {
-    backgroundTexture.dispose();
+    dirtTexture.dispose();
     car.dispose();
   }
 }
