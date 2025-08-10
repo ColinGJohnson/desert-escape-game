@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.games.Constants;
+import dev.cgj.games.escape.Constants;
 import dev.cgj.games.old.CarType;
 
 /// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
@@ -25,19 +25,10 @@ public class Car implements Disposable {
   private static final float MAX_LATERAL_IMPULSE = 3f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
 
-  private Texture texture;
-  public Sprite sprite;
-  private CarType carType;
-  private Body body;
-
-  private int health = 100;
-  private int fuel = 100;
-  private int numRocket = 0;
-  private int numShield = 0;
-  private int numNitro = 0;
-
-  public boolean nitroActive = false;
-  private boolean shieldActive = false;
+  public final Texture texture;
+  public final Sprite sprite;
+  public final CarType carType;
+  public final Body body;
 
   public Car(CarType carType, World world) {
     this.carType = carType;
@@ -48,7 +39,7 @@ public class Car implements Disposable {
     body = createPhysicsObject(world);
   }
 
-  public void render(SpriteBatch batch) {
+  public void draw(SpriteBatch batch) {
     float posX = body.getPosition().x;
     float posY = body.getPosition().y;
     sprite.setCenter(posX, posY);

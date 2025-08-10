@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -13,16 +12,16 @@ import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
   private final DesertEscape game;
-  private final Texture dirtTexture;
   private float accumulator = 0;
   private final World world;
   private final Car car;
+  private final TileManager tileManager;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
-    dirtTexture = new Texture("sprites/terrain/ground.png");
     world = new World(Vector2.Zero, true);
     car = new Car(CarType.SPORTS, world);
+    tileManager = new TileManager();
   }
 
   @Override
@@ -52,7 +51,6 @@ public class GameScreen implements Screen {
 
   @Override
   public void dispose() {
-    dirtTexture.dispose();
     car.dispose();
   }
 
@@ -84,22 +82,18 @@ public class GameScreen implements Screen {
   }
 
   private void draw() {
-    ScreenUtils.clear(Color.BLACK);
+    game.viewport.getCamera().position.set(car.body.getPosition(), 0);
+    ScreenUtils.clear(Color.SLATE);
     game.viewport.apply();
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();
 
-    float worldWidth = game.viewport.getWorldWidth();
-    float worldHeight = game.viewport.getWorldHeight();
+    tileManager.draw(game.batch, car.body.getPosition());
+    car.draw(game.batch);
 
-    // Draw all sprites first (same texture binding)
-    game.batch.draw(dirtTexture, 0, 0, worldWidth, worldHeight);
-    car.render(game.batch);
-
-    // Flush batch before switching to font rendering
+    // Must flush batch before switching to font rendering
     game.batch.flush();
-
-    game.font.draw(game.batch, "Test Text", 0, worldHeight);
+    game.font.draw(game.batch, "Test Text", 0, game.viewport.getWorldHeight());
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()

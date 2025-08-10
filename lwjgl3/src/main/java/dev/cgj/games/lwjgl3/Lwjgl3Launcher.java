@@ -2,7 +2,7 @@ package dev.cgj.games.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import dev.cgj.games.DesertEscape;
+import dev.cgj.games.escape.DesertEscape;
 
 /**
  * Launches {@link DesertEscape} on desktop. This is the only supported platform.
