@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.escape;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

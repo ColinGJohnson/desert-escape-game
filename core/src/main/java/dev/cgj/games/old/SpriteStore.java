@@ -1,6 +1,6 @@
 package dev.cgj.games.old;
 
-import dev.cgj.games.DesertEscape;
+import dev.cgj.games.escape.DesertEscape;
 
 import java.awt.Image;
 import java.io.IOException;

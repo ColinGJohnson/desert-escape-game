@@ -1,4 +1,4 @@
-package dev.cgj.games;
+package dev.cgj.games.escape;
 
 public class Constants {
     public static final float OFF_ROAD_PENALTY = 0.75f;

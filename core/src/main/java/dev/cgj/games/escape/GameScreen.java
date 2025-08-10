@@ -1,29 +1,28 @@
-package dev.cgj.games;
+package dev.cgj.games.escape;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
 import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
-  final DesertEscape game;
+  private final DesertEscape game;
+  private final Texture dirtTexture;
   private float accumulator = 0;
-  Texture dirtTexture;
-  Car car;
+  private final World world;
+  private final Car car;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
     dirtTexture = new Texture("sprites/terrain/ground.png");
-    car = new Car(CarType.SPORTS, game.world);
-  }
-
-  @Override
-  public void show() {
-
+    world = new World(Vector2.Zero, true);
+    car = new Car(CarType.SPORTS, world);
   }
 
   @Override
@@ -34,18 +33,27 @@ public class GameScreen implements Screen {
     draw();
   }
 
-  /**
-   * Fixed time step with max frame time to avoid a spiral of death on slow devices.
-   *
-   * @param delta Amount of time that has elapsed since the last frame, in milliseconds.
-   */
-  private void stepPhysics(float delta) {
-    float frameTime = Math.min(delta, 0.25f);
-    accumulator += frameTime;
-    while (accumulator >= Constants.TIME_STEP) {
-      game.world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
-      accumulator -= Constants.TIME_STEP;
-    }
+  @Override
+  public void resize(int width, int height) {
+    game.viewport.update(width, height, true);
+  }
+
+  @Override
+  public void show() {}
+
+  @Override
+  public void hide() {}
+
+  @Override
+  public void pause() {}
+
+  @Override
+  public void resume() {}
+
+  @Override
+  public void dispose() {
+    dirtTexture.dispose();
+    car.dispose();
   }
 
   private void handleInput() {
@@ -59,6 +67,20 @@ public class GameScreen implements Screen {
 
   private void updateLogic() {
     car.updatePhysics();
+  }
+
+  /**
+   * Fixed time step with max frame time to avoid a spiral of death on slow devices.
+   *
+   * @param delta Amount of time that has elapsed since the last frame, in milliseconds.
+   */
+  private void stepPhysics(float delta) {
+    float frameTime = Math.min(delta, 0.25f);
+    accumulator += frameTime;
+    while (accumulator >= Constants.TIME_STEP) {
+      world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
+      accumulator -= Constants.TIME_STEP;
+    }
   }
 
   private void draw() {
@@ -77,33 +99,10 @@ public class GameScreen implements Screen {
     // Flush batch before switching to font rendering
     game.batch.flush();
 
-    game.font.draw(game.batch, "Test", 0, worldHeight);
+    game.font.draw(game.batch, "Test Text", 0, worldHeight);
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
-    game.debugRenderer.render(game.world, game.viewport.getCamera().combined);
-  }
-
-  @Override
-  public void resize(int width, int height) {
-    game.viewport.update(width, height, true);
-  }
-
-  @Override
-  public void hide() {
-  }
-
-  @Override
-  public void pause() {
-  }
-
-  @Override
-  public void resume() {
-  }
-
-  @Override
-  public void dispose() {
-    dirtTexture.dispose();
-    car.dispose();
+    game.debugRenderer.render(world, game.viewport.getCamera().combined);
   }
 }
