@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
 
   private void draw() {
     game.viewport.getCamera().position.set(car.body.getPosition(), 0);
-    ScreenUtils.clear(Color.SLATE);
+    ScreenUtils.clear(Color.BLACK);
     game.viewport.apply();
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();

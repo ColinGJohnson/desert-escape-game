@@ -16,7 +16,7 @@ public class DesertEscape extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont(); // use libGDX's default font
-        viewport = new FitViewport(200 * Constants.PIXEL_SCALE, 200 * Constants.PIXEL_SCALE);
+        viewport = new FitViewport(480 * Constants.PIXEL_SCALE, 270 * Constants.PIXEL_SCALE);
         debugRenderer = new Box2DDebugRenderer();
 
         // font has 15 pt, but we need to scale it to our viewport by ratio of viewport height to screen height
