@@ -34,7 +34,7 @@ public class Car implements Disposable {
     this.carType = carType;
     texture = new Texture("sprites/vehicles/sports_car.png");
     sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * Constants.PIXEL_SCALE, texture.getHeight() * Constants.PIXEL_SCALE);
+    sprite.setSize(texture.getWidth() * Constants.PIXEL_TO_WORLD, texture.getHeight() * Constants.PIXEL_TO_WORLD);
     sprite.setOriginCenter();
     body = createPhysicsObject(world);
   }
@@ -118,7 +118,7 @@ public class Car implements Disposable {
     Body body = world.createBody(bodyDef);
 
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(4f * Constants.PIXEL_SCALE, sprite.getHeight() / 2f);
+    shape.setAsBox(4f * Constants.PIXEL_TO_WORLD, sprite.getHeight() / 2f);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;

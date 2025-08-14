@@ -24,6 +24,7 @@ sprites/ui/DesertEscapeBanner.jpg
 sprites/ui/arrow.png
 sprites/ui/pressAnyKeyToStart.png
 sprites/ui/ui_overlay.aseprite
+sprites/ui/ui_overlay.png
 sprites/vehicles/sedan.png
 sprites/vehicles/sports_car.png
 sprites/vehicles/truck.png

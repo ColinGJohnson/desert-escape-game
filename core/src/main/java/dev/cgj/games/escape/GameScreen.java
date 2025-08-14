@@ -16,12 +16,14 @@ public class GameScreen implements Screen {
   private final World world;
   private final Car car;
   private final TileManager tileManager;
+  private final HudRenderer hudRenderer;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
     world = new World(Vector2.Zero, true);
     car = new Car(CarType.SPORTS, world);
     tileManager = new TileManager();
+    hudRenderer = new HudRenderer();
   }
 
   @Override
@@ -98,5 +100,6 @@ public class GameScreen implements Screen {
 
     // Render Box2D debug AFTER batch.end()
     game.debugRenderer.render(world, game.viewport.getCamera().combined);
+    hudRenderer.draw();
   }
 }

@@ -13,7 +13,7 @@ public class TileManager implements Disposable {
   public TileManager() {
     roadTexture = new Texture("sprites/terrain/ground.png");
     wallTexture = new Texture("sprites/terrain/wall.png");
-    tileSize = roadTexture.getWidth() * Constants.PIXEL_SCALE;
+    tileSize = roadTexture.getWidth() * Constants.PIXEL_TO_WORLD;
   }
 
   @Override
