@@ -1,8 +1,7 @@
 # desert-ecape
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
-
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+A top-down racing bullet hell game in which the player must avoid projectiles and obstacles for a set distance. 
+Originally Created for a High School IT course, then later rewritten using LibGdx.
 
 ## Platforms
 
