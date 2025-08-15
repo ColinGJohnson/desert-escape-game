@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
+import dev.cgj.games.escape.terrain.TileManager;
 import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
@@ -67,6 +68,7 @@ public class GameScreen implements Screen {
 
   private void updateLogic() {
     car.updatePhysics();
+    tileManager.update(car.body.getPosition());
   }
 
   /**
@@ -90,7 +92,7 @@ public class GameScreen implements Screen {
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();
 
-    tileManager.draw(game.batch, car.body.getPosition());
+    tileManager.draw(game.batch);
     car.draw(game.batch);
 
     // Must flush batch before switching to font rendering

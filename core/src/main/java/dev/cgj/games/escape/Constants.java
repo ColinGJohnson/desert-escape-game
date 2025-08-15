@@ -4,8 +4,8 @@ public class Constants {
     public static final float OFF_ROAD_PENALTY = 0.75f;
 
     /**
-     * The size in meters of each sprite pixel. This is *not* the size of a pixel on the user's
-     * screen, which is expected to vary.
+     * The size in world units of each sprite pixel. This is *not* the size of a pixel on the
+     * user's screen, which is expected to vary.
      */
     public static final float PIXEL_TO_WORLD = 0.1f;
 
