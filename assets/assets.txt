@@ -1,4 +1,4 @@
-libgdx.png
+DesertEscapeBanner.jpg
 sprites/apollo.pal
 sprites/enemies/body1.png
 sprites/enemies/body2.png
@@ -19,9 +19,7 @@ sprites/terrain/ground.png
 sprites/terrain/wall.aseprite
 sprites/terrain/wall_left.png
 sprites/terrain/wall_right.png
-sprites/ui/DesertEscapeBanner.jpg
 sprites/ui/arrow.png
-sprites/ui/pressAnyKeyToStart.png
 sprites/ui/ui_overlay.aseprite
 sprites/ui/ui_overlay.png
 sprites/vehicles/sedan.png

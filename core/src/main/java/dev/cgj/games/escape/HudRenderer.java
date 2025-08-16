@@ -13,7 +13,7 @@ public class HudRenderer implements Disposable {
   private final Texture hudOverlay;
 
   public HudRenderer() {
-    hudViewport = new FitViewport(480 * Constants.PIXEL_TO_WORLD, 270 * Constants.PIXEL_TO_WORLD);
+    hudViewport = new FitViewport(480 * Constants.SPRITE_TO_WORLD, 270 * Constants.SPRITE_TO_WORLD);
     hudBatch = new SpriteBatch();
     hudOverlay = new Texture("sprites/ui/ui_overlay.png");
   }

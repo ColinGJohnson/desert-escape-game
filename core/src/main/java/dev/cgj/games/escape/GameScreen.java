@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 
   private void updateLogic() {
     car.updatePhysics();
-    tileManager.update(car.body.getPosition());
+    tileManager.update(car.body.carBody.getPosition());
   }
 
   /**
@@ -86,7 +86,7 @@ public class GameScreen implements Screen {
   }
 
   private void draw() {
-    game.viewport.getCamera().position.set(car.body.getPosition(), 0);
+    game.viewport.getCamera().position.set(car.body.carBody.getPosition(), 0);
     ScreenUtils.clear(Color.BLACK);
     game.viewport.apply();
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);

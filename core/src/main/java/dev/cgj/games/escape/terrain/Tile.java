@@ -7,12 +7,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.List;
 
-import static dev.cgj.games.escape.Constants.PIXEL_TO_WORLD;
+import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
 public class Tile {
 
   /** The size of each tile in world units **/
-  public static final float TILE_SIZE = 270f * PIXEL_TO_WORLD;
+  public static final float TILE_SIZE = 270f * SPRITE_TO_WORLD;
 
   private final Texture texture;
   private final List<Body> staticBodies;

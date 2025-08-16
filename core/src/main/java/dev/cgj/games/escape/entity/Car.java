@@ -7,14 +7,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.games.escape.Constants;
 import dev.cgj.games.old.CarType;
+
+import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
 /// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
 public class Car implements Disposable {
-  private static final float TURN_TORQUE = 6f;
+  private static final float TURN_TORQUE = 3f;
   private static final float MAX_FORWARD_SPEED = 10f;
   private static final float MAX_BACKWARD_SPEED = -4f;
   private static final float MAX_DRIVE_FORCE = 10f;
@@ -24,23 +25,28 @@ public class Car implements Disposable {
   public final Texture texture;
   public final Sprite sprite;
   public final CarType carType;
-  public final Body body;
+  public final CarBody body;
 
   public Car(CarType carType, World world) {
     this.carType = carType;
     texture = new Texture("sprites/vehicles/sports_car.png");
     sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * Constants.PIXEL_TO_WORLD,
-      texture.getHeight() * Constants.PIXEL_TO_WORLD);
+    sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
+      texture.getHeight() * SPRITE_TO_WORLD);
     sprite.setOriginCenter();
-    body = createPhysicsObject(world);
+    body = new CarBody(world);
+  }
+
+  @Override
+  public void dispose() {
+    sprite.getTexture().dispose();
   }
 
   public void draw(SpriteBatch batch) {
-    float posX = body.getPosition().x;
-    float posY = body.getPosition().y;
+    float posX = body.carBody.getPosition().x;
+    float posY = body.carBody.getPosition().y;
     sprite.setCenter(posX, posY);
-    sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+    sprite.setRotation(body.carBody.getAngle() * MathUtils.radiansToDegrees);
     sprite.draw(batch);
   }
 
@@ -55,9 +61,9 @@ public class Car implements Disposable {
     boolean turnRight = input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.D);
 
     if (turnLeft && !turnRight) {
-      body.applyTorque(TURN_TORQUE, true);
+      body.carBody.applyTorque(TURN_TORQUE, true);
     } else if (turnRight && !turnLeft) {
-      body.applyTorque(-TURN_TORQUE, true);
+      body.carBody.applyTorque(-TURN_TORQUE, true);
     }
 
     if (input.isKeyPressed(Keys.SPACE)) {
@@ -71,15 +77,15 @@ public class Car implements Disposable {
   }
 
   private void cancelAngularVelocity() {
-    float impulse = -body.getAngularVelocity() * body.getInertia() * 0.1f;
-    body.applyAngularImpulse(impulse, true);
+    float impulse = -body.carBody.getAngularVelocity() * body.carBody.getInertia() * 0.1f;
+    body.carBody.applyAngularImpulse(impulse, true);
   }
 
   private void accelerateToSpeed(float speed) {
-    Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1)).cpy();
+    Vector2 forwardNormal = body.carBody.getWorldVector(new Vector2(0, 1)).cpy();
     float currentSpeed = getForwardVelocity().dot(forwardNormal);
     float force = (currentSpeed < speed) ? MAX_DRIVE_FORCE : -MAX_DRIVE_FORCE;
-    body.applyForceToCenter(forwardNormal.scl(force), true);
+    body.carBody.applyForceToCenter(forwardNormal.scl(force), true);
   }
 
   private void cancelLateralVelocity() {
@@ -91,42 +97,20 @@ public class Car implements Disposable {
   }
 
   private void cancelVelocity(Vector2 velocity, float maxImpulse) {
-    Vector2 impulse = velocity.scl(-body.getMass());
+    Vector2 impulse = velocity.scl(-body.carBody.getMass());
     if (impulse.len() > maxImpulse) {
       impulse.scl(maxImpulse / impulse.len());
     }
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+    body.carBody.applyLinearImpulse(impulse, body.carBody.getWorldCenter(), true);
   }
 
   private Vector2 getLateralVelocity() {
-    Vector2 rightNormal = body.getWorldVector(new Vector2(1, 0));
-    return rightNormal.scl(rightNormal.dot(body.getLinearVelocity()));
+    Vector2 rightNormal = body.carBody.getWorldVector(new Vector2(1, 0));
+    return rightNormal.scl(rightNormal.dot(body.carBody.getLinearVelocity()));
   }
 
   private Vector2 getForwardVelocity() {
-    Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1));
-    return forwardNormal.scl(forwardNormal.dot(body.getLinearVelocity()));
-  }
-
-  private Body createPhysicsObject(World world) {
-    BodyDef bodyDef = new BodyDef();
-    bodyDef.type = BodyDef.BodyType.DynamicBody;
-    bodyDef.position.set(10, 10);
-    Body body = world.createBody(bodyDef);
-
-    PolygonShape shape = new PolygonShape();
-    shape.setAsBox(4f * Constants.PIXEL_TO_WORLD, sprite.getHeight() / 2f);
-
-    FixtureDef fixtureDef = new FixtureDef();
-    fixtureDef.shape = shape;
-    fixtureDef.density = 1f;
-    body.createFixture(fixtureDef);
-
-    return body;
-  }
-
-  @Override
-  public void dispose() {
-    sprite.getTexture().dispose();
+    Vector2 forwardNormal = body.carBody.getWorldVector(new Vector2(0, 1));
+    return forwardNormal.scl(forwardNormal.dot(body.carBody.getLinearVelocity()));
   }
 }
