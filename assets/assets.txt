@@ -16,10 +16,9 @@ sprites/pickups/rocket.png
 sprites/pickups/shield.png
 sprites/terrain/ground.aseprite
 sprites/terrain/ground.png
-sprites/terrain/startGround1.png
-sprites/terrain/startGround2.png
 sprites/terrain/wall.aseprite
-sprites/terrain/wall.png
+sprites/terrain/wall_left.png
+sprites/terrain/wall_right.png
 sprites/ui/DesertEscapeBanner.jpg
 sprites/ui/arrow.png
 sprites/ui/pressAnyKeyToStart.png

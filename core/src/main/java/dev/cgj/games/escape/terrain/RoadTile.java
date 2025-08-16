@@ -1,18 +1,20 @@
 package dev.cgj.games.escape.terrain;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.List;
 
 public class RoadTile implements TileDefinition {
 
   @Override
-  public String getTexturePath() {
-    return "sprites/terrain/ground.png";
+  public Texture getTexturePath() {
+    return new Texture("sprites/terrain/ground.png");
   }
 
   @Override
-  public List<Body> getStaticBodies() {
+  public List<Body> addStaticBodies(World world) {
     return List.of();
   }
 }

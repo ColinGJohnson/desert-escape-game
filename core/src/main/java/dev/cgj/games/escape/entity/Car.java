@@ -7,11 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.games.escape.Constants;
 import dev.cgj.games.old.CarType;
@@ -34,7 +30,8 @@ public class Car implements Disposable {
     this.carType = carType;
     texture = new Texture("sprites/vehicles/sports_car.png");
     sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * Constants.PIXEL_TO_WORLD, texture.getHeight() * Constants.PIXEL_TO_WORLD);
+    sprite.setSize(texture.getWidth() * Constants.PIXEL_TO_WORLD,
+      texture.getHeight() * Constants.PIXEL_TO_WORLD);
     sprite.setOriginCenter();
     body = createPhysicsObject(world);
   }

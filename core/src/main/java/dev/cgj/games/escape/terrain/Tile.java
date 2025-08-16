@@ -3,8 +3,8 @@ package dev.cgj.games.escape.terrain;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 
-import java.util.Collections;
 import java.util.List;
 
 import static dev.cgj.games.escape.Constants.PIXEL_TO_WORLD;
@@ -15,21 +15,17 @@ public class Tile {
   public static final float TILE_SIZE = 270f * PIXEL_TO_WORLD;
 
   private final Texture texture;
-  private final Vector2 position;
   private final List<Body> staticBodies;
+  private final Vector2 position;
 
-  public Tile(TileDefinition definition) {
-    this.texture = new Texture(definition.getTexturePath());
+  public Tile(TileDefinition definition, World world) {
+    this.texture = definition.getTexturePath();
+    this.staticBodies = definition.addStaticBodies(world);
     this.position = Vector2.Zero.cpy();
-    this.staticBodies = definition.getStaticBodies();
   }
 
   public Texture getTexture() {
     return texture;
-  }
-
-  public List<Body> getStaticBodies() {
-    return Collections.emptyList();
   }
 
   public Vector2 getPosition() {

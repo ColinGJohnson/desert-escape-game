@@ -23,7 +23,7 @@ public class GameScreen implements Screen {
     this.game = game;
     world = new World(Vector2.Zero, true);
     car = new Car(CarType.SPORTS, world);
-    tileManager = new TileManager();
+    tileManager = new TileManager(world);
     hudRenderer = new HudRenderer();
   }
 
