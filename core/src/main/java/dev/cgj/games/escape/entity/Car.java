@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.games.old.CarType;
@@ -15,10 +14,10 @@ import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
 /// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
 public class Car implements Disposable {
-  private static final float TURN_TORQUE = 3f;
-  private static final float MAX_FORWARD_SPEED = 10f;
+  private static final float TURN_TORQUE = 6f;
+  private static final float MAX_FORWARD_SPEED = 20f;
   private static final float MAX_BACKWARD_SPEED = -4f;
-  private static final float MAX_DRIVE_FORCE = 10f;
+  private static final float MAX_DRIVE_FORCE = 5f;
   private static final float MAX_LATERAL_IMPULSE = 3f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
 
@@ -52,9 +51,9 @@ public class Car implements Disposable {
 
   public void handleInput(Input input) {
     if (input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.W)) {
-      accelerateToSpeed(MAX_FORWARD_SPEED);
+      body.accelerateToSpeed(MAX_FORWARD_SPEED, MAX_DRIVE_FORCE);
     } else if (input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.S)) {
-      accelerateToSpeed(MAX_BACKWARD_SPEED);
+      body.accelerateToSpeed(MAX_BACKWARD_SPEED, MAX_DRIVE_FORCE);
     }
 
     boolean turnLeft = input.isKeyPressed(Keys.LEFT) || input.isKeyPressed(Keys.A);
@@ -67,50 +66,12 @@ public class Car implements Disposable {
     }
 
     if (input.isKeyPressed(Keys.SPACE)) {
-      cancelForwardVelocity();
+      body.cancelForwardVelocity(MAX_BRAKE_IMPULSE);
     }
   }
 
   public void updatePhysics() {
-    cancelLateralVelocity();
-    cancelAngularVelocity();
-  }
-
-  private void cancelAngularVelocity() {
-    float impulse = -body.carBody.getAngularVelocity() * body.carBody.getInertia() * 0.1f;
-    body.carBody.applyAngularImpulse(impulse, true);
-  }
-
-  private void accelerateToSpeed(float speed) {
-    Vector2 forwardNormal = body.carBody.getWorldVector(new Vector2(0, 1)).cpy();
-    float currentSpeed = getForwardVelocity().dot(forwardNormal);
-    float force = (currentSpeed < speed) ? MAX_DRIVE_FORCE : -MAX_DRIVE_FORCE;
-    body.carBody.applyForceToCenter(forwardNormal.scl(force), true);
-  }
-
-  private void cancelLateralVelocity() {
-    cancelVelocity(getLateralVelocity(), MAX_LATERAL_IMPULSE);
-  }
-
-  private void cancelForwardVelocity() {
-    cancelVelocity(getForwardVelocity(), MAX_BRAKE_IMPULSE);
-  }
-
-  private void cancelVelocity(Vector2 velocity, float maxImpulse) {
-    Vector2 impulse = velocity.scl(-body.carBody.getMass());
-    if (impulse.len() > maxImpulse) {
-      impulse.scl(maxImpulse / impulse.len());
-    }
-    body.carBody.applyLinearImpulse(impulse, body.carBody.getWorldCenter(), true);
-  }
-
-  private Vector2 getLateralVelocity() {
-    Vector2 rightNormal = body.carBody.getWorldVector(new Vector2(1, 0));
-    return rightNormal.scl(rightNormal.dot(body.carBody.getLinearVelocity()));
-  }
-
-  private Vector2 getForwardVelocity() {
-    Vector2 forwardNormal = body.carBody.getWorldVector(new Vector2(0, 1));
-    return forwardNormal.scl(forwardNormal.dot(body.carBody.getLinearVelocity()));
+    body.cancelLateralVelocity(MAX_LATERAL_IMPULSE);
+    body.cancelAngularVelocity();
   }
 }
