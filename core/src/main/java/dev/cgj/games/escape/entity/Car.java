@@ -14,11 +14,10 @@ import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
 /// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
 public class Car implements Disposable {
-  private static final float TURN_TORQUE = 6f;
-  private static final float MAX_FORWARD_SPEED = 20f;
+  private static final float MAX_FORWARD_SPEED = 16f;
   private static final float MAX_BACKWARD_SPEED = -4f;
-  private static final float MAX_DRIVE_FORCE = 5f;
-  private static final float MAX_LATERAL_IMPULSE = 3f;
+  private static final float MAX_DRIVE_FORCE = 2f;
+  private static final float MAX_LATERAL_IMPULSE = 60f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
 
   public final Texture texture;
@@ -49,7 +48,7 @@ public class Car implements Disposable {
     sprite.draw(batch);
   }
 
-  public void handleInput(Input input) {
+  public void handleInput(float delta, Input input) {
     if (input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.W)) {
       body.accelerateToSpeed(MAX_FORWARD_SPEED, MAX_DRIVE_FORCE);
     } else if (input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.S)) {
@@ -60,9 +59,11 @@ public class Car implements Disposable {
     boolean turnRight = input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.D);
 
     if (turnLeft && !turnRight) {
-      body.carBody.applyTorque(TURN_TORQUE, true);
+      body.turnWheels(delta, (float) Math.toRadians(45));
     } else if (turnRight && !turnLeft) {
-      body.carBody.applyTorque(-TURN_TORQUE, true);
+      body.turnWheels(delta, (float) Math.toRadians(-45));
+    } else {
+      body.turnWheels(delta, 0);
     }
 
     if (input.isKeyPressed(Keys.SPACE)) {

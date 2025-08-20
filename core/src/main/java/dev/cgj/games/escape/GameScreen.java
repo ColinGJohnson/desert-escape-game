@@ -29,7 +29,7 @@ public class GameScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    handleInput();
+    handleInput(delta);
     updateLogic();
     stepPhysics(delta);
     draw();
@@ -57,8 +57,8 @@ public class GameScreen implements Screen {
     car.dispose();
   }
 
-  private void handleInput() {
-    car.handleInput(Gdx.input);
+  private void handleInput(float delta) {
+    car.handleInput(delta, Gdx.input);
 
     if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
       game.setScreen(new MainMenuScreen(game));

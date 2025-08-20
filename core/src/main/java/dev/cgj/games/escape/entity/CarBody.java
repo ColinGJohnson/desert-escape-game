@@ -45,6 +45,14 @@ public class CarBody {
     rearRightWheelJoint = joinWheel(world, new Vector2(4, -4), carBody, rearRightWheel);
   }
 
+  public void turnWheels(float delta, float desiredAngle) {
+    float currentAngle = frontLeftWheelJoint.getJointAngle();
+    float maxTurn = (float) Math.toRadians(180) * delta;
+    float newAngle = currentAngle + Math.clamp(desiredAngle - currentAngle, -maxTurn, maxTurn);
+    frontRightWheelJoint.setLimits(newAngle, newAngle);
+    frontLeftWheelJoint.setLimits(newAngle, newAngle);
+  }
+
   public void accelerateToSpeed(float speed, float maxDriveForce) {
     for (Body wheel : getWheels()) {
       accelerateToSpeed(wheel, speed, maxDriveForce);
@@ -65,7 +73,7 @@ public class CarBody {
   }
 
   private void cancelAngularVelocity(Body body) {
-    float impulse = -body.getAngularVelocity() * body.getInertia() * 0.1f;
+    float impulse = -body.getAngularVelocity() * body.getInertia() * 1f;
     body.applyAngularImpulse(impulse, true);
   }
 
