@@ -19,6 +19,8 @@ public class GameScreen implements Screen {
   private final TileManager tileManager;
   private final HudRenderer hudRenderer;
 
+  private boolean showDebug = false;
+
   public GameScreen(final DesertEscape game) {
     this.game = game;
     world = new World(Vector2.Zero, true);
@@ -64,6 +66,10 @@ public class GameScreen implements Screen {
       game.setScreen(new MainMenuScreen(game));
       dispose();
     }
+
+    if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
+      showDebug = !showDebug;
+    }
   }
 
   private void updateLogic() {
@@ -101,7 +107,10 @@ public class GameScreen implements Screen {
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
-    game.debugRenderer.render(world, game.viewport.getCamera().combined);
+    if (showDebug) {
+      game.debugRenderer.render(world, game.viewport.getCamera().combined);
+    }
+
     hudRenderer.draw();
   }
 }
