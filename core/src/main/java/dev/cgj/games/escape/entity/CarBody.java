@@ -49,20 +49,29 @@ public class CarBody {
     float currentAngle = frontLeftWheelJoint.getJointAngle();
     float maxTurn = (float) Math.toRadians(180) * delta;
     float newAngle = currentAngle + Math.clamp(desiredAngle - currentAngle, -maxTurn, maxTurn);
-    frontRightWheelJoint.setLimits(newAngle, newAngle);
-    frontLeftWheelJoint.setLimits(newAngle, newAngle);
+    turnWheelsImmediately(newAngle);
+  }
+
+  public void turnWheelsImmediately(float DesiredAngle) {
+    frontRightWheelJoint.setLimits(DesiredAngle, DesiredAngle);
+    frontLeftWheelJoint.setLimits(DesiredAngle, DesiredAngle);
   }
 
   public void accelerateToSpeed(float speed, float maxDriveForce) {
-    for (Body wheel : getWheels()) {
-      accelerateToSpeed(wheel, speed, maxDriveForce);
-    }
+    accelerateToSpeed(frontLeftWheel, speed, maxDriveForce);
+    accelerateToSpeed(frontRightWheel, speed, maxDriveForce);
+
+    // TODO: Fix all wheel drive steering
+
+    //    for (Body wheel : getWheels()) {
+    //      accelerateToSpeed(wheel, speed, maxDriveForce);
+    //    }
   }
 
   private void accelerateToSpeed(Body body, float desiredSpeed, float maxDriveForce) {
     Vector2 forwardNormal = body.getWorldVector(new Vector2(0, 1)).cpy();
     float currentSpeed = getForwardVelocity(body).dot(forwardNormal);
-    if (Math.abs(currentSpeed - desiredSpeed) > 0.001) {
+    if (Math.abs(currentSpeed - desiredSpeed) > 0.01) {
       float force = (currentSpeed < desiredSpeed) ? maxDriveForce : -maxDriveForce;
       body.applyForceToCenter(forwardNormal.scl(force), true);
     }
@@ -121,9 +130,8 @@ public class CarBody {
     bodyDef.position.set(10, 10);
     Body car = world.createBody(bodyDef);
 
-    PolygonShape shape = new PolygonShape();
-
     // The sports car sprite is 8 x 16 pixels, so the half-size is 4 x 8
+    PolygonShape shape = new PolygonShape();
     shape.setAsBox(3f * SPRITE_TO_WORLD, 8f * SPRITE_TO_WORLD);
 
     FixtureDef fixtureDef = new FixtureDef();

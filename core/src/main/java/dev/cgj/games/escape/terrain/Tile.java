@@ -1,9 +1,11 @@
 package dev.cgj.games.escape.terrain;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import dev.cgj.games.escape.entity.Obstacle;
 
 import java.util.List;
 
@@ -16,11 +18,13 @@ public class Tile {
 
   private final Texture texture;
   private final List<Body> staticBodies;
+  private final List<Obstacle> obstacles;
   private final Vector2 position;
 
   public Tile(TileDefinition definition, World world) {
     this.texture = definition.getTexturePath();
     this.staticBodies = definition.addStaticBodies(world);
+    this.obstacles = definition.addObstacles(world);
     this.position = Vector2.Zero.cpy();
   }
 
@@ -39,11 +43,26 @@ public class Tile {
    * @param position The new bottom-left position of the tile, in world coordinates.
    */
   public void setPosition(Vector2 position) {
+    Vector2 delta = position.cpy().sub(this.position);
+
     for (Body body : staticBodies) {
-      Vector2 newPosition = body.getPosition().add(position.cpy().sub(this.position));
+      Vector2 newPosition = body.getPosition().add(delta);
       body.setTransform(newPosition, body.getAngle());
     }
+
+    for (Obstacle obstacle : obstacles) {
+      obstacle.move(delta);
+    }
+
     this.position.set(position.cpy());
+  }
+
+  public void draw(SpriteBatch batch) {
+    Vector2 position = getPosition();
+    batch.draw(getTexture(), position.x, position.y, TILE_SIZE, TILE_SIZE);
+    for (Obstacle obstacle : obstacles) {
+      obstacle.draw(batch);
+    }
   }
 
   public void dispose() {

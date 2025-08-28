@@ -48,8 +48,7 @@ public class TileManager implements Disposable {
 
   private void drawTiles(SpriteBatch batch, List<Tile> tiles) {
     for (Tile tile : tiles) {
-      Vector2 position = tile.getPosition();
-      batch.draw(tile.getTexture(), position.x, position.y, TILE_SIZE, TILE_SIZE);
+      tile.draw(batch);
     }
   }
 
