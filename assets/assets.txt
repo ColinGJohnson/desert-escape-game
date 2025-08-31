@@ -1,4 +1,7 @@
 DesertEscapeBanner.jpg
+fonts/Kenney Mini.ttf
+fonts/kenney_mini.fnt
+fonts/kenney_mini.png
 sprites/apollo.pal
 sprites/enemies/body1.png
 sprites/enemies/body2.png

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
+import dev.cgj.games.escape.render.HudRenderer;
 import dev.cgj.games.escape.terrain.TileManager;
 import dev.cgj.games.old.CarType;
 
@@ -103,7 +104,7 @@ public class GameScreen implements Screen {
 
     // Must flush batch before switching to font rendering
     game.batch.flush();
-    game.font.draw(game.batch, "Test Text", 0, game.viewport.getWorldHeight());
+    game.font.draw(game.batch, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, game.viewport.getWorldHeight());
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
