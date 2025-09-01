@@ -8,24 +8,27 @@ import dev.cgj.games.escape.DesertEscape;
  * Launches {@link DesertEscape} on desktop. This is the only supported platform.
  */
 public class Lwjgl3Launcher {
-    public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) {
-            return; // This handles macOS support and helps on Windows.
-        }
-        createApplication();
+  public static void main(String[] args) {
+
+    // This handles macOS support and helps on Windows.
+    if (StartupHelper.startNewJvmIfRequired()) {
+      return;
     }
 
-    private static void createApplication() {
-        new Lwjgl3Application(new DesertEscape(), getDefaultConfiguration());
-    }
+    createApplication();
+  }
 
-    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
-        Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-        configuration.setTitle("desert-ecape");
-        configuration.useVsync(true);
-        configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
-        configuration.setWindowedMode(1280, 720);
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
-        return configuration;
-    }
+  private static void createApplication() {
+    new Lwjgl3Application(new DesertEscape(), getDefaultConfiguration());
+  }
+
+  private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
+    Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
+    configuration.setTitle("Desert Escape");
+    configuration.useVsync(true);
+    configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+    configuration.setWindowedMode(1280, 720);
+    configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+    return configuration;
+  }
 }
