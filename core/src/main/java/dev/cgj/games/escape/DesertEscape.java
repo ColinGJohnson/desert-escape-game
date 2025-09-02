@@ -18,11 +18,6 @@ public class DesertEscape extends Game {
         font = new BitmapFont(Gdx.files.internal("fonts/kenney_mini.fnt"));
         viewport = new FitViewport(480 * Constants.SPRITE_TO_WORLD, 270 * Constants.SPRITE_TO_WORLD);
         debugRenderer = new Box2DDebugRenderer();
-
-        // font has 15 pt, but we need to scale it to our viewport by ratio of viewport height to screen height
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(Constants.SPRITE_TO_WORLD);
-
         this.setScreen(new GameScreen(this));
     }
 

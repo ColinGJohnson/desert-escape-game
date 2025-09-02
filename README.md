@@ -1,4 +1,4 @@
-# desert-ecape
+# desert-escape
 
 A top-down racing bullet hell game in which the player must avoid projectiles and obstacles for a set distance. 
 Originally Created for a High School IT course, then later rewritten using LibGdx.

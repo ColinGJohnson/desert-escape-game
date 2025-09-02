@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.games.old.CarType;
 
 import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 

@@ -8,9 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
+import dev.cgj.games.escape.entity.CarType;
+import dev.cgj.games.escape.render.HudData;
 import dev.cgj.games.escape.render.HudRenderer;
 import dev.cgj.games.escape.terrain.TileManager;
-import dev.cgj.games.old.CarType;
 
 public class GameScreen implements Screen {
   private final DesertEscape game;
@@ -93,18 +94,13 @@ public class GameScreen implements Screen {
   }
 
   private void draw() {
-    game.viewport.getCamera().position.set(car.body.carBody.getPosition(), 0);
+    updateCameraPosition();
     ScreenUtils.clear(Color.BLACK);
     game.viewport.apply();
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();
-
     tileManager.draw(game.batch);
     car.draw(game.batch);
-
-    // Must flush batch before switching to font rendering
-    game.batch.flush();
-    game.font.draw(game.batch, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, game.viewport.getWorldHeight());
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
@@ -112,6 +108,15 @@ public class GameScreen implements Screen {
       game.debugRenderer.render(world, game.viewport.getCamera().combined);
     }
 
-    hudRenderer.draw();
+    // Draw the HUD on top of everything
+    hudRenderer.draw(getMockHudData());
+  }
+
+  private void updateCameraPosition() {
+    game.viewport.getCamera().position.set(car.body.carBody.getPosition(), 0);
+  }
+
+  private HudData getMockHudData() {
+    return new HudData(CarType.SPORTS, 102.2f, 10, 20, 2, 0, 5, 0f, 97, 9999);
   }
 }

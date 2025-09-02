@@ -56,6 +56,7 @@ public class Obstacle implements Disposable {
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
+    fixtureDef.isSensor = true;
     body.createFixture(fixtureDef);
     return body;
   }
