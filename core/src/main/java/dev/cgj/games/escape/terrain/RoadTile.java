@@ -1,15 +1,20 @@
 package dev.cgj.games.escape.terrain;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.games.escape.entity.Obstacle;
 import dev.cgj.games.escape.entity.ObstacleType;
 
 import java.util.List;
+import java.util.stream.Stream;
+
+import static dev.cgj.games.escape.Constants.spriteToWorld;
 
 public class RoadTile implements TileDefinition {
+  SpawnZone leftDirt = new SpawnZone(spriteToWorld(0, 0), spriteToWorld(90, 270));
+  SpawnZone rightDirt = new SpawnZone(spriteToWorld(390, 0), spriteToWorld(480, 270));
+  SpawnZone road = new SpawnZone(spriteToWorld(120, 0), spriteToWorld(150, 270));
 
   @Override
   public Texture getTexturePath() {
@@ -23,11 +28,15 @@ public class RoadTile implements TileDefinition {
 
   @Override
   public List<Obstacle> addObstacles(World world) {
-    // TODO: Randomly position obstacles on tile in zones
-    return List.of(
-      new Obstacle(ObstacleType.CACTUS, world, new Vector2(5, 10)),
-      new Obstacle(ObstacleType.SKULL, world, new Vector2(5, 15)),
-      new Obstacle(ObstacleType.CONE, world, new Vector2(5, 20))
-    );
+    Stream<Obstacle> left = Stream.generate(() ->
+        new Obstacle(ObstacleType.CACTUS, world, leftDirt.randomPosition()))
+      .limit(5);
+    Stream<Obstacle> right = Stream.generate(() ->
+        new Obstacle(ObstacleType.CACTUS, world, rightDirt.randomPosition()))
+      .limit(5);
+    Stream<Obstacle> cones = Stream.generate(() ->
+        new Obstacle(ObstacleType.CONE, world, road.randomPosition()))
+      .limit(3);
+    return Stream.concat(Stream.concat(left, right), cones).toList();
   }
 }
