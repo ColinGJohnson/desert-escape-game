@@ -109,14 +109,15 @@ public class GameScreen implements Screen {
     }
 
     // Draw the HUD on top of everything
-    hudRenderer.draw(getMockHudData());
+    hudRenderer.draw(getHudData(car));
   }
 
   private void updateCameraPosition() {
     game.viewport.getCamera().position.set(car.body.carBody.getPosition(), 0);
   }
 
-  private HudData getMockHudData() {
-    return new HudData(CarType.SPORTS, 102.2f, 10, 20, 2, 0, 5, 0f, 97, 9999);
+  private HudData getHudData(Car car) {
+    return new HudData(CarType.SPORTS, car.body.getForwardVelocity(), 10, 20, 2, 0, 5, 0f,
+      (int) car.body.carBody.getPosition().y, 9999);
   }
 }

@@ -45,6 +45,10 @@ public class CarBody {
     rearRightWheelJoint = joinWheel(world, new Vector2(4, -4), carBody, rearRightWheel);
   }
 
+  public float getForwardVelocity() {
+    return getForwardVelocity(carBody).len();
+  }
+
   public void turnWheels(float delta, float desiredAngle) {
     float currentAngle = frontLeftWheelJoint.getJointAngle();
     float maxTurn = (float) Math.toRadians(180) * delta;

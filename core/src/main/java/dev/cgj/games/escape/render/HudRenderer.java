@@ -30,21 +30,19 @@ public class HudRenderer implements Disposable {
   }
 
   public void draw(HudData hudData) {
-    // Update HUD viewport to match screen size
     hudViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     hudViewport.apply();
     hudBatch.setProjectionMatrix(hudViewport.getCamera().combined);
     hudBatch.begin();
-    hudBatch.draw(hudOverlay, 0, 0, hudOverlay.getWidth() * SPRITE_TO_WORLD, hudOverlay.getHeight() * SPRITE_TO_WORLD);
-    hudBatch.draw(arrow, 464 * SPRITE_TO_WORLD, 150 * SPRITE_TO_WORLD, arrow.getWidth() * SPRITE_TO_WORLD,
-      arrow.getHeight() * SPRITE_TO_WORLD);
+    RenderUtils.drawTexture(hudBatch, hudOverlay, 0, 0);
+    RenderUtils.drawTexture(hudBatch, arrow, 464, 150);
     hudBatch.flush();
     drawHudData(hudData);
     hudBatch.end();
   }
 
   private void drawHudData(HudData hudData) {
-    drawHudString(String.format("%.1f", hudData.speed()), 2, 163);
+    drawHudString(String.valueOf(Math.round(hudData.speed())), 2, 163);
     drawHudString(String.valueOf(hudData.health()), 12, 142);
     drawHudString(String.valueOf(hudData.fuel()), 12, 132);
     drawHudString(String.valueOf(hudData.rockets()), 15, 115);
@@ -66,10 +64,7 @@ public class HudRenderer implements Disposable {
   }
 
   /**
-   * Formats a given distance value into a string representation with appropriate units.
-   * Distances less than 100 are displayed in meters (m). Distances between 100 and 1000 are
-   * displayed in kilometers with one decimal place (km). Distances 1000 or greater are
-   * displayed in whole kilometers (km).
+   * Formats a given distance value into a string representation with appropriate units (m or km).
    *
    * @param distance the distance to be formatted, expressed in meters
    * @return a string representation of the distance with the appropriate unit
@@ -79,7 +74,7 @@ public class HudRenderer implements Disposable {
       return String.format("%dm", distance);
     }
     if (distance < 1000) {
-      return String.format("%.1fkm", distance / 100f);
+      return String.format("%.1fkm", distance / 1000f);
     }
     return String.format("%dkm", distance / 1000);
   }

@@ -16,7 +16,7 @@ public class Car implements Disposable {
   private static final float MAX_FORWARD_SPEED = 16f;
   private static final float MAX_BACKWARD_SPEED = -8f;
   private static final float MAX_DRIVE_FORCE = 2f;
-  private static final float MAX_LATERAL_IMPULSE = 2f;
+  private static final float MAX_LATERAL_IMPULSE = 20f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
 
   public final Sprite sprite;
