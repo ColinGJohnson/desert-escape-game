@@ -11,9 +11,10 @@ import com.badlogic.gdx.utils.Disposable;
 import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
 public class Obstacle implements Disposable {
-  private ObstacleType type;
-  private Sprite sprite;
-  private Body body;
+  private final ObstacleType type;
+  private final Sprite sprite;
+  private final Body body;
+  private final World world;
 
   public Obstacle(ObstacleType type, World world, Vector2 position) {
     this.type = type;
@@ -24,6 +25,7 @@ public class Obstacle implements Disposable {
     sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
         texture.getHeight() * SPRITE_TO_WORLD);
     sprite.setOriginCenter();
+    this.world = world;
   }
 
   public void draw(SpriteBatch batch) {
@@ -42,6 +44,7 @@ public class Obstacle implements Disposable {
   @Override
   public void dispose() {
     sprite.getTexture().dispose();
+    world.destroyBody(body);
   }
 
   private static Body createBody(World world, Vector2 position) {

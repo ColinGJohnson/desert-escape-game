@@ -4,64 +4,79 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.games.escape.terrain.WallTile.Direction;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.Map;
 
 import static dev.cgj.games.escape.terrain.Tile.TILE_SIZE;
 
 public class TileManager implements Disposable {
-  List<Tile> leftWallTiles;
-  List<Tile> rightWallTiles;
-  List<Tile> roadTiles;
+  record TilePosition(int x, int y) { }
+  private final Map<TilePosition, Tile> tiles = new HashMap<>();
+  private final World world;
 
   public TileManager(World world) {
-    roadTiles = generateTiles(RoadTile::new, world);
-    leftWallTiles = generateTiles(() -> new WallTile(Direction.LEFT), world);
-    rightWallTiles = generateTiles(() -> new WallTile(Direction.RIGHT), world);
-  }
-
-  @Override
-  public void dispose() {
-    Stream.of(leftWallTiles, roadTiles, rightWallTiles)
-      .flatMap(Collection::stream)
-      .forEach(Tile::dispose);
+    this.world = world;
   }
 
   public void update(Vector2 playerPosition) {
-    for (int i = 0; i < 3; i++) {
-      float y = playerPosition.y + (i - 1) * TILE_SIZE;
-      roadTiles.get(i).setPosition(roundToTileSize(new Vector2(0, y)));
-      leftWallTiles.get(i).setPosition(roundToTileSize(new Vector2(-TILE_SIZE, y)));
-      rightWallTiles.get(i).setPosition(roundToTileSize(new Vector2(TILE_SIZE, y)));
+    List<TilePosition> requiredTiles = getVisibleTilePositions(playerPosition);
+
+    // Add tiles that should be visible but haven't yet been created
+    for (TilePosition requiredTile : requiredTiles) {
+      if (!tiles.containsKey(requiredTile)) {
+        Tile tile = new Tile(getTileDefinition(requiredTile), world);
+        tile.setPosition(new Vector2(requiredTile.x, requiredTile.y));
+        tiles.put(requiredTile, tile);
+      }
+    }
+
+    // Remove tiles which have been created but are no longer visible
+    for (TilePosition existingTile : new ArrayList<>(tiles.keySet())) {
+      if (!requiredTiles.contains(existingTile)) {
+        Tile tile = tiles.get(existingTile);
+        tile.dispose();
+        tiles.remove(existingTile);
+      }
     }
   }
 
-  public void draw(SpriteBatch batch) {
-    drawTiles(batch, roadTiles);
-    drawTiles(batch, leftWallTiles);
-    drawTiles(batch, rightWallTiles);
+  private TileDefinition getTileDefinition(TilePosition position) {
+    if (position.x < 0) {
+      return new WallTile(WallTile.Direction.LEFT);
+    } else if (position.x > 0) {
+      return new WallTile(WallTile.Direction.RIGHT);
+    }
+    return new RoadTile();
   }
 
-  private void drawTiles(SpriteBatch batch, List<Tile> tiles) {
-    for (Tile tile : tiles) {
+  private List<TilePosition> getVisibleTilePositions(Vector2 playerPosition) {
+    List<TilePosition> visibleTiles = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      float y = playerPosition.y + (i - 1) * TILE_SIZE;
+      visibleTiles.add(roundToTileSize(new Vector2(0, y)));
+      visibleTiles.add(roundToTileSize(new Vector2(-TILE_SIZE, y)));
+      visibleTiles.add(roundToTileSize(new Vector2(TILE_SIZE, y)));
+    }
+    return visibleTiles;
+  }
+
+  private TilePosition roundToTileSize(Vector2 position) {
+    int x = Math.round(position.x / TILE_SIZE) * (int) TILE_SIZE;
+    int y = Math.round(position.y / TILE_SIZE) * (int) TILE_SIZE;
+    return new TilePosition(x, y);
+  }
+
+  public void draw(SpriteBatch batch) {
+    for (Tile tile : tiles.values()) {
       tile.draw(batch);
     }
   }
 
-  private Vector2 roundToTileSize(Vector2 position) {
-    float x = Math.round(position.x / TILE_SIZE) * TILE_SIZE;
-    float y = Math.round(position.y / TILE_SIZE) * TILE_SIZE;
-    return new Vector2(x, y);
-  }
-
-  <T extends TileDefinition> List<Tile> generateTiles(Supplier<T> supplier, World world) {
-    return Stream.generate(supplier)
-      .map(tileDefinition -> new Tile(tileDefinition, world))
-      .limit(3)
-      .toList();
+  @Override
+  public void dispose() {
+    tiles.values().forEach(Tile::dispose);
   }
 }

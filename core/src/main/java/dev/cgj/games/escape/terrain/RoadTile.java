@@ -13,7 +13,7 @@ import static dev.cgj.games.escape.Constants.spriteToWorld;
 
 public class RoadTile implements TileDefinition {
   SpawnZone leftDirt = new SpawnZone(spriteToWorld(0, 0), spriteToWorld(90, 270));
-  SpawnZone rightDirt = new SpawnZone(spriteToWorld(390, 0), spriteToWorld(480, 270));
+  SpawnZone rightDirt = new SpawnZone(spriteToWorld(180, 0), spriteToWorld(270, 270));
   SpawnZone road = new SpawnZone(spriteToWorld(120, 0), spriteToWorld(150, 270));
 
   @Override
@@ -36,7 +36,7 @@ public class RoadTile implements TileDefinition {
       .limit(5);
     Stream<Obstacle> cones = Stream.generate(() ->
         new Obstacle(ObstacleType.CONE, world, road.randomPosition()))
-      .limit(3);
+      .limit(1);
     return Stream.concat(Stream.concat(left, right), cones).toList();
   }
 }

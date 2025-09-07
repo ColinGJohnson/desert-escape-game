@@ -20,12 +20,14 @@ public class Tile {
   private final List<Body> staticBodies;
   private final List<Obstacle> obstacles;
   private final Vector2 position;
+  private final World world;
 
   public Tile(TileDefinition definition, World world) {
     this.texture = definition.getTexturePath();
     this.staticBodies = definition.addStaticBodies(world);
     this.obstacles = definition.addObstacles(world);
     this.position = Vector2.Zero.cpy();
+    this.world = world;
   }
 
   public Texture getTexture() {
@@ -66,6 +68,9 @@ public class Tile {
   }
 
   public void dispose() {
+    for (Body body : staticBodies) {
+      world.destroyBody(body);
+    }
     texture.dispose();
   }
 }
