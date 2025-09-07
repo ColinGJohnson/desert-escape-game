@@ -29,7 +29,7 @@ public class RoadTile implements TileDefinition {
   @Override
   public List<Obstacle> addObstacles(World world) {
     Stream<Obstacle> left = Stream.generate(() ->
-        new Obstacle(ObstacleType.CACTUS, world, leftDirt.randomPosition()))
+        new Obstacle(ObstacleType.SKULL, world, leftDirt.randomPosition()))
       .limit(5);
     Stream<Obstacle> right = Stream.generate(() ->
         new Obstacle(ObstacleType.CACTUS, world, rightDirt.randomPosition()))

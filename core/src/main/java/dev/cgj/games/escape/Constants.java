@@ -10,6 +10,7 @@ public class Constants {
    * user's screen, which is expected to vary.
    */
   public static final float SPRITE_TO_WORLD = 0.1f;
+  public static final float WORLD_TO_SPRITE = 1 / SPRITE_TO_WORLD;
   public static final float TIME_STEP = 1 / 60f;
   public static final int VELOCITY_ITERATIONS = 6;
   public static final int POSITION_ITERATIONS = 2;
@@ -20,5 +21,13 @@ public class Constants {
 
   public static Vector2 spriteToWorld(float x, float y) {
     return new Vector2(x, y).scl(SPRITE_TO_WORLD);
+  }
+
+  public static Vector2 roundWorldToNearestPixel(Vector2 vector) {
+    return new Vector2(roundWorldToNearestPixel(vector.x), roundWorldToNearestPixel(vector.y));
+  }
+
+  public static float roundWorldToNearestPixel(float value) {
+    return Math.round(value * WORLD_TO_SPRITE) * SPRITE_TO_WORLD;
   }
 }

@@ -1,6 +1,7 @@
 package dev.cgj.games.escape.terrain;
 
 import com.badlogic.gdx.math.Vector2;
+import dev.cgj.games.escape.Constants;
 
 public class SpawnZone {
   private final Vector2 min;
@@ -12,7 +13,7 @@ public class SpawnZone {
   }
 
   public Vector2 randomPosition() {
-    return randomPosition(min, max);
+    return Constants.roundWorldToNearestPixel(randomPosition(min, max));
   }
 
   /**
