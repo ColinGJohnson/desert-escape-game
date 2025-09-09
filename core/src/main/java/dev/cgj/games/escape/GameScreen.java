@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.games.escape.entity.Car;
 import dev.cgj.games.escape.entity.CarType;
+import dev.cgj.games.escape.physics.EntityContactListener;
 import dev.cgj.games.escape.render.HudData;
 import dev.cgj.games.escape.render.HudRenderer;
 import dev.cgj.games.escape.terrain.TileManager;
@@ -26,6 +27,7 @@ public class GameScreen implements Screen {
   public GameScreen(final DesertEscape game) {
     this.game = game;
     world = new World(Vector2.Zero, true);
+    world.setContactListener(new EntityContactListener());
     car = new Car(CarType.SPORTS, world);
     tileManager = new TileManager(world);
     hudRenderer = new HudRenderer();
@@ -113,7 +115,11 @@ public class GameScreen implements Screen {
   }
 
   private void updateCameraPosition() {
-    game.viewport.getCamera().position.set(car.body.carBody.getPosition(), 0);
+    Vector2 carPosition = car.body.carBody.getPosition().cpy();
+    // TODO: Position camera based on car's velocity (requires smoothing)
+    // carPosition.add(new Vector2(0, car.body.getForwardVelocity()).clamp(0, 10));
+    carPosition.add(new Vector2(0, 5).clamp(0, 10));
+    game.viewport.getCamera().position.set(carPosition, 0);
   }
 
   private HudData getHudData(Car car) {
