@@ -1,42 +1,29 @@
 package dev.cgj.games.escape.physics;
 
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 
 public class EntityContactListener implements ContactListener {
 
   @Override
   public void beginContact(Contact contact) {
-    Fixture fixtureA = contact.getFixtureA();
-    Fixture fixtureB = contact.getFixtureB();
+    Object userDataA = contact.getFixtureA().getBody().getUserData();
+    Object userDataB = contact.getFixtureB().getBody().getUserData();
 
-    if (fixtureA.isSensor() || fixtureB.isSensor()) {
-      handleSensorContact(fixtureA, fixtureB, true);
+    if (userDataA instanceof UserData && userDataB instanceof UserData) {
+      handleCollision((UserData) userDataA, (UserData) userDataB);
     }
+  }
+
+  private static void handleCollision(UserData entityA, UserData entityB) {
+    entityA.handleCollision(entityB.getCollisionData());
+    entityB.handleCollision(entityA.getCollisionData());
   }
 
   @Override
-  public void endContact(Contact contact) {
-    Fixture fixtureA = contact.getFixtureA();
-    Fixture fixtureB = contact.getFixtureB();
-
-    if (fixtureA.isSensor() || fixtureB.isSensor()) {
-      handleSensorContact(fixtureA, fixtureB, false);
-    }
-  }
-
-  private void handleSensorContact(Fixture fixtureA, Fixture fixtureB, boolean isBeginning) {
-    Fixture sensor = fixtureA.isSensor() ? fixtureA : fixtureB;
-    Fixture other = fixtureA.isSensor() ? fixtureB : fixtureA;
-
-    Object sensorData = sensor.getBody().getUserData();
-    Object otherData = other.getBody().getUserData();
-
-    if (isBeginning) {
-      System.out.println("Sensor collision started");
-    } else {
-      System.out.println("Sensor collision ended");
-    }
-  }
+  public void endContact(Contact contact) { }
 
   @Override
   public void preSolve(Contact contact, Manifold oldManifold) { }

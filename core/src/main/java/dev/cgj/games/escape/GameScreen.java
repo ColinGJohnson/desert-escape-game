@@ -18,7 +18,7 @@ public class GameScreen implements Screen {
   private final DesertEscape game;
   private float accumulator = 0;
   private final World world;
-  private final Car car;
+  private final Player player;
   private final TileManager tileManager;
   private final HudRenderer hudRenderer;
 
@@ -28,7 +28,7 @@ public class GameScreen implements Screen {
     this.game = game;
     world = new World(Vector2.Zero, true);
     world.setContactListener(new EntityContactListener());
-    car = new Car(CarType.SPORTS, world);
+    player = new Player(new Car(CarType.SPORTS, world));
     tileManager = new TileManager(world);
     hudRenderer = new HudRenderer();
   }
@@ -60,11 +60,11 @@ public class GameScreen implements Screen {
 
   @Override
   public void dispose() {
-    car.dispose();
+    player.car.dispose();
   }
 
   private void handleInput(float delta) {
-    car.handleInput(delta, Gdx.input);
+    player.car.handleInput(delta, Gdx.input);
 
     if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
       game.setScreen(new MainMenuScreen(game));
@@ -77,8 +77,8 @@ public class GameScreen implements Screen {
   }
 
   private void updateLogic() {
-    car.updatePhysics();
-    tileManager.update(car.body.carBody.getPosition());
+    player.car.updatePhysics();
+    tileManager.update(player.car.body.carBody.getPosition());
   }
 
   /**
@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();
     tileManager.draw(game.batch);
-    car.draw(game.batch);
+    player.car.draw(game.batch);
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
@@ -111,19 +111,27 @@ public class GameScreen implements Screen {
     }
 
     // Draw the HUD on top of everything
-    hudRenderer.draw(getHudData(car));
+    hudRenderer.draw(getHudData(player));
   }
 
   private void updateCameraPosition() {
-    Vector2 carPosition = car.body.carBody.getPosition().cpy();
+    Vector2 carPosition = player.car.body.carBody.getPosition().cpy();
     // TODO: Position camera based on car's velocity (requires smoothing)
     // carPosition.add(new Vector2(0, car.body.getForwardVelocity()).clamp(0, 10));
     carPosition.add(new Vector2(0, 5).clamp(0, 10));
     game.viewport.getCamera().position.set(carPosition, 0);
   }
 
-  private HudData getHudData(Car car) {
-    return new HudData(CarType.SPORTS, car.body.getForwardVelocity(), 10, 20, 2, 0, 5, 0f,
-      (int) car.body.carBody.getPosition().y, 9999);
+  private HudData getHudData(Player player) {
+    return new HudData(CarType.SPORTS,
+      player.car.body.getForwardVelocity(),
+      player.health,
+      player.fuel,
+      player.rockets,
+      player.nitro,
+      player.shield,
+      0f,
+      (int) player.car.body.carBody.getPosition().y,
+      9999);
   }
 }

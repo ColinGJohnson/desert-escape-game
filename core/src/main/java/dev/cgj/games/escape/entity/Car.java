@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.games.escape.physics.UserData;
 
 import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
 
@@ -37,6 +38,10 @@ public class Car implements Disposable {
   @Override
   public void dispose() {
     sprite.getTexture().dispose();
+  }
+
+  public void setUserData(UserData userData) {
+    body.carBody.setUserData(userData);
   }
 
   public void draw(SpriteBatch batch) {

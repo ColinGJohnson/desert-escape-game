@@ -71,6 +71,9 @@ public class Tile {
     for (Body body : staticBodies) {
       world.destroyBody(body);
     }
+    for (Obstacle obstacle : obstacles) {
+      obstacle.dispose();
+    }
     texture.dispose();
   }
 }
