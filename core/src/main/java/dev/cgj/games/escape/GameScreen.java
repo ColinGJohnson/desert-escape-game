@@ -28,7 +28,7 @@ public class GameScreen implements Screen {
     this.game = game;
     world = new World(Vector2.Zero, true);
     world.setContactListener(new EntityContactListener());
-    player = new Player(new Car(CarType.SPORTS, world));
+    player = new Player(new Car(CarType.SPORTS, world), new Inventory());
     tileManager = new TileManager(world);
     hudRenderer = new HudRenderer();
   }
@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
   @Override
   public void render(float delta) {
     handleInput(delta);
-    updateLogic();
+    updateLogic(delta);
     stepPhysics(delta);
     draw();
   }
@@ -60,11 +60,11 @@ public class GameScreen implements Screen {
 
   @Override
   public void dispose() {
-    player.car.dispose();
+    player.getCar().dispose();
   }
 
   private void handleInput(float delta) {
-    player.car.handleInput(delta, Gdx.input);
+    player.getCar().handleInput(delta, Gdx.input);
 
     if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
       game.setScreen(new MainMenuScreen(game));
@@ -76,9 +76,9 @@ public class GameScreen implements Screen {
     }
   }
 
-  private void updateLogic() {
-    player.car.updatePhysics();
-    tileManager.update(player.car.body.carBody.getPosition());
+  private void updateLogic(float delta) {
+    player.update(delta);
+    tileManager.update(player.getCar().body.carBody.getPosition());
   }
 
   /**
@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
     game.batch.begin();
     tileManager.draw(game.batch);
-    player.car.draw(game.batch);
+    player.getCar().draw(game.batch);
     game.batch.end();
 
     // Render Box2D debug AFTER batch.end()
@@ -115,7 +115,7 @@ public class GameScreen implements Screen {
   }
 
   private void updateCameraPosition() {
-    Vector2 carPosition = player.car.body.carBody.getPosition().cpy();
+    Vector2 carPosition = player.getCar().body.carBody.getPosition().cpy();
     // TODO: Position camera based on car's velocity (requires smoothing)
     // carPosition.add(new Vector2(0, car.body.getForwardVelocity()).clamp(0, 10));
     carPosition.add(new Vector2(0, 5).clamp(0, 10));
@@ -124,14 +124,14 @@ public class GameScreen implements Screen {
 
   private HudData getHudData(Player player) {
     return new HudData(CarType.SPORTS,
-      player.car.body.getForwardVelocity(),
-      player.health,
-      player.fuel,
-      player.rockets,
-      player.nitro,
-      player.shield,
+      player.getCar().body.getForwardVelocity(),
+      player.getCar().getHealth(),
+      (int) player.getCar().getFuel(),
+      player.getInventory().getRockets(),
+      player.getInventory().getNitro(),
+      player.getInventory().getShield(),
       0f,
-      (int) player.car.body.carBody.getPosition().y,
+      (int) player.getCar().body.carBody.getPosition().y,
       9999);
   }
 }

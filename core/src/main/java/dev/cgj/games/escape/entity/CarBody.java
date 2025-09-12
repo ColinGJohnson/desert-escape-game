@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import dev.cgj.games.escape.physics.UserData;
 
 import java.util.List;
 
@@ -29,8 +30,8 @@ public class CarBody {
     return List.of(frontLeftWheel, frontRightWheel, rearLeftWheel, rearRightWheel);
   }
 
-  public CarBody(World world) {
-    carBody = createCarBody(world);
+  public CarBody(World world, UserData userData) {
+    carBody = createCarBody(world, userData);
 
     frontLeftWheel = createWheel(world);
     frontLeftWheelJoint = joinWheel(world, new Vector2(-4, 4), carBody, frontLeftWheel);
@@ -128,11 +129,12 @@ public class CarBody {
     return (RevoluteJoint) world.createJoint(jointDef);
   }
 
-  private Body createCarBody(World world) {
+  private Body createCarBody(World world, UserData userData) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;
     bodyDef.position.set(10, 10);
     Body car = world.createBody(bodyDef);
+    car.setUserData(userData);
 
     // The sports car sprite is 8 x 16 pixels, so the half-size is 4 x 8
     PolygonShape shape = new PolygonShape();

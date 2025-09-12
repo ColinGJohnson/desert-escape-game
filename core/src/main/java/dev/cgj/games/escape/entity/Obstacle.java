@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.games.escape.Player;
 import dev.cgj.games.escape.physics.UserData;
 
 import static dev.cgj.games.escape.Constants.SPRITE_TO_WORLD;
@@ -32,6 +31,10 @@ public class Obstacle implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
+    if (consumed) {
+      return;
+    }
+
     float posX = body.getPosition().x;
     float posY = body.getPosition().y;
     sprite.setCenter(posX, posY);
@@ -77,8 +80,8 @@ public class Obstacle implements Disposable {
     }
 
     switch (entity) {
-      case Player player -> {
-        player.damage(1);
+      case Car car -> {
+        car.damage(1);
         consumed = true;
       }
       case null, default -> {}

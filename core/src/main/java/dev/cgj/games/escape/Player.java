@@ -2,27 +2,26 @@ package dev.cgj.games.escape;
 
 import dev.cgj.games.escape.entity.Car;
 import dev.cgj.games.escape.entity.CollisionHandler;
-import dev.cgj.games.escape.physics.UserData;
 
 public class Player implements CollisionHandler {
-  public Player(Car car) {
+  private final Car car;
+  private final Inventory inventory;
+
+  public Player(Car car, Inventory inventory) {
     this.car = car;
-    car.setUserData(new UserData((object) -> {}, this));
+    this.inventory = inventory;
   }
 
-  int health = 10;
+  public void update(float delta) {
+    car.update(delta);
+    car.updatePhysics();
+  }
 
-  int fuel ;
+  public Car getCar() {
+    return car;
+  }
 
-  int rockets;
-
-  int nitro;
-
-  int shield;
-
-  Car car;
-
-  public void damage(int amount) {
-    health = Math.max(0, health - amount);
+  public Inventory getInventory() {
+    return inventory;
   }
 }

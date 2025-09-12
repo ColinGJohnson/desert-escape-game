@@ -19,6 +19,10 @@ public class Car implements Disposable {
   private static final float MAX_DRIVE_FORCE = 2f;
   private static final float MAX_LATERAL_IMPULSE = 20f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
+  private static final float FUEL_LOSS_RATE = 1f;
+
+  private int health = 10;
+  private float fuel = 100;
 
   public final Sprite sprite;
   public final CarType carType;
@@ -26,7 +30,7 @@ public class Car implements Disposable {
 
   public Car(CarType carType, World world) {
     this.carType = carType;
-    body = new CarBody(world);
+    body = new CarBody(world, new UserData((object) -> {}, this));
 
     Texture texture = new Texture("sprites/vehicles/sports_car.png");
     sprite = new Sprite(texture);
@@ -40,16 +44,20 @@ public class Car implements Disposable {
     sprite.getTexture().dispose();
   }
 
-  public void setUserData(UserData userData) {
-    body.carBody.setUserData(userData);
-  }
-
   public void draw(SpriteBatch batch) {
     float posX = body.carBody.getPosition().x;
     float posY = body.carBody.getPosition().y;
     sprite.setCenter(posX, posY);
     sprite.setRotation(body.carBody.getAngle() * MathUtils.radiansToDegrees);
     sprite.draw(batch);
+  }
+
+  public void update(float delta) {
+    fuel -= FUEL_LOSS_RATE * delta;
+    if (fuel <= 0) {
+      health = 0;
+      fuel = 0;
+    }
   }
 
   public void handleInput(float delta, Input input) {
@@ -78,5 +86,17 @@ public class Car implements Disposable {
   public void updatePhysics() {
     body.cancelLateralVelocity(MAX_LATERAL_IMPULSE);
     body.cancelAngularVelocity();
+  }
+
+  public void damage(int amount) {
+    health = Math.max(0, health - amount);
+  }
+
+  public int getHealth() {
+    return health;
+  }
+
+  public float getFuel() {
+    return fuel;
   }
 }
