@@ -41,6 +41,16 @@ public class HudRenderer implements Disposable {
     hudBatch.end();
   }
 
+  public void drawWithProjection(com.badlogic.gdx.math.Matrix4 projection, HudData hudData) {
+    hudBatch.setProjectionMatrix(projection);
+    hudBatch.begin();
+    RenderUtils.drawTexture(hudBatch, hudOverlay, 0, 0);
+    RenderUtils.drawTexture(hudBatch, arrow, 464, 150);
+    hudBatch.flush();
+    drawHudData(hudData);
+    hudBatch.end();
+  }
+
   private void drawHudData(HudData hudData) {
     drawHudString(String.valueOf(Math.round(hudData.speed())), 2, 163);
     drawHudString(String.valueOf(hudData.health()), 12, 142);

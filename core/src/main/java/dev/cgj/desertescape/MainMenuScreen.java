@@ -3,14 +3,17 @@ package dev.cgj.desertescape;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.Color;
 
 public class MainMenuScreen implements Screen {
   private final DesertEscape game;
+  public BitmapFont font;
 
   public MainMenuScreen(DesertEscape game) {
     this.game = game;
+    font = new BitmapFont(Gdx.files.internal("fonts/kenney_mini.fnt"));
   }
 
   @Override
@@ -26,16 +29,13 @@ public class MainMenuScreen implements Screen {
     game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
 
     game.batch.begin();
-    game.font.draw(game.batch, "Desert Escape", 1, 1.5f);
-    game.font.draw(game.batch, "Press any key to start", 1, 1);
-
-
-    game.font.draw(game.batch, " !\"#$%&'()*+,-./0123456789:;" +
+    font.draw(game.batch, "Desert Escape", 1, 1.5f);
+    font.draw(game.batch, "Press any key to start", 1, 1);
+    font.draw(game.batch, " !\"#$%&'()*+,-./0123456789:;" +
       "<=>?@ABCDEFGHIJKLMNOPQRSTU\nVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, 10);
 
-
     float worldHeight = game.viewport.getWorldHeight();
-    game.font.draw(game.batch, "Desert Escape", 0, worldHeight);
+    font.draw(game.batch, "Desert Escape", 0, worldHeight);
 
     game.batch.end();
 
@@ -68,6 +68,6 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void dispose() {
-
+    font.dispose();
   }
 }
