@@ -11,14 +11,20 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static dev.cgj.desertescape.Constants.PIXEL_HEIGHT;
+import static dev.cgj.desertescape.Constants.PIXEL_WIDTH;
+
 public class DesertEscape extends Game {
-  public FitViewport viewport;
-  public SpriteBatch batch;
+  public FitViewport screenViewport;
 
   /**
-   * Box2D debug renderer
+   * Screen-space batch to draw {@code renderBuffer} scaled up to the {@code viewport} size.
    */
-  public Box2DDebugRenderer debugRenderer;
+  public SpriteBatch screenBatch;
+
+
+  public SpriteBatch renderBatch;
+
 
   /**
    * Low-resolution render target (480x270)
@@ -26,56 +32,41 @@ public class DesertEscape extends Game {
   public FrameBuffer renderBuffer;
 
   /**
-   * Low-res viewport used for rendering into the 480x270 framebuffer (48x27 world units)
+   * Box2D debug renderer
    */
-  public FitViewport lowResViewport;
-
-  /**
-   * Screen-space batch to draw {@code renderBuffer} scaled.
-   */
-  public SpriteBatch screenBatch;
+  public Box2DDebugRenderer debugRenderer;
 
   public void create() {
-    batch = new SpriteBatch();
+    renderBatch = new SpriteBatch();
     screenBatch = new SpriteBatch();
-    viewport = new FitViewport(480 * Constants.SPRITE_TO_WORLD, 270 * Constants.SPRITE_TO_WORLD);
-    debugRenderer = new Box2DDebugRenderer();
+    screenViewport = new FitViewport(PIXEL_WIDTH, PIXEL_HEIGHT);
     renderBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, 480, 270, false);
-    renderBuffer.getColorBufferTexture()
-      .setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+    renderBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+    debugRenderer = new Box2DDebugRenderer();
     this.setScreen(new GameScreen(this));
   }
 
   @Override
   public void render() {
     super.render();
-
     ScreenUtils.clear(Color.BLACK);
+    screenViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+    screenBatch.setProjectionMatrix(screenViewport.getCamera().combined);
     screenBatch.begin();
-    screenBatch.setColor(1, 1, 1, 1);
-
-    // Calculate destination size using integer scaling with letterboxing.
-    int windowW = Gdx.graphics.getWidth();
-    int windowH = Gdx.graphics.getHeight();
-    float scaleF = Math.min(windowW / 480f, windowH / 270f);
-    int targetW = Math.max(1, Math.round(480 * scaleF));
-    int targetH = Math.max(1, Math.round(270 * scaleF));
-    int x = (windowW - targetW) / 2;
-    int y = (windowH - targetH) / 2;
-
-    // Draw with a negative height to flip the FBO texture vertically (FBOs are upside-down)
-    screenBatch.draw(renderBuffer.getColorBufferTexture(), x, y + targetH, targetW, -targetH);
+    screenBatch.draw(renderBuffer.getColorBufferTexture(), 0, PIXEL_HEIGHT, PIXEL_WIDTH, -PIXEL_HEIGHT);
     screenBatch.end();
   }
 
   @Override
   public void resize(int width, int height) {
-//    lowResViewport.update(480, 270, true);
+    screenViewport.update(width, height, true);
   }
 
   public void dispose() {
-    batch.dispose();
+    renderBatch.dispose();
     screenBatch.dispose();
-    if (renderBuffer != null) renderBuffer.dispose();
+    if (renderBuffer != null) {
+      renderBuffer.dispose();
+    }
   }
 }

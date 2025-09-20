@@ -1,26 +1,30 @@
 package dev.cgj.desertescape.render;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
 
 public class HudRenderer implements Disposable {
-  private final Viewport hudViewport;
-  private final SpriteBatch hudBatch;
+  private final Camera camera;
+  private final SpriteBatch spriteBatch;
+  private final BitmapFont font;
   private final Texture hudOverlay;
   private final Texture arrow;
-  private final BitmapFont font;
 
   public HudRenderer() {
-    hudViewport = new FitViewport(480 * SPRITE_TO_WORLD, 270 * SPRITE_TO_WORLD);
-    hudBatch = new SpriteBatch();
+    camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
+    camera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
+    camera.update();
+    spriteBatch = new SpriteBatch();
     hudOverlay = new Texture("sprites/ui/ui_overlay.png");
     arrow = new Texture("sprites/ui/arrow.png");
     font = new BitmapFont(Gdx.files.internal("fonts/kenney_mini.fnt"));
@@ -30,25 +34,13 @@ public class HudRenderer implements Disposable {
   }
 
   public void draw(HudData hudData) {
-    hudViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-    hudViewport.apply();
-    hudBatch.setProjectionMatrix(hudViewport.getCamera().combined);
-    hudBatch.begin();
-    RenderUtils.drawTexture(hudBatch, hudOverlay, 0, 0);
-    RenderUtils.drawTexture(hudBatch, arrow, 464, 150);
-    hudBatch.flush();
+    spriteBatch.setProjectionMatrix(camera.combined);
+    spriteBatch.begin();
+    RenderUtils.drawTexture(spriteBatch, hudOverlay, 0, 0);
+    RenderUtils.drawTexture(spriteBatch, arrow, 464, 150);
+    spriteBatch.flush();
     drawHudData(hudData);
-    hudBatch.end();
-  }
-
-  public void drawWithProjection(com.badlogic.gdx.math.Matrix4 projection, HudData hudData) {
-    hudBatch.setProjectionMatrix(projection);
-    hudBatch.begin();
-    RenderUtils.drawTexture(hudBatch, hudOverlay, 0, 0);
-    RenderUtils.drawTexture(hudBatch, arrow, 464, 150);
-    hudBatch.flush();
-    drawHudData(hudData);
-    hudBatch.end();
+    spriteBatch.end();
   }
 
   private void drawHudData(HudData hudData) {
@@ -70,7 +62,7 @@ public class HudRenderer implements Disposable {
    * @param spriteY the y-coordinate in sprite-space where the text should be drawn
    */
   private void drawHudString(String text, float spriteX, float spriteY) {
-    font.draw(hudBatch, text, spriteX * SPRITE_TO_WORLD, spriteY * SPRITE_TO_WORLD);
+    font.draw(spriteBatch, text, spriteX * SPRITE_TO_WORLD, spriteY * SPRITE_TO_WORLD);
   }
 
   /**

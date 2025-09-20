@@ -25,19 +25,19 @@ public class MainMenuScreen implements Screen {
   public void render(float delta) {
     ScreenUtils.clear(Color.BLACK);
 
-    game.viewport.apply();
-    game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+    game.screenViewport.apply();
+    game.renderBatch.setProjectionMatrix(game.screenViewport.getCamera().combined);
 
-    game.batch.begin();
-    font.draw(game.batch, "Desert Escape", 1, 1.5f);
-    font.draw(game.batch, "Press any key to start", 1, 1);
-    font.draw(game.batch, " !\"#$%&'()*+,-./0123456789:;" +
+    game.renderBatch.begin();
+    font.draw(game.renderBatch, "Desert Escape", 1, 1.5f);
+    font.draw(game.renderBatch, "Press any key to start", 1, 1);
+    font.draw(game.renderBatch, " !\"#$%&'()*+,-./0123456789:;" +
       "<=>?@ABCDEFGHIJKLMNOPQRSTU\nVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, 10);
 
-    float worldHeight = game.viewport.getWorldHeight();
-    font.draw(game.batch, "Desert Escape", 0, worldHeight);
+    float worldHeight = game.screenViewport.getWorldHeight();
+    font.draw(game.renderBatch, "Desert Escape", 0, worldHeight);
 
-    game.batch.end();
+    game.renderBatch.end();
 
     if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
       System.out.println("Starting game...");

@@ -3,7 +3,11 @@ package dev.cgj.desertescape;
 import com.badlogic.gdx.math.Vector2;
 
 public class Constants {
-  public static final float OFF_ROAD_PENALTY = 0.75f;
+  public static final int PIXEL_WIDTH = 480;
+  public static final int PIXEL_HEIGHT = 270;
+
+  public static final int WORLD_WIDTH = 48;
+  public static final int WORLD_HEIGHT = 27;
 
   /**
    * The size in world units of each sprite pixel. This is *not* the size of a pixel on the
@@ -11,6 +15,7 @@ public class Constants {
    */
   public static final float SPRITE_TO_WORLD = 0.1f;
   public static final float WORLD_TO_SPRITE = 1 / SPRITE_TO_WORLD;
+
   public static final float TIME_STEP = 1 / 60f;
   public static final int VELOCITY_ITERATIONS = 6;
   public static final int POSITION_ITERATIONS = 2;
