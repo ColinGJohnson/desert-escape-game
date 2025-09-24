@@ -22,9 +22,7 @@ public class DesertEscape extends Game {
    */
   public SpriteBatch screenBatch;
 
-
   public SpriteBatch renderBatch;
-
 
   /**
    * Low-resolution render target (480x270)
@@ -43,7 +41,7 @@ public class DesertEscape extends Game {
     renderBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, 480, 270, false);
     renderBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     debugRenderer = new Box2DDebugRenderer();
-    this.setScreen(new GameScreen(this));
+    this.setScreen(new MainMenuScreen(this));
   }
 
   @Override

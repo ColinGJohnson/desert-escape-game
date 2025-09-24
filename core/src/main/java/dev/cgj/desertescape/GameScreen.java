@@ -16,8 +16,11 @@ import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
 
-import static dev.cgj.desertescape.Constants.*;
+import static dev.cgj.desertescape.Constants.POSITION_ITERATIONS;
+import static dev.cgj.desertescape.Constants.TIME_STEP;
+import static dev.cgj.desertescape.Constants.VELOCITY_ITERATIONS;
 import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
 
 public class GameScreen extends ScreenAdapter {
   private final DesertEscape game;
