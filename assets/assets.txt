@@ -1,4 +1,6 @@
 DesertEscapeBanner.jpg
+audio/click1.ogg
+audio/rollover1.ogg
 fonts/Kenney Mini.ttf
 fonts/kenney_mini.fnt
 fonts/kenney_mini.png

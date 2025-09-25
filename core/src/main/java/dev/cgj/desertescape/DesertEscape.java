@@ -2,6 +2,7 @@ package dev.cgj.desertescape;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -34,6 +35,8 @@ public class DesertEscape extends Game {
    */
   public Box2DDebugRenderer debugRenderer;
 
+  public boolean showDebug = false;
+
   public void create() {
     renderBatch = new SpriteBatch();
     screenBatch = new SpriteBatch();
@@ -45,19 +48,30 @@ public class DesertEscape extends Game {
   }
 
   @Override
+  public void resize(int width, int height) {
+    screenViewport.update(width, height, true);
+  }
+
+  @Override
   public void render() {
     super.render();
+    handleInput();
+    draw();
+  }
+
+  private void handleInput() {
+    if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
+      showDebug = !showDebug;
+    }
+  }
+
+  private void draw() {
     ScreenUtils.clear(Color.BLACK);
     screenViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     screenBatch.setProjectionMatrix(screenViewport.getCamera().combined);
     screenBatch.begin();
     screenBatch.draw(renderBuffer.getColorBufferTexture(), 0, PIXEL_HEIGHT, PIXEL_WIDTH, -PIXEL_HEIGHT);
     screenBatch.end();
-  }
-
-  @Override
-  public void resize(int width, int height) {
-    screenViewport.update(width, height, true);
   }
 
   public void dispose() {

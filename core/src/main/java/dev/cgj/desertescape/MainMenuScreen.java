@@ -3,12 +3,13 @@ package dev.cgj.desertescape;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.graphics.Color;
 
 import java.util.List;
 
@@ -16,8 +17,12 @@ import static dev.cgj.desertescape.Constants.*;
 
 public class MainMenuScreen extends ScreenAdapter {
 
+  Sound rolloverSound = Gdx.audio.newSound(Gdx.files.internal("audio/rollover1.ogg"));
+  Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("audio/click1.ogg"));
+
   private enum MenuOptions {
     START("Start"),
+    HELP("Controls"),
     OPTIONS("Options"),
     EXIT( "Exit");
 
@@ -32,7 +37,11 @@ public class MainMenuScreen extends ScreenAdapter {
     }
   }
 
-  private final List<MenuOptions> menuOptions = List.of(MenuOptions.START, MenuOptions.OPTIONS, MenuOptions.EXIT);
+  private final List<MenuOptions> menuOptions = List.of(MenuOptions.START,
+    MenuOptions.HELP,
+    MenuOptions.OPTIONS,
+    MenuOptions.EXIT
+  );
 
   private final Camera camera;
 
@@ -53,7 +62,6 @@ public class MainMenuScreen extends ScreenAdapter {
     font = new BitmapFont(Gdx.files.internal("fonts/kenney_mini.fnt"));
     font.setUseIntegerPositions(false);
     font.getData().setScale(SPRITE_TO_WORLD);
-    font.setColor(Color.WHITE);
   }
 
   @Override
@@ -65,19 +73,25 @@ public class MainMenuScreen extends ScreenAdapter {
   @Override
   public void dispose() {
     font.dispose();
+    rolloverSound.dispose();
   }
 
   private void handleInput() {
     if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
       selectionIndex = (selectionIndex + menuOptions.size() - 1) % menuOptions.size();
+      rolloverSound.play(1.0f);
     } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
       selectionIndex = (selectionIndex + 1) % menuOptions.size();
+      rolloverSound.play(1.0f);
     }
 
-    if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+    if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+      clickSound.play(1.0f);
       switch (menuOptions.get(selectionIndex)) {
         case START:
           game.setScreen(new GameScreen(game));
+          break;
+        case HELP:
           break;
         case OPTIONS:
           break;
@@ -97,21 +111,27 @@ public class MainMenuScreen extends ScreenAdapter {
     spriteBatch.setProjectionMatrix(camera.combined);
     spriteBatch.begin();
 
-    float lineHeight = 1.25f * font.getLineHeight();
-    float leftMargin = 10;
+    final float leftMargin = 21f;
+    final float bottomMargin = 16f;
 
-    font.draw(spriteBatch, "DESERT ESCAPE", leftMargin, 20 + lineHeight);
+    font.setColor(Color.valueOf("#BE772B"));
+    font.draw(spriteBatch, "DESERT ESCAPE", leftMargin, bottomMargin + 1.5f * font.getLineHeight());
 
     for (int i = 0; i < menuOptions.size(); i++) {
       MenuOptions option = menuOptions.get(i);
       boolean isSelected = i == selectionIndex;
-      float y = 20 - lineHeight * i;
+      float y = bottomMargin - 1.25f * font.getLineHeight() * i;
       String text = isSelected ? "> " + option.getText() : "  " + option.getText();
+      font.setColor(isSelected ? Color.valueOf("#EBEDE9") : Color.valueOf("#C7CFCC"));
       font.draw(spriteBatch, text, leftMargin, y);
     }
 
-    font.draw(spriteBatch, " !\"#$%&'()*+,-./0123456789:;" +
-      "<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, 1);
+    if (game.showDebug) {
+      font.setColor(Color.LIME);
+      font.draw(spriteBatch, " !\"#$%&'()*+,-./0123456789:;" +
+        "<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0, 1);
+    }
+
     spriteBatch.end();
     game.renderBuffer.end();
   }

@@ -16,11 +16,7 @@ import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
 
-import static dev.cgj.desertescape.Constants.POSITION_ITERATIONS;
-import static dev.cgj.desertescape.Constants.TIME_STEP;
-import static dev.cgj.desertescape.Constants.VELOCITY_ITERATIONS;
-import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
-import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
+import static dev.cgj.desertescape.Constants.*;
 
 public class GameScreen extends ScreenAdapter {
   private final DesertEscape game;
@@ -36,8 +32,6 @@ public class GameScreen extends ScreenAdapter {
   private final HudRenderer hudRenderer;
 
   private float accumulator = 0;
-
-  private boolean showDebug = false;
 
   public GameScreen(final DesertEscape game) {
     this.game = game;
@@ -69,10 +63,6 @@ public class GameScreen extends ScreenAdapter {
     if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
       game.setScreen(new MainMenuScreen(game));
       dispose();
-    }
-
-    if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
-      showDebug = !showDebug;
     }
   }
 
@@ -106,7 +96,7 @@ public class GameScreen extends ScreenAdapter {
     player.getCar().draw(game.renderBatch);
     game.renderBatch.end();
 
-    if (showDebug) {
+    if (game.showDebug) {
       game.debugRenderer.render(world, camera.combined);
     }
 
