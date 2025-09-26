@@ -21,9 +21,9 @@ import static dev.cgj.desertescape.Constants.*;
 public class GameScreen extends ScreenAdapter {
   private final DesertEscape game;
 
-  private final Camera camera;
+  public final Camera camera;
 
-  private final World world;
+  public final World world;
 
   private final Player player;
 
@@ -89,17 +89,11 @@ public class GameScreen extends ScreenAdapter {
     updateCameraPosition();
     game.renderBuffer.begin();
     ScreenUtils.clear(Color.PURPLE);
-
     game.renderBatch.setProjectionMatrix(camera.combined);
     game.renderBatch.begin();
     tileManager.draw(game.renderBatch);
     player.getCar().draw(game.renderBatch);
     game.renderBatch.end();
-
-    if (game.showDebug) {
-      game.debugRenderer.render(world, camera.combined);
-    }
-
     hudRenderer.draw(getHudData(player));
     game.renderBuffer.end();
   }

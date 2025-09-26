@@ -12,8 +12,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import static dev.cgj.desertescape.Constants.PIXEL_HEIGHT;
-import static dev.cgj.desertescape.Constants.PIXEL_WIDTH;
+import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
 
 public class DesertEscape extends Game {
   public FitViewport screenViewport;
@@ -35,21 +35,16 @@ public class DesertEscape extends Game {
    */
   public Box2DDebugRenderer debugRenderer;
 
-  public boolean showDebug = false;
+  public boolean showDebug = true;
 
   public void create() {
     renderBatch = new SpriteBatch();
     screenBatch = new SpriteBatch();
-    screenViewport = new FitViewport(PIXEL_WIDTH, PIXEL_HEIGHT);
+    screenViewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT);
     renderBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, 480, 270, false);
     renderBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     debugRenderer = new Box2DDebugRenderer();
     this.setScreen(new MainMenuScreen(this));
-  }
-
-  @Override
-  public void resize(int width, int height) {
-    screenViewport.update(width, height, true);
   }
 
   @Override
@@ -70,7 +65,13 @@ public class DesertEscape extends Game {
     screenViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     screenBatch.setProjectionMatrix(screenViewport.getCamera().combined);
     screenBatch.begin();
-    screenBatch.draw(renderBuffer.getColorBufferTexture(), 0, PIXEL_HEIGHT, PIXEL_WIDTH, -PIXEL_HEIGHT);
+    screenBatch.draw(renderBuffer.getColorBufferTexture(), 0, WORLD_HEIGHT, WORLD_WIDTH, -WORLD_HEIGHT);
+    screenBatch.flush();
+
+    if (showDebug && this.getScreen() instanceof GameScreen gameScreen) {
+      debugRenderer.render(gameScreen.world, gameScreen.camera.combined);
+    }
+
     screenBatch.end();
   }
 
