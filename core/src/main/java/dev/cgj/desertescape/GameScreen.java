@@ -38,7 +38,7 @@ public class GameScreen extends ScreenAdapter {
     camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
     world = new World(Vector2.Zero, true);
     world.setContactListener(new EntityContactListener());
-    player = new Player(new Car(CarType.SPORTS, world), new Inventory());
+    player = new Player(new Car(CarType.SPORTS, world), new Inventory(), new ScoreBoard());
     tileManager = new TileManager(world);
     hudRenderer = new HudRenderer();
   }
@@ -108,13 +108,12 @@ public class GameScreen extends ScreenAdapter {
   private HudData getHudData(Player player) {
     return new HudData(CarType.SPORTS,
       player.getCar().body.getForwardVelocity(),
+      player.getCar().body.carBody.getPosition().y,
+      player.getCar().getFuel(),
       player.getCar().getHealth(),
-      (int) player.getCar().getFuel(),
       player.getInventory().getRockets(),
       player.getInventory().getNitro(),
       player.getInventory().getShield(),
-      0f,
-      (int) player.getCar().body.carBody.getPosition().y,
-      9999);
+      player.getScoreBoard().getScore());
   }
 }

@@ -5,12 +5,11 @@ import dev.cgj.desertescape.entity.CarType;
 public record HudData(
   CarType carType,
   float speed,
+  float distance,
+  float fuel,
   int health,
-  int fuel,
   int rockets,
   int nitro,
   int shield,
-  float progress,
-  int distance,
   int score
-) {};
+) {}

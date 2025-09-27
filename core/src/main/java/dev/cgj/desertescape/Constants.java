@@ -3,6 +3,12 @@ package dev.cgj.desertescape;
 import com.badlogic.gdx.math.Vector2;
 
 public class Constants {
+
+  /**
+   * How far the player needs to travel in world units to win the game.
+   */
+  public static final float GOAL_DISTANCE = 10000;
+
   public static final int PIXEL_WIDTH = 480;
   public static final int PIXEL_HEIGHT = 270;
 

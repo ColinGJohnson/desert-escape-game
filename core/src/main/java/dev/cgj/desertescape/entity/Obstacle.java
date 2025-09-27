@@ -60,7 +60,7 @@ public class Obstacle implements Disposable {
     Body body = world.createBody(bodyDef);
     body.setUserData(userData);
 
-    // Asset sprites are 8x8 pixels, so the half size is 4px
+    // Asset sprites are 8x8 pixels, so the half-size is 4px
     PolygonShape shape = new PolygonShape();
     shape.setAsBox(4f * SPRITE_TO_WORLD, 4f * SPRITE_TO_WORLD);
 
