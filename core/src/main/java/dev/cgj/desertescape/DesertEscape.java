@@ -11,9 +11,10 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dev.cgj.desertescape.screens.GameScreen;
+import dev.cgj.desertescape.screens.MainMenuScreen;
 
-import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
-import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
+import static dev.cgj.desertescape.Constants.*;
 
 public class DesertEscape extends Game {
   public FitViewport screenViewport;
@@ -35,13 +36,13 @@ public class DesertEscape extends Game {
    */
   public Box2DDebugRenderer debugRenderer;
 
-  public boolean showDebug = true;
+  public boolean showDebug = false;
 
   public void create() {
     renderBatch = new SpriteBatch();
     screenBatch = new SpriteBatch();
     screenViewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT);
-    renderBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, 480, 270, false);
+    renderBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, PIXEL_WIDTH, PIXEL_HEIGHT, false);
     renderBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     debugRenderer = new Box2DDebugRenderer();
     this.setScreen(new MainMenuScreen(this));

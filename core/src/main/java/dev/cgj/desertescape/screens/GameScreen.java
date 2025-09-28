@@ -1,4 +1,4 @@
-package dev.cgj.desertescape;
+package dev.cgj.desertescape.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,6 +9,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import dev.cgj.desertescape.DesertEscape;
+import dev.cgj.desertescape.Inventory;
+import dev.cgj.desertescape.Player;
+import dev.cgj.desertescape.ScoreBoard;
 import dev.cgj.desertescape.entity.Car;
 import dev.cgj.desertescape.entity.CarType;
 import dev.cgj.desertescape.physics.EntityContactListener;
@@ -69,6 +73,9 @@ public class GameScreen extends ScreenAdapter {
   private void updateLogic(float delta) {
     player.update(delta);
     tileManager.update(player.getCar().body.carBody.getPosition());
+    if (player.getCar().body.carBody.getPosition().y > GOAL_DISTANCE) {
+      game.setScreen(new WinScreen(game));
+    }
   }
 
   /**
