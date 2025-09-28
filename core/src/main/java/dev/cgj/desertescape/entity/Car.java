@@ -1,7 +1,5 @@
 package dev.cgj.desertescape.entity;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +18,7 @@ public class Car implements Disposable {
   private static final float MAX_LATERAL_IMPULSE = 20f;
   private static final float MAX_BRAKE_IMPULSE = 1f;
   private static final float FUEL_LOSS_RATE = 1f;
+  private static final float MAX_STEER_ANGLE = 20f;
 
   private int health = 10;
   private float fuel = 100;
@@ -60,32 +59,44 @@ public class Car implements Disposable {
     }
   }
 
-  public void handleInput(float delta, Input input) {
-    if (input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.W)) {
-      body.accelerateToSpeed(MAX_FORWARD_SPEED, MAX_DRIVE_FORCE);
-    } else if (input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.S)) {
-      body.accelerateToSpeed(MAX_BACKWARD_SPEED, MAX_DRIVE_FORCE);
-    }
-
-    boolean turnLeft = input.isKeyPressed(Keys.LEFT) || input.isKeyPressed(Keys.A);
-    boolean turnRight = input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.D);
-
-    if (turnLeft && !turnRight) {
-      body.turnWheels(delta, (float) Math.toRadians(20));
-    } else if (turnRight && !turnLeft) {
-      body.turnWheels(delta, (float) Math.toRadians(-20));
-    } else {
-      body.turnWheelsImmediately(0);
-    }
-
-    if (input.isKeyPressed(Keys.SPACE)) {
-      body.cancelForwardVelocity(MAX_BRAKE_IMPULSE);
-    }
-  }
-
   public void updatePhysics() {
     body.cancelLateralVelocity(MAX_LATERAL_IMPULSE);
     body.cancelAngularVelocity();
+  }
+
+  /**
+   * Accelerates the car towards its maximum forward speed based on the input value.
+   *
+   * @param input The acceleration input, where 0 represents no acceleration, and 1 represents full
+   *              acceleration. The input value is clamped between 0 and 1.
+   */
+  public void accelerate(float input) {
+    float clampedInput = MathUtils.clamp(input, 0, 1f);
+    body.accelerateToSpeed(MAX_FORWARD_SPEED, clampedInput * MAX_DRIVE_FORCE);
+  }
+
+  /**
+   * Reduces the car's forward velocity based on the brake input.
+   * Applies a braking force proportional to the input value and limited by the maximum brake impulse.
+   *
+   * @param input The brake input, where 0 represents no braking, and 1 represents full braking.
+   *              The value will be clamped between 0 and 1.
+   */
+  public void brake(float input) {
+    float clampedInput = MathUtils.clamp(input, 0, 1f);
+    body.cancelForwardVelocity(clampedInput * MAX_BRAKE_IMPULSE);
+  }
+
+  /**
+   * Adjusts the steering angle of the car based on the input and time elapsed.
+   *
+   * @param delta The time elapsed since the last update, used to smooth steering changes.
+   * @param input The desired steering input, where -1 represents full left, 1 represents full right,
+   *              and 0 represents no steering. The value will be clamped between -1 and 1.
+   */
+  public void steer(float delta, float input) {
+    float clampedInput = MathUtils.clamp(input, -1, 1f);
+    body.turnWheels(delta, clampedInput * (float) Math.toRadians(MAX_STEER_ANGLE));
   }
 
   public void damage(int amount) {

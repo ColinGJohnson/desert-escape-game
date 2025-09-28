@@ -2,16 +2,12 @@ package dev.cgj.desertescape;
 
 import dev.cgj.desertescape.entity.Car;
 
-public class Player {
-  private final Car car;
-  private final Inventory inventory;
-  private final ScoreBoard scoreBoard;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.BRAKE_HAND;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_LEFT;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_RIGHT;
 
-  public Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
-    this.car = car;
-    this.inventory = inventory;
-    this.scoreBoard = scoreBoard;
-  }
+public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
 
   public void update(float delta) {
     car.update(delta);
@@ -19,15 +15,26 @@ public class Player {
     scoreBoard.updateDistance(car.body.carBody.getPosition().y);
   }
 
-  public Car getCar() {
-    return car;
+  public void handleInput(float delta) {
+    car.steer(delta, getSteeringInput());
+
+    if (KeyMap.isPressed(ACCELERATE)) {
+      car.accelerate(1);
+    }
+
+    if (KeyMap.isPressed(BRAKE_HAND)) {
+      car.brake(1);
+    }
   }
 
-  public Inventory getInventory() {
-    return inventory;
-  }
-
-  public ScoreBoard getScoreBoard() {
-    return scoreBoard;
+  private float getSteeringInput() {
+    float steerInput = 0;
+    if (KeyMap.isPressed(STEER_LEFT)) {
+      steerInput += 1;
+    }
+    if (KeyMap.isPressed(STEER_RIGHT)) {
+      steerInput -= 1;
+    }
+    return steerInput;
   }
 }
