@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 
-import static dev.cgj.desertescape.Constants.*;
+import static dev.cgj.desertescape.Constants.GOAL_DISTANCE;
+import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
 
 public class HudRenderer implements Disposable {
   private static final int MIN_ARROW_POSITION = 126;

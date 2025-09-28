@@ -1,7 +1,6 @@
 package dev.cgj.desertescape.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -11,10 +10,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.desertescape.DesertEscape;
+import dev.cgj.desertescape.KeyMap;
 
 import java.util.List;
 
-import static dev.cgj.desertescape.Constants.*;
+import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.MENU_DOWN;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.MENU_SELECT;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.MENU_UP;
 
 public abstract class MenuScreen extends ScreenAdapter {
   public static final Color SELECTED_OPTION_COLOR = Color.valueOf("#EBEDE9");
@@ -102,17 +107,14 @@ public abstract class MenuScreen extends ScreenAdapter {
 
 
   private static boolean downKeyPressed() {
-    return Gdx.input.isKeyJustPressed(Input.Keys.DOWN)
-      || Gdx.input.isKeyJustPressed(Input.Keys.S);
+    return KeyMap.isJustPressed(MENU_DOWN);
   }
 
   private static boolean upKeyPressed() {
-    return Gdx.input.isKeyJustPressed(Input.Keys.UP)
-      || Gdx.input.isKeyJustPressed(Input.Keys.W);
+    return KeyMap.isJustPressed(MENU_UP);
   }
 
   private static boolean selectKeyPressed() {
-    return Gdx.input.isKeyJustPressed(Input.Keys.ENTER) ||
-      Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
+    return KeyMap.isJustPressed(MENU_SELECT);
   }
 }

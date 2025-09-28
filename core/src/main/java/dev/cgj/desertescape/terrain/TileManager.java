@@ -13,7 +13,8 @@ import java.util.Map;
 import static dev.cgj.desertescape.terrain.Tile.TILE_SIZE;
 
 public class TileManager implements Disposable {
-  record TilePosition(int x, int y) { }
+  private record TilePosition(int x, int y) {
+  }
   private final Map<TilePosition, Tile> tiles = new HashMap<>();
   private final World world;
 

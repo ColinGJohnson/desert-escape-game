@@ -2,7 +2,6 @@ package dev.cgj.desertescape;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +13,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import dev.cgj.desertescape.screens.GameScreen;
 import dev.cgj.desertescape.screens.MainMenuScreen;
 
-import static dev.cgj.desertescape.Constants.*;
+import static dev.cgj.desertescape.Constants.PIXEL_HEIGHT;
+import static dev.cgj.desertescape.Constants.PIXEL_WIDTH;
+import static dev.cgj.desertescape.Constants.WORLD_HEIGHT;
+import static dev.cgj.desertescape.Constants.WORLD_WIDTH;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.TOGGLE_DEBUG;
 
 public class DesertEscape extends Game {
   public FitViewport screenViewport;
@@ -56,7 +59,7 @@ public class DesertEscape extends Game {
   }
 
   private void handleInput() {
-    if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
+    if (KeyMap.isJustPressed(TOGGLE_DEBUG)) {
       showDebug = !showDebug;
     }
   }
