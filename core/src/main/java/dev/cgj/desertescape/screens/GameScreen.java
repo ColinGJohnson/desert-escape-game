@@ -29,17 +29,11 @@ import static dev.cgj.desertescape.KeyMap.KeyBinding.PAUSE;
 
 public class GameScreen extends ScreenAdapter {
   private final DesertEscape game;
-
   public final Camera camera;
-
   public final World world;
-
   private final Player player;
-
   private final TileManager tileManager;
-
   private final HudRenderer hudRenderer;
-
   private float accumulator = 0;
 
   public GameScreen(final DesertEscape game) {
@@ -70,7 +64,7 @@ public class GameScreen extends ScreenAdapter {
     player.handleInput(delta);
 
     if (KeyMap.isPressed(PAUSE)) {
-      game.setScreen(new MainMenuScreen(game));
+      game.setScreen(new PauseScreen(game, this));
       dispose();
     }
   }

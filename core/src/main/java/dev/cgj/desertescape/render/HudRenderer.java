@@ -95,5 +95,6 @@ public class HudRenderer implements Disposable {
   @Override
   public void dispose() {
     hudOverlay.dispose();
+    arrow.dispose();
   }
 }
