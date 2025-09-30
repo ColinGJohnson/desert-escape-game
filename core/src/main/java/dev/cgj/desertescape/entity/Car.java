@@ -12,26 +12,20 @@ import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
 /// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
 public class Car implements Disposable {
-  private static final float MAX_FORWARD_SPEED = 16f;
-  private static final float MAX_BACKWARD_SPEED = -8f;
-  private static final float MAX_DRIVE_FORCE = 2f;
-  private static final float MAX_LATERAL_IMPULSE = 20f;
-  private static final float MAX_BRAKE_IMPULSE = 1f;
-  private static final float FUEL_LOSS_RATE = 1f;
-  private static final float MAX_STEER_ANGLE = 20f;
-
-  private int health = 10;
-  private float fuel = 100;
-
   public final Sprite sprite;
-  public final CarType carType;
   public final CarBody body;
+  public final CarType type;
 
-  public Car(CarType carType, World world) {
-    this.carType = carType;
+  private int health;
+  private float fuel;
+
+  public Car(CarType type, World world) {
+    this.type = type;
+    this.health = type.maxHealth;
+    this.fuel = type.maxFuel;
     body = new CarBody(world, new UserData((object) -> {}, this));
 
-    Texture texture = new Texture("sprites/vehicles/sports_car.png");
+    Texture texture = new Texture(type.spritePath.substring(1));
     sprite = new Sprite(texture);
     sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
       texture.getHeight() * SPRITE_TO_WORLD);
@@ -52,15 +46,17 @@ public class Car implements Disposable {
   }
 
   public void update(float delta) {
-    fuel -= FUEL_LOSS_RATE * delta;
+    fuel -= type.fuelLossRate * delta;
     if (fuel <= 0) {
       health = 0;
       fuel = 0;
+    } else if (fuel > type.maxFuel) {
+      fuel = type.maxFuel;
     }
   }
 
   public void updatePhysics() {
-    body.cancelLateralVelocity(MAX_LATERAL_IMPULSE);
+    body.cancelLateralVelocity(type.maxLateralImpulse);
     body.cancelAngularVelocity();
   }
 
@@ -72,7 +68,7 @@ public class Car implements Disposable {
    */
   public void accelerate(float input) {
     float clampedInput = MathUtils.clamp(input, 0, 1f);
-    body.accelerateToSpeed(MAX_FORWARD_SPEED, clampedInput * MAX_DRIVE_FORCE);
+    body.accelerateToSpeed(type.maxForwardSpeed, clampedInput * type.maxDriveForce);
   }
 
   /**
@@ -84,7 +80,7 @@ public class Car implements Disposable {
    */
   public void brake(float input) {
     float clampedInput = MathUtils.clamp(input, 0, 1f);
-    body.cancelForwardVelocity(clampedInput * MAX_BRAKE_IMPULSE);
+    body.cancelForwardVelocity(clampedInput * type.maxBrakeImpulse);
   }
 
   /**
@@ -96,7 +92,7 @@ public class Car implements Disposable {
    */
   public void steer(float delta, float input) {
     float clampedInput = MathUtils.clamp(input, -1, 1f);
-    body.turnWheels(delta, clampedInput * (float) Math.toRadians(MAX_STEER_ANGLE));
+    body.turnWheels(delta, clampedInput * (float) Math.toRadians(type.maxSteerAngleDeg));
   }
 
   public void damage(int amount) {
