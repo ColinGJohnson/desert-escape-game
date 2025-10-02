@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.entity;
+package dev.cgj.desertescape.vehicle;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -24,12 +24,7 @@ public class Car implements Disposable {
     this.health = type.maxHealth;
     this.fuel = type.maxFuel;
     body = new CarBody(world, new UserData((object) -> {}, this));
-
-    Texture texture = new Texture(type.spritePath.substring(1));
-    sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
-      texture.getHeight() * SPRITE_TO_WORLD);
-    sprite.setOriginCenter();
+    sprite = getSprite(type);
   }
 
   @Override
@@ -46,6 +41,8 @@ public class Car implements Disposable {
   }
 
   public void update(float delta) {
+
+    // Consume fuel
     fuel -= type.fuelLossRate * delta;
     if (fuel <= 0) {
       health = 0;
@@ -53,9 +50,9 @@ public class Car implements Disposable {
     } else if (fuel > type.maxFuel) {
       fuel = type.maxFuel;
     }
-  }
 
-  public void updatePhysics() {
+    // Update physics
+    // TODO: Move to update function in CarBody
     body.cancelLateralVelocity(type.maxLateralImpulse);
     body.cancelAngularVelocity();
   }
@@ -99,11 +96,28 @@ public class Car implements Disposable {
     health = Math.max(0, health - amount);
   }
 
+  public void repair(int amount) {
+    health = Math.min(type.maxHealth, health + amount);
+  }
+
+  public void refuel(float amount) {
+    fuel = Math.min(type.maxFuel, fuel + amount);
+  }
+
   public int getHealth() {
     return health;
   }
 
   public float getFuel() {
     return fuel;
+  }
+
+  private Sprite getSprite(CarType type) {
+    Texture texture = new Texture(type.spritePath.substring(1));
+    Sprite sprite = new Sprite(texture);
+    sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
+      texture.getHeight() * SPRITE_TO_WORLD);
+    sprite.setOriginCenter();
+    return sprite;
   }
 }

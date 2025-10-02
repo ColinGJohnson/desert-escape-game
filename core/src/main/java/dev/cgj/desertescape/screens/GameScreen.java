@@ -12,12 +12,12 @@ import dev.cgj.desertescape.Inventory;
 import dev.cgj.desertescape.KeyMap;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.ScoreBoard;
-import dev.cgj.desertescape.entity.Car;
-import dev.cgj.desertescape.entity.CarType;
 import dev.cgj.desertescape.physics.EntityContactListener;
 import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
+import dev.cgj.desertescape.vehicle.Car;
+import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.Constants.GOAL_DISTANCE;
 import static dev.cgj.desertescape.Constants.POSITION_ITERATIONS;
@@ -63,7 +63,7 @@ public class GameScreen extends ScreenAdapter {
   private void handleInput(float delta) {
     player.handleInput(delta);
 
-    if (KeyMap.isPressed(PAUSE)) {
+    if (KeyMap.isJustPressed(PAUSE)) {
       game.setScreen(new PauseScreen(game, this));
       dispose();
     }

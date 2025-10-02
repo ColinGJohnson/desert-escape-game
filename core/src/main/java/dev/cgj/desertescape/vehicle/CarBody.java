@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.entity;
+package dev.cgj.desertescape.vehicle;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;

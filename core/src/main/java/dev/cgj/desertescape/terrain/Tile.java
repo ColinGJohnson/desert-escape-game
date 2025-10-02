@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.entity.Obstacle;
+import dev.cgj.desertescape.entity.Powerup;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class Tile {
   private final Texture texture;
   private final List<Body> staticBodies;
   private final List<Obstacle> obstacles;
+  private final List<Powerup> powerups;
   private final Vector2 position;
   private final World world;
 
@@ -26,6 +28,7 @@ public class Tile {
     this.texture = definition.getTexturePath();
     this.staticBodies = definition.addStaticBodies(world);
     this.obstacles = definition.addObstacles(world);
+    this.powerups = definition.addPowerups(world);
     this.position = Vector2.Zero.cpy();
     this.world = world;
   }
@@ -75,5 +78,14 @@ public class Tile {
       obstacle.dispose();
     }
     texture.dispose();
+  }
+
+  public void update() {
+    for (Obstacle obstacle : obstacles) {
+      if (obstacle.isCollided()) {
+        obstacle.dispose();
+      }
+    }
+    obstacles.removeIf(Obstacle::isCollided);
   }
 }

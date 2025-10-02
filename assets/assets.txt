@@ -14,11 +14,11 @@ sprites/enemies/turret.png
 sprites/obstacles/cactus.png
 sprites/obstacles/cone.png
 sprites/obstacles/skull.png
-sprites/pickups/fuel.png
-sprites/pickups/health.png
-sprites/pickups/nitro.png
-sprites/pickups/rocket.png
-sprites/pickups/shield.png
+sprites/powerups/fuel.png
+sprites/powerups/health.png
+sprites/powerups/nitro.png
+sprites/powerups/rocket.png
+sprites/powerups/shield.png
 sprites/terrain/ground.aseprite
 sprites/terrain/ground.png
 sprites/terrain/wall.aseprite

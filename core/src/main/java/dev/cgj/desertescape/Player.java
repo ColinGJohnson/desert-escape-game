@@ -1,6 +1,6 @@
 package dev.cgj.desertescape;
 
-import dev.cgj.desertescape.entity.Car;
+import dev.cgj.desertescape.vehicle.Car;
 
 import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.BRAKE_HAND;
@@ -11,7 +11,6 @@ public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
 
   public void update(float delta) {
     car.update(delta);
-    car.updatePhysics();
     scoreBoard.updateDistance(car.body.carBody.getPosition().y);
   }
 

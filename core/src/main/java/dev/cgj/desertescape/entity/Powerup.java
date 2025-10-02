@@ -3,14 +3,14 @@ package dev.cgj.desertescape.entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
+import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.UserData;
-import dev.cgj.desertescape.vehicle.Car;
 
-public class Obstacle extends Entity implements Pool.Poolable {
-  private final ObstacleType type;
+public class Powerup extends Entity implements Pool.Poolable {
+  private final PowerupType type;
   private boolean collided;
 
-  public Obstacle(ObstacleType type, World world, Vector2 position) {
+  public Powerup(PowerupType type, World world, Vector2 position) {
     super(type.getSpritePath(), world, position);
     this.type = type;
     getBody().setUserData(new UserData(this::handleCollision));
@@ -21,21 +21,18 @@ public class Obstacle extends Entity implements Pool.Poolable {
 
   }
 
-  public void handleCollision(Object entity) {
+  void handleCollision(Object entity) {
     if (collided) {
       return;
     }
 
     switch (entity) {
-      case Car car -> {
-        car.damage(type.getDamage());
+      case Player player -> {
+        type.onCollect(player);
         collided = true;
       }
-      case null, default -> {}
+      case null, default -> {
+      }
     }
-  }
-
-  public boolean isCollided() {
-    return collided;
   }
 }

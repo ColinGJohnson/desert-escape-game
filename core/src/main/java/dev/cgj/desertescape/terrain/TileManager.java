@@ -42,6 +42,11 @@ public class TileManager implements Disposable {
         tiles.remove(existingTile);
       }
     }
+
+    // Clean up any destroyed obstacles associated with each remaining tile
+    for (Tile tile : tiles.values()) {
+      tile.update();
+    }
   }
 
   private TileDefinition getTileDefinition(TilePosition position) {

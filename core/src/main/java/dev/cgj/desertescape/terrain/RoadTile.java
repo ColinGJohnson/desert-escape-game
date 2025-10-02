@@ -5,8 +5,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.entity.Obstacle;
 import dev.cgj.desertescape.entity.ObstacleType;
+import dev.cgj.desertescape.entity.Powerup;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static dev.cgj.desertescape.Constants.spriteToWorld;
@@ -37,6 +39,11 @@ public class RoadTile implements TileDefinition {
     Stream<Obstacle> cones = Stream.generate(() ->
         new Obstacle(ObstacleType.CONE, world, road.randomPosition()))
       .limit(1);
-    return Stream.concat(Stream.concat(left, right), cones).toList();
+    return Stream.concat(Stream.concat(left, right), cones).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Powerup> addPowerups(World world) {
+    return List.of();
   }
 }
