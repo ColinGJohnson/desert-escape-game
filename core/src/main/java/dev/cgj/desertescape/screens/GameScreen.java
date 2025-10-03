@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.desertescape.DesertEscape;
 import dev.cgj.desertescape.Inventory;
 import dev.cgj.desertescape.KeyMap;
+import dev.cgj.desertescape.NpcManager;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.ScoreBoard;
 import dev.cgj.desertescape.physics.EntityContactListener;
@@ -33,6 +34,7 @@ public class GameScreen extends ScreenAdapter {
   public final World world;
   private final Player player;
   private final TileManager tileManager;
+  private final NpcManager npcManager;
   private final HudRenderer hudRenderer;
   private float accumulator = 0;
 
@@ -43,6 +45,7 @@ public class GameScreen extends ScreenAdapter {
     world.setContactListener(new EntityContactListener());
     player = new Player(new Car(CarType.SPORTS, world), new Inventory(), new ScoreBoard());
     tileManager = new TileManager(world);
+    npcManager = new NpcManager(world);
     hudRenderer = new HudRenderer();
   }
 
@@ -58,6 +61,9 @@ public class GameScreen extends ScreenAdapter {
   public void dispose() {
     player.car().dispose();
     hudRenderer.dispose();
+    tileManager.dispose();
+    npcManager.dispose();
+    world.dispose();
   }
 
   private void handleInput(float delta) {
@@ -71,8 +77,10 @@ public class GameScreen extends ScreenAdapter {
 
   private void updateLogic(float delta) {
     player.update(delta);
-    tileManager.update(player.car().body.carBody.getPosition());
-    if (player.car().body.carBody.getPosition().y > GOAL_DISTANCE) {
+    npcManager.update(delta, player);
+    tileManager.update(player.car().body.getPosition());
+
+    if (player.car().body.getPosition().y > GOAL_DISTANCE) {
       game.setScreen(new WinScreen(game));
     }
   }
@@ -97,15 +105,18 @@ public class GameScreen extends ScreenAdapter {
     ScreenUtils.clear(Color.PURPLE);
     game.renderBatch.setProjectionMatrix(camera.combined);
     game.renderBatch.begin();
+
     tileManager.draw(game.renderBatch);
-    player.car().draw(game.renderBatch);
+    npcManager.draw(game.renderBatch);
+    player.draw(game.renderBatch);
+
     game.renderBatch.end();
     hudRenderer.draw(getHudData(player));
     game.renderBuffer.end();
   }
 
   private void updateCameraPosition() {
-    Vector2 carPosition = player.car().body.carBody.getPosition().cpy();
+    Vector2 carPosition = player.car().body.getPosition().cpy();
     carPosition.add(new Vector2(0, 5).clamp(0, 10));
     camera.position.set(carPosition, 0);
     camera.update();
@@ -114,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
   private HudData getHudData(Player player) {
     return new HudData(CarType.SPORTS,
       player.car().body.getForwardVelocity(),
-      player.car().body.carBody.getPosition().y,
+      player.car().body.getPosition().y,
       player.car().getFuel(),
       player.car().getHealth(),
       player.inventory().getRockets(),

@@ -2,11 +2,10 @@ package dev.cgj.desertescape.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Pool;
+import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.UserData;
-import dev.cgj.desertescape.vehicle.Car;
 
-public class Obstacle extends Entity implements Pool.Poolable {
+public class Obstacle extends Entity {
   private final ObstacleType type;
   private boolean collided;
 
@@ -16,19 +15,14 @@ public class Obstacle extends Entity implements Pool.Poolable {
     getBody().setUserData(new UserData(this::handleCollision));
   }
 
-  @Override
-  public void reset() {
-
-  }
-
   public void handleCollision(Object entity) {
     if (collided) {
       return;
     }
 
     switch (entity) {
-      case Car car -> {
-        car.damage(type.getDamage());
+      case Player player -> {
+        player.car().damage(type.getDamage());
         collided = true;
       }
       case null, default -> {}

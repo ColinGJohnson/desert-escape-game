@@ -2,11 +2,10 @@ package dev.cgj.desertescape.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Pool;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.UserData;
 
-public class Powerup extends Entity implements Pool.Poolable {
+public class Powerup extends Entity {
   private final PowerupType type;
   private boolean collided;
 
@@ -14,11 +13,6 @@ public class Powerup extends Entity implements Pool.Poolable {
     super(type.getSpritePath(), world, position);
     this.type = type;
     getBody().setUserData(new UserData(this::handleCollision));
-  }
-
-  @Override
-  public void reset() {
-
   }
 
   void handleCollision(Object entity) {

@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import dev.cgj.desertescape.physics.UserData;
 
 import java.util.List;
 
@@ -75,6 +74,10 @@ public class CarBody {
     //    for (Body wheel : getWheels()) {
     //      accelerateToSpeed(wheel, speed, maxDriveForce);
     //    }
+  }
+
+  public Vector2 getPosition() {
+    return carBody.getPosition().cpy();
   }
 
   private void accelerateToSpeed(Body body, float desiredSpeed, float maxDriveForce) {

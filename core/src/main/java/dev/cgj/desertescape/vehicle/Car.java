@@ -4,13 +4,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.desertescape.physics.CarBody;
 import dev.cgj.desertescape.physics.UserData;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
-/// Uses physics adapted from [this iforce2d article](https://www.iforce2d.net/b2dtut/top-down-car).
+/**
+ * A car entity with physics implementation.
+ * Uses physics adapted from <a href="https://www.iforce2d.net/b2dtut/top-down-car">this iforce2d article</a>.
+ */
 public class Car implements Disposable {
   public final Sprite sprite;
   public final CarBody body;
@@ -33,8 +38,8 @@ public class Car implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
-    float posX = body.carBody.getPosition().x;
-    float posY = body.carBody.getPosition().y;
+    float posX = body.getPosition().x;
+    float posY = body.getPosition().y;
     sprite.setCenter(posX, posY);
     sprite.setRotation(body.carBody.getAngle() * MathUtils.radiansToDegrees);
     sprite.draw(batch);
@@ -123,5 +128,9 @@ public class Car implements Disposable {
       texture.getHeight() * SPRITE_TO_WORLD);
     sprite.setOriginCenter();
     return sprite;
+  }
+
+  public Vector2 getPosition() {
+    return body.getPosition().cpy();
   }
 }

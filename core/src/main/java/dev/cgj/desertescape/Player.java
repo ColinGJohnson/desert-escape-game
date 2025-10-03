@@ -1,5 +1,6 @@
 package dev.cgj.desertescape;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import dev.cgj.desertescape.vehicle.Car;
 
 import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
@@ -12,7 +13,7 @@ public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
 
   public void update(float delta) {
     car.update(delta);
-    scoreBoard.updateDistance(car.body.carBody.getPosition().y);
+    scoreBoard.updateDistance(car.body.getPosition().y);
   }
 
   public void handleInput(float delta) {
@@ -38,5 +39,9 @@ public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
       steerInput -= 1;
     }
     return steerInput;
+  }
+
+  public void draw(SpriteBatch renderBatch) {
+    car.draw(renderBatch);
   }
 }
