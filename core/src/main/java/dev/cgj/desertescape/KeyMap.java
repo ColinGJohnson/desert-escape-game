@@ -10,7 +10,7 @@ public class KeyMap {
     STEER_LEFT(List.of(Input.Keys.LEFT, Input.Keys.A)),
     STEER_RIGHT(List.of(Input.Keys.RIGHT, Input.Keys.D)),
     ACCELERATE(List.of(Input.Keys.UP, Input.Keys.W)),
-    BRAKE_REVERSE(List.of(Input.Keys.DOWN, Input.Keys.S)),
+    REVERSE(List.of(Input.Keys.DOWN, Input.Keys.S)),
     BRAKE_HAND(List.of(Input.Keys.SPACE)),
     PAUSE(List.of(Input.Keys.ESCAPE)),
     MENU_UP(List.of(Input.Keys.UP, Input.Keys.W)),

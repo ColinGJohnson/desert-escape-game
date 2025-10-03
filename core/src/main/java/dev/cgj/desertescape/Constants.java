@@ -7,7 +7,7 @@ public class Constants {
   /**
    * How far the player needs to travel in world units to win the game.
    */
-  public static final float GOAL_DISTANCE = 100;
+  public static final float GOAL_DISTANCE = 1000;
 
   public static final int PIXEL_WIDTH = 480;
   public static final int PIXEL_HEIGHT = 270;

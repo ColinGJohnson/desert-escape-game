@@ -60,12 +60,16 @@ public class Car implements Disposable {
   /**
    * Accelerates the car towards its maximum forward speed based on the input value.
    *
-   * @param input The acceleration input, where 0 represents no acceleration, and 1 represents full
+   * @param input The acceleration input, where -1 full reverse, and 1 represents full forwards
    *              acceleration. The input value is clamped between 0 and 1.
    */
   public void accelerate(float input) {
-    float clampedInput = MathUtils.clamp(input, 0, 1f);
-    body.accelerateToSpeed(type.maxForwardSpeed, clampedInput * type.maxDriveForce);
+    float clampedInput = MathUtils.clamp(input, -1, 1f);
+    if (clampedInput < 0) {
+      body.accelerateToSpeed(type.maxBackwardSpeed, Math.abs(clampedInput) * type.maxDriveForce);
+    } else {
+      body.accelerateToSpeed(type.maxForwardSpeed, clampedInput * type.maxDriveForce);
+    }
   }
 
   /**

@@ -4,6 +4,7 @@ import dev.cgj.desertescape.vehicle.Car;
 
 import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.BRAKE_HAND;
+import static dev.cgj.desertescape.KeyMap.KeyBinding.REVERSE;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_LEFT;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_RIGHT;
 
@@ -19,6 +20,8 @@ public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
 
     if (KeyMap.isPressed(ACCELERATE)) {
       car.accelerate(1);
+    } else if (KeyMap.isPressed(REVERSE)) {
+      car.accelerate(-1);
     }
 
     if (KeyMap.isPressed(BRAKE_HAND)) {
