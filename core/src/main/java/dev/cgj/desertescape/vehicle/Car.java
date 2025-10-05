@@ -46,8 +46,11 @@ public class Car implements Disposable {
   }
 
   public void update(float delta) {
+    updateFuel(delta);
+    body.update(type);
+  }
 
-    // Consume fuel
+  private void updateFuel(float delta) {
     fuel -= type.fuelLossRate * delta;
     if (fuel <= 0) {
       health = 0;
@@ -55,11 +58,6 @@ public class Car implements Disposable {
     } else if (fuel > type.maxFuel) {
       fuel = type.maxFuel;
     }
-
-    // Update physics
-    // TODO: Move to update function in CarBody
-    body.cancelLateralVelocity(type.maxLateralImpulse);
-    body.cancelAngularVelocity();
   }
 
   /**
@@ -86,7 +84,7 @@ public class Car implements Disposable {
    */
   public void brake(float input) {
     float clampedInput = MathUtils.clamp(input, 0, 1f);
-    body.cancelForwardVelocity(clampedInput * type.maxBrakeImpulse);
+    body.brake(clampedInput * type.maxBrakeImpulse);
   }
 
   /**

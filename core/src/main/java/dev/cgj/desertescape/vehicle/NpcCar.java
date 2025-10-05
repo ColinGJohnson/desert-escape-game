@@ -79,7 +79,11 @@ public class NpcCar implements Disposable {
     // When facing in the opposite direction, reverse and steer towards the target to flip around.
     if (absDiff > MathUtils.degreesToRadians * 170f) {
       car.steer(delta, Math.signum(steerInput));
-      car.accelerate(-0.8f);
+      if (car.body.getForwardVelocity() > 0) {
+        car.brake(1f);
+      } else {
+        car.accelerate(-0.8f);
+      }
       return;
     }
 
