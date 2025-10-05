@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-public class EntityContactListener implements ContactListener {
+public class CollisionListener implements ContactListener {
 
   @Override
   public void beginContact(Contact contact) {

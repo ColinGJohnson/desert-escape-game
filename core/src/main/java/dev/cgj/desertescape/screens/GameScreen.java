@@ -13,7 +13,7 @@ import dev.cgj.desertescape.KeyMap;
 import dev.cgj.desertescape.NpcManager;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.ScoreBoard;
-import dev.cgj.desertescape.physics.EntityContactListener;
+import dev.cgj.desertescape.physics.CollisionListener;
 import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
@@ -42,7 +42,7 @@ public class GameScreen extends ScreenAdapter {
     this.game = game;
     camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
     world = new World(Vector2.Zero, true);
-    world.setContactListener(new EntityContactListener());
+    world.setContactListener(new CollisionListener());
     player = new Player(new Car(CarType.SPORTS, world), new Inventory(), new ScoreBoard());
     tileManager = new TileManager(world);
     npcManager = new NpcManager(world);

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.desertescape.physics.BodyUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,9 @@ public class NpcCar implements Disposable {
   /**
    * Threshold within which a waypoint is considered to have been reached by the NPC.
    */
-  public static final float REACH_THRESHOLD = 1.0f;
+  public static final float REACH_THRESHOLD = 4.0f;
+  public static final float MIN_ACCELERATION = 0.3f;
+  public static final float MAX_ACCELERATION = 0.5f;
 
   /**
    * The car controlled by this NPC.
@@ -54,52 +57,26 @@ public class NpcCar implements Disposable {
   }
 
   /**
-   * Steers the car towards a waypoint.
+   * Controls NPC car steering:
+   * 1. If facing away from the target (angle > 90°), backs up and steers to turn around
+   * 2. If within 90° of target, accelerates forward with steering proportional to angle
+   * 3. Acceleration increases as a car aligns with a target direction
    */
-  protected void updateSteering(float delta, Vector2 waypoint) {
+  private void updateSteering(float delta, Vector2 waypoint) {
+    Vector2 targetHeading = waypoint.cpy().sub(car.getPosition()).nor();
+    Vector2 currentHeading = BodyUtils.getForwardNormal(car.body.carBody);
+    float angleBetween = angleBetween(currentHeading, targetHeading);
 
-    // Normalized vector from car to waypoint
-    Vector2 carPos = car.getPosition();
-    Vector2 targetDir = waypoint.cpy().sub(carPos).nor();
-
-    // Current forward direction of the car
-    float heading = car.body.carBody.getAngle() + (float) Math.PI / 2;
-
-    // Compute signed smallest angle difference between forward and target
-    float targetAngle = MathUtils.atan2(targetDir.y, targetDir.x);
-    float angleDiff = MathUtils.atan2(MathUtils.sin(targetAngle - heading), MathUtils.cos(targetAngle - heading));
-    float absDiff = Math.abs(angleDiff);
-
-    // Determine steering input: left (-1) or right (1) proportional to angle
-    float steerInput = 0f;
-    if (absDiff > 1e-3f) {
-      steerInput = MathUtils.clamp(angleDiff / (float) Math.PI, -1f, 1f);
-    }
-
-    // When facing in the opposite direction, reverse and steer towards the target to flip around.
-    if (absDiff > MathUtils.degreesToRadians * 170f) {
-      car.steer(delta, Math.signum(steerInput));
-      if (car.body.getForwardVelocity() > 0) {
-        car.brake(1f);
-      } else {
-        car.accelerate(-0.8f);
-      }
+    // Facing in the wrong direction
+    if (Math.abs(angleBetween) > MathUtils.HALF_PI) {
+      car.steer(delta, -Math.signum(angleBetween));
+      car.accelerate(-1f);
       return;
     }
 
-    // Normal steering to minimize angleDiff
-    car.steer(delta, steerInput);
-
-    // Increase acceleration when the NPC car is pointed directly towards the target
-    float diffDeg = absDiff * MathUtils.radiansToDegrees;
-    float accel;
-    if (diffDeg >= 90f) {
-      accel = 0.1f;
-    } else {
-      accel = 0.3f - (diffDeg / 90f) * (0.3f - 0.1f);
-    }
-
-    car.accelerate(accel);
+    // Facing in the right direction
+    car.steer(delta, angleBetween / MathUtils.HALF_PI);
+    car.accelerate(lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
   }
 
   /**
@@ -128,5 +105,34 @@ public class NpcCar implements Disposable {
   @Override
   public void dispose() {
     car.dispose();
+  }
+
+
+  /**
+   * Calculates the angle in radians between two 2D vectors. The angle is measured counter-clockwise
+   * from the first vector to the second.
+   * <ul>
+   *   <li>Positive result: b is counter-clockwise from a.</li>
+   *   <li>Negative result: b is clockwise from a</li>
+   * </ul>
+   *
+   * @param a The first vector.
+   * @param b The second vector.
+   * @return The angle in radians between the two vectors.
+   */
+  public static float angleBetween(Vector2 a, Vector2 b) {
+    return MathUtils.atan2(a.crs(b), a.dot(b));
+  }
+
+  /**
+   * Linearly interpolates between two values.
+   *
+   * @param start The starting value
+   * @param end   The ending value
+   * @param t     The interpolation factor in the range [0,1]
+   * @return The interpolated value
+   */
+  public static float lerp(float start, float end, float t) {
+    return start + (end - start) * t;
   }
 }

@@ -11,16 +11,16 @@ public class BodyUtils {
 
   public static Vector2 getLateralVelocity(Body body) {
     Vector2 rightNormal = body.getWorldVector(new Vector2(1, 0));
-    return rightNormal.scl(rightNormal.cpy().dot(body.getLinearVelocity()));
+    return rightNormal.scl(rightNormal.dot(body.getLinearVelocity()));
   }
 
   public static Vector2 getForwardVelocity(Body body) {
     Vector2 forwardNormal = getForwardNormal(body);
-    return forwardNormal.scl(forwardNormal.cpy().dot(body.getLinearVelocity()));
+    return forwardNormal.scl(forwardNormal.dot(body.getLinearVelocity()));
   }
 
   public static void cancelVelocity(Body body, Vector2 velocity, float maxImpulse) {
-    Vector2 impulse = velocity.scl(-body.getMass());
+    Vector2 impulse = velocity.cpy().scl(-body.getMass());
     if (impulse.len() > maxImpulse) {
       impulse.scl(maxImpulse / impulse.len());
     }
