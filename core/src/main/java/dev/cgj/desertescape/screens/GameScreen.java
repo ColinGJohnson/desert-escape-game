@@ -70,7 +70,6 @@ public class GameScreen extends ScreenAdapter {
 
     if (KeyMap.isJustPressed(PAUSE)) {
       game.setScreen(new PauseScreen(game, this));
-      dispose();
     }
   }
 
@@ -81,6 +80,10 @@ public class GameScreen extends ScreenAdapter {
 
     if (player.car().body.getPosition().y > GOAL_DISTANCE) {
       game.setScreen(new WinScreen(game));
+    }
+
+    if (player.car().getHealth() <= 0) {
+      game.setScreen(new LossScreen(game));
     }
   }
 
