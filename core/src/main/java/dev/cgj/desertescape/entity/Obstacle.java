@@ -12,7 +12,7 @@ public class Obstacle extends Entity {
   public Obstacle(ObstacleType type, World world, Vector2 position) {
     super(type.getSpritePath(), world, position);
     this.type = type;
-    getBody().setUserData(new UserData(this::handleCollision));
+    getBody().setUserData(UserData.handlerOnly(this::handleCollision));
   }
 
   public void handleCollision(Object entity) {

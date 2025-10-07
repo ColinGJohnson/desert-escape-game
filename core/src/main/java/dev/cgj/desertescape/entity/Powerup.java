@@ -12,7 +12,7 @@ public class Powerup extends Entity {
   public Powerup(PowerupType type, World world, Vector2 position) {
     super(type.getSpritePath(), world, position);
     this.type = type;
-    getBody().setUserData(new UserData(this::handleCollision));
+    getBody().setUserData(UserData.handlerOnly(this::handleCollision));
   }
 
   void handleCollision(Object entity) {

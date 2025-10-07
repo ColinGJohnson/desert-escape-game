@@ -1,7 +1,10 @@
 package dev.cgj.desertescape;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
+import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.vehicle.Car;
+import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.BRAKE_HAND;
@@ -10,6 +13,11 @@ import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_LEFT;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.STEER_RIGHT;
 
 public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
+
+  public Player(World world, Inventory inventory, ScoreBoard scoreBoard) {
+    this(new Car(CarType.SPORTS, world), inventory, scoreBoard);
+    car.setUserData(UserData.dataOnly(this));
+  }
 
   public void update(float delta) {
     car.update(delta);

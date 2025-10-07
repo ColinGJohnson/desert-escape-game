@@ -17,7 +17,6 @@ import dev.cgj.desertescape.physics.CollisionListener;
 import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
-import dev.cgj.desertescape.vehicle.Car;
 import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.Constants.GOAL_DISTANCE;
@@ -32,10 +31,10 @@ public class GameScreen extends ScreenAdapter {
   private final DesertEscape game;
   public final Camera camera;
   public final World world;
-  private final Player player;
   private final TileManager tileManager;
   private final NpcManager npcManager;
   private final HudRenderer hudRenderer;
+  private final Player player;
   private float accumulator = 0;
 
   public GameScreen(final DesertEscape game) {
@@ -43,10 +42,10 @@ public class GameScreen extends ScreenAdapter {
     camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
     world = new World(Vector2.Zero, true);
     world.setContactListener(new CollisionListener());
-    player = new Player(new Car(CarType.SPORTS, world), new Inventory(), new ScoreBoard());
     tileManager = new TileManager(world);
     npcManager = new NpcManager(world);
     hudRenderer = new HudRenderer();
+    player = new Player(world, new Inventory(), new ScoreBoard());
   }
 
   @Override

@@ -13,8 +13,13 @@ public class UserData {
     this.collisionData = collisionData;
   }
 
-  public UserData(Consumer<Object> collisionHandler) {
-    this(collisionHandler, null);
+  public static UserData dataOnly(Object collisionData) {
+    return new UserData((ignored) -> {
+    }, collisionData);
+  }
+
+  public static UserData handlerOnly(Consumer<Object> collisionHandler) {
+    return new UserData(collisionHandler, null);
   }
 
   public void handleCollision(Object collisionData) {

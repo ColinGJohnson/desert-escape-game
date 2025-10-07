@@ -13,7 +13,7 @@ public class NpcManager implements Disposable {
   private final List<NpcCar> npcCars;
 
   public NpcManager(World world) {
-    npcCars = Collections.singletonList(new NpcCar(world, CarType.SEDAN));
+    npcCars = Collections.singletonList(new NpcCar(world, CarType.VAN));
   }
 
   public void update(float delta, Player player) {

@@ -23,8 +23,8 @@ public class CarBody {
     return List.of(frontLeftWheel, frontRightWheel, rearLeftWheel, rearRightWheel);
   }
 
-  public CarBody(World world, UserData userData) {
-    carBody = createCarBody(world, userData);
+  public CarBody(World world) {
+    carBody = createCarBody(world);
 
     frontLeftWheel = new WheelBody(world);
     frontLeftWheel.joinToVehicle(new Vector2(-4, 4), carBody);
@@ -70,12 +70,11 @@ public class CarBody {
     }
   }
 
-  private Body createCarBody(World world, UserData userData) {
+  private Body createCarBody(World world) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;
     bodyDef.position.set(10, 10);
     Body car = world.createBody(bodyDef);
-    car.setUserData(userData);
 
     // The sports car sprite is 8 x 16 pixels, so the half-size is 4 x 8
     PolygonShape shape = new PolygonShape();
@@ -87,5 +86,9 @@ public class CarBody {
     car.createFixture(fixtureDef);
 
     return car;
+  }
+
+  public void setUserData(UserData userData) {
+    carBody.setUserData(userData);
   }
 }

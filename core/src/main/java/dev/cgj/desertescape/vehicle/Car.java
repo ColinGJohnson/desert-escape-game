@@ -28,7 +28,7 @@ public class Car implements Disposable {
     this.type = type;
     this.health = type.maxHealth;
     this.fuel = type.maxFuel;
-    body = new CarBody(world, new UserData((object) -> {}, this));
+    body = new CarBody(world);
     sprite = getSprite(type);
   }
 
@@ -130,5 +130,9 @@ public class Car implements Disposable {
 
   public Vector2 getPosition() {
     return body.getPosition().cpy();
+  }
+
+  public void setUserData(UserData userData) {
+    body.setUserData(userData);
   }
 }

@@ -107,7 +107,6 @@ public class NpcCar implements Disposable {
     car.dispose();
   }
 
-
   /**
    * Calculates the angle in radians between two 2D vectors. The angle is measured counter-clockwise
    * from the first vector to the second.
