@@ -3,10 +3,8 @@ package dev.cgj.desertescape.terrain;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import dev.cgj.desertescape.entity.Obstacle;
-import dev.cgj.desertescape.entity.Powerup;
+import dev.cgj.desertescape.entity.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TileDefinition {
@@ -15,9 +13,7 @@ public interface TileDefinition {
 
   List<Body> addStaticBodies(World world);
 
-  default List<Obstacle> addObstacles(World world) {
-    return new ArrayList<>();
+  default List<Entity> addEntities(World world) {
+    return List.of();
   }
-
-  List<Powerup> addPowerups(World world);
 }

@@ -17,15 +17,14 @@ import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 public abstract class Entity implements Disposable {
   private final Sprite sprite;
   private final Body body;
-  private final World world;
+  private boolean destroyed = false;
 
   public Entity(String spritePath, World world, Vector2 position) {
-    this.world = world;
     sprite = createSprite(spritePath);
-    body = createBody(position);
+    body = createBody(world, position);
   }
 
-  public Body createBody(Vector2 position) {
+  public Body createBody(World world, Vector2 position) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.StaticBody;
     bodyDef.position.set(position);
@@ -44,7 +43,7 @@ public abstract class Entity implements Disposable {
   @Override
   public void dispose() {
     sprite.getTexture().dispose();
-    world.destroyBody(body);
+    body.getWorld().destroyBody(body);
   }
 
   private Sprite createSprite(String spritePath) {
@@ -77,7 +76,11 @@ public abstract class Entity implements Disposable {
     return body;
   }
 
-  public World getWorld() {
-    return world;
+  public boolean isDestroyed() {
+    return destroyed;
+  }
+
+  public void setDestroyed(boolean destroyed) {
+    this.destroyed = destroyed;
   }
 }

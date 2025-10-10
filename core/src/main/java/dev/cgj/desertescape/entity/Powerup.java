@@ -7,7 +7,6 @@ import dev.cgj.desertescape.physics.UserData;
 
 public class Powerup extends Entity {
   private final PowerupType type;
-  private boolean collided;
 
   public Powerup(PowerupType type, World world, Vector2 position) {
     super(type.getSpritePath(), world, position);
@@ -16,14 +15,14 @@ public class Powerup extends Entity {
   }
 
   void handleCollision(Object entity) {
-    if (collided) {
+    if (isDestroyed()) {
       return;
     }
 
     switch (entity) {
       case Player player -> {
         type.onCollect(player);
-        collided = true;
+        setDestroyed(true);
       }
       case null, default -> {
       }

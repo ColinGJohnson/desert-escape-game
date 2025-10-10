@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import dev.cgj.desertescape.entity.Powerup;
 
 import java.util.List;
 
@@ -42,10 +41,5 @@ public class WallTile implements TileDefinition {
     body.createFixture(fixtureDef);
 
     return List.of(body);
-  }
-
-  @Override
-  public List<Powerup> addPowerups(World world) {
-    return List.of();
   }
 }

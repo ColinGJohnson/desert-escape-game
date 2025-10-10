@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import dev.cgj.desertescape.entity.Obstacle;
-import dev.cgj.desertescape.entity.Powerup;
+import dev.cgj.desertescape.entity.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
@@ -19,16 +19,14 @@ public class Tile {
 
   private final Texture texture;
   private final List<Body> staticBodies;
-  private final List<Obstacle> obstacles;
-  private final List<Powerup> powerups;
+  private final List<Entity> entities;
   private final Vector2 position;
   private final World world;
 
   public Tile(TileDefinition definition, World world) {
     this.texture = definition.getTexturePath();
-    this.staticBodies = definition.addStaticBodies(world);
-    this.obstacles = definition.addObstacles(world);
-    this.powerups = definition.addPowerups(world);
+    this.staticBodies = new ArrayList<>(definition.addStaticBodies(world));
+    this.entities = new ArrayList<>(definition.addEntities(world));
     this.position = Vector2.Zero.cpy();
     this.world = world;
   }
@@ -55,37 +53,28 @@ public class Tile {
       body.setTransform(newPosition, body.getAngle());
     }
 
-    for (Obstacle obstacle : obstacles) {
-      obstacle.move(delta);
-    }
-
+    entities.forEach(entity -> entity.move(delta));
     this.position.set(position.cpy());
   }
 
   public void draw(SpriteBatch batch) {
     Vector2 position = getPosition();
     batch.draw(getTexture(), position.x, position.y, TILE_SIZE, TILE_SIZE);
-    for (Obstacle obstacle : obstacles) {
-      obstacle.draw(batch);
-    }
+    entities.forEach(entity -> entity.draw(batch));
   }
 
   public void dispose() {
-    for (Body body : staticBodies) {
-      world.destroyBody(body);
-    }
-    for (Obstacle obstacle : obstacles) {
-      obstacle.dispose();
-    }
+    staticBodies.forEach(world::destroyBody);
+    entities.forEach(Entity::dispose);
     texture.dispose();
   }
 
   public void update() {
-    for (Obstacle obstacle : obstacles) {
-      if (obstacle.isCollided()) {
-        obstacle.dispose();
+    for (Entity entity : entities) {
+      if (entity.isDestroyed()) {
+        entity.dispose();
       }
     }
-    obstacles.removeIf(Obstacle::isCollided);
+    entities.removeIf(Entity::isDestroyed);
   }
 }

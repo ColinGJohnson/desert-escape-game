@@ -7,7 +7,6 @@ import dev.cgj.desertescape.physics.UserData;
 
 public class Obstacle extends Entity {
   private final ObstacleType type;
-  private boolean collided;
 
   public Obstacle(ObstacleType type, World world, Vector2 position) {
     super(type.getSpritePath(), world, position);
@@ -16,20 +15,16 @@ public class Obstacle extends Entity {
   }
 
   public void handleCollision(Object entity) {
-    if (collided) {
+    if (isDestroyed()) {
       return;
     }
 
     switch (entity) {
       case Player player -> {
         player.car().damage(type.getDamage());
-        collided = true;
+        setDestroyed(true);
       }
       case null, default -> {}
     }
-  }
-
-  public boolean isCollided() {
-    return collided;
   }
 }
