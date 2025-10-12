@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.physics.BodyUtils;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,9 +25,9 @@ public class NpcCar implements Disposable {
   private final Car car;
 
   /**
-   * Waypoints for this NPC to sequentially navigate to.
+   * Waypoint controller managing target points for this NPC.
    */
-  private final List<Vector2> waypoints = new LinkedList<>();
+  private final WaypointList waypoints = new WaypointList(REACH_THRESHOLD);
 
   public NpcCar(World world, CarType carType) {
     this.car = new Car(carType, world);
@@ -36,7 +35,7 @@ public class NpcCar implements Disposable {
 
   public void update(float delta) {
     car.update(delta);
-    Optional<Vector2> waypoint = getNextWaypoint();
+    Optional<Vector2> waypoint = waypoints.getNext(car.getPosition());
     if (waypoint.isPresent()) {
       updateSteering(delta, waypoint.get());
     } else {
@@ -49,7 +48,7 @@ public class NpcCar implements Disposable {
   }
 
   public void addWaypoints(List<Vector2> waypoints) {
-    this.waypoints.addAll(waypoints);
+    this.waypoints.addWaypoints(waypoints);
   }
 
   public void clearWaypoints() {
@@ -79,28 +78,6 @@ public class NpcCar implements Disposable {
     car.accelerate(lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
   }
 
-  /**
-   * Retrieves the next waypoint that the NPC car should navigate to. If the current waypoint
-   * is within the defined reach threshold of the car's position, it is removed, and the
-   * next waypoint is considered. If no waypoints remain, an empty Optional is returned.
-   *
-   * @return An {@link Optional} containing the next waypoint as a {@link Vector2} if available,
-   * or an empty Optional if all waypoints have been reached or the list is empty.
-   */
-  private Optional<Vector2> getNextWaypoint() {
-    Vector2 currentPosition = car.getPosition();
-
-    while (!waypoints.isEmpty()) {
-      Vector2 target = waypoints.getFirst();
-      if (currentPosition.dst2(target) <= REACH_THRESHOLD * REACH_THRESHOLD) {
-        waypoints.removeFirst();
-      } else {
-        return Optional.of(target);
-      }
-    }
-
-    return Optional.empty();
-  }
 
   @Override
   public void dispose() {
