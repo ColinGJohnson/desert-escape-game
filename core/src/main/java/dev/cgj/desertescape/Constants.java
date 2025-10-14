@@ -17,11 +17,18 @@ public class Constants {
 
   /**
    * The size in world units of each sprite pixel. This is *not* the size of a pixel on the
-   * user's screen, which is expected to vary.
+   * user's screen, which varies depending on the window size.
    */
   public static final float SPRITE_TO_WORLD = 0.1f;
+
+  /**
+   * The sprite pixel width of each world unit. That is, the inverse of {@link #SPRITE_TO_WORLD}.
+   */
   public static final float WORLD_TO_SPRITE = 1 / SPRITE_TO_WORLD;
 
+  /**
+   * Fixed time step for physics calculations.
+   */
   public static final float TIME_STEP = 1 / 60f;
   public static final int VELOCITY_ITERATIONS = 6;
   public static final int POSITION_ITERATIONS = 2;

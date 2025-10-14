@@ -1,6 +1,5 @@
 package dev.cgj.desertescape.vehicle;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,7 +9,8 @@ import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.physics.CarBody;
 import dev.cgj.desertescape.physics.UserData;
 
-import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.util.SpriteUtil.drawAtBodyPosition;
+import static dev.cgj.desertescape.util.SpriteUtil.getScaledSprite;
 
 /**
  * A car entity with physics implementation.
@@ -29,7 +29,7 @@ public class Car implements Disposable {
     this.health = type.maxHealth;
     this.fuel = type.maxFuel;
     body = new CarBody(world);
-    sprite = getSprite(type);
+    sprite = getScaledSprite(type.spritePath);
   }
 
   @Override
@@ -38,11 +38,7 @@ public class Car implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
-    float posX = body.getPosition().x;
-    float posY = body.getPosition().y;
-    sprite.setCenter(posX, posY);
-    sprite.setRotation(body.carBody.getAngle() * MathUtils.radiansToDegrees);
-    sprite.draw(batch);
+    drawAtBodyPosition(batch, sprite, body.carBody);
   }
 
   public void update(float delta) {
@@ -117,15 +113,6 @@ public class Car implements Disposable {
 
   public float getFuel() {
     return fuel;
-  }
-
-  private Sprite getSprite(CarType type) {
-    Texture texture = new Texture(type.spritePath.substring(1));
-    Sprite sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
-      texture.getHeight() * SPRITE_TO_WORLD);
-    sprite.setOriginCenter();
-    return sprite;
   }
 
   public Vector2 getPosition() {

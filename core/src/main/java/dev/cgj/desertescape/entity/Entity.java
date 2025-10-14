@@ -1,9 +1,7 @@
 package dev.cgj.desertescape.entity;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -12,7 +10,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.util.SpriteUtil.drawAtBodyPosition;
+import static dev.cgj.desertescape.util.SpriteUtil.getScaledSprite;
 
 public abstract class Entity implements Disposable {
   private final Sprite sprite;
@@ -20,7 +19,7 @@ public abstract class Entity implements Disposable {
   private boolean destroyed = false;
 
   public Entity(String spritePath, World world, Vector2 position) {
-    sprite = createSprite(spritePath);
+    sprite = getScaledSprite(spritePath);
     body = createBody(world, position);
   }
 
@@ -46,21 +45,8 @@ public abstract class Entity implements Disposable {
     body.getWorld().destroyBody(body);
   }
 
-  private Sprite createSprite(String spritePath) {
-    Texture texture = new Texture(spritePath);
-    Sprite sprite = new Sprite(texture);
-    sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
-      texture.getHeight() * SPRITE_TO_WORLD);
-    sprite.setOriginCenter();
-    return sprite;
-  }
-
   public void draw(SpriteBatch batch) {
-    float posX = body.getPosition().x;
-    float posY = body.getPosition().y;
-    sprite.setCenter(posX, posY);
-    sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-    sprite.draw(batch);
+    drawAtBodyPosition(batch, sprite, body);
   }
 
   public void move(Vector2 delta) {
