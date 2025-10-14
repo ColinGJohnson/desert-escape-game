@@ -17,9 +17,10 @@ import static dev.cgj.desertescape.physics.BodyUtils.getForwardVelocity;
 import static dev.cgj.desertescape.physics.BodyUtils.getLateralVelocity;
 
 public class WheelBody {
+  private static final float WHEEL_FRICTION = 0.4f;
 
   /**
-   * Represents a wheel, but doesn't actually spin. We simulate the effects of a spinning wheel by
+   * Represents a wheel but doesn't spin. We simulate the effects of a spinning wheel by
    * applying forces to this body.
    */
   private final Body wheel;
@@ -34,6 +35,7 @@ public class WheelBody {
   }
 
   public void update(CarType type) {
+    applyFriction();
     cancelLateralVelocity(type.maxLateralImpulse);
     cancelAngularVelocity();
   }
@@ -68,6 +70,12 @@ public class WheelBody {
     jointDef.localAnchorB.setZero();
     jointDef.localAnchorA.set(spriteToWorld(anchor));
     joint = (RevoluteJoint) wheel.getWorld().createJoint(jointDef);
+  }
+
+  private void applyFriction() {
+    //TODO: Vary friction depending on wheel+car mass
+    Vector2 friction = wheel.getLinearVelocity().cpy().nor().scl(-1 * WHEEL_FRICTION);
+    wheel.applyForceToCenter(friction, true);
   }
 
   private void cancelLateralVelocity(float maxLateralImpulse) {
