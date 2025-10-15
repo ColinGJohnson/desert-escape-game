@@ -4,34 +4,36 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.vehicle.CarType;
+import dev.cgj.desertescape.vehicle.Npc;
 import dev.cgj.desertescape.vehicle.NpcCar;
+import dev.cgj.desertescape.vehicle.NpcTank;
 
-import java.util.Collections;
 import java.util.List;
 
 public class NpcManager implements Disposable {
-  private final List<NpcCar> npcCars;
+  private final List<Npc> npcs;
 
   public NpcManager(World world) {
-    npcCars = Collections.singletonList(new NpcCar(world, CarType.VAN));
+    npcs = List.of(
+      new NpcCar(world, CarType.VAN),
+      new NpcTank(world)
+    );
   }
 
   public void update(float delta, Player player) {
-    for (NpcCar npc : npcCars) {
-      npc.clearWaypoints();
-      npc.addWaypoints(Collections.singletonList(player.car().body.getPosition().cpy()));
-      npc.update(delta);
+    for (Npc npc : npcs) {
+      npc.update(delta, player);
     }
   }
 
   public void draw(SpriteBatch batch) {
-    for (NpcCar npc : npcCars) {
+    for (Npc npc : npcs) {
       npc.draw(batch);
     }
   }
 
   @Override
   public void dispose() {
-    npcCars.forEach(Disposable::dispose);
+    npcs.forEach(Disposable::dispose);
   }
 }

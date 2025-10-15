@@ -18,18 +18,18 @@ import static dev.cgj.desertescape.util.SpriteUtil.getScaledSprite;
  */
 public class Car implements Disposable {
   public final Sprite sprite;
-  public final CarBody body;
-  public final CarType type;
+  public final CarBody carBody;
+  public final CarType carType;
 
   private int health;
   private float fuel;
 
-  public Car(CarType type, World world) {
-    this.type = type;
-    this.health = type.maxHealth;
-    this.fuel = type.maxFuel;
-    body = new CarBody(world);
-    sprite = getScaledSprite(type.spritePath);
+  public Car(CarType carType, World world) {
+    this.carType = carType;
+    this.health = carType.maxHealth;
+    this.fuel = carType.maxFuel;
+    carBody = new CarBody(world);
+    sprite = getScaledSprite(carType.spritePath);
   }
 
   @Override
@@ -38,21 +38,21 @@ public class Car implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
-    drawAtBodyPosition(batch, sprite, body.carBody);
+    drawAtBodyPosition(batch, sprite, carBody.carBody);
   }
 
   public void update(float delta) {
     updateFuel(delta);
-    body.update(type);
+    carBody.update(carType);
   }
 
   private void updateFuel(float delta) {
-    fuel -= type.fuelLossRate * delta;
+    fuel -= carType.fuelLossRate * delta;
     if (fuel <= 0) {
       health = 0;
       fuel = 0;
-    } else if (fuel > type.maxFuel) {
-      fuel = type.maxFuel;
+    } else if (fuel > carType.maxFuel) {
+      fuel = carType.maxFuel;
     }
   }
 
@@ -65,9 +65,9 @@ public class Car implements Disposable {
   public void accelerate(float input) {
     float clampedInput = MathUtils.clamp(input, -1, 1f);
     if (clampedInput < 0) {
-      body.accelerateToSpeed(type.maxBackwardSpeed, Math.abs(clampedInput) * type.maxDriveForce);
+      carBody.accelerateToSpeed(carType.maxBackwardSpeed, Math.abs(clampedInput) * carType.maxDriveForce);
     } else {
-      body.accelerateToSpeed(type.maxForwardSpeed, clampedInput * type.maxDriveForce);
+      carBody.accelerateToSpeed(carType.maxForwardSpeed, clampedInput * carType.maxDriveForce);
     }
   }
 
@@ -80,7 +80,7 @@ public class Car implements Disposable {
    */
   public void brake(float input) {
     float clampedInput = MathUtils.clamp(input, 0, 1f);
-    body.brake(clampedInput * type.maxBrakeImpulse);
+    carBody.brake(clampedInput * carType.maxBrakeImpulse);
   }
 
   /**
@@ -92,7 +92,7 @@ public class Car implements Disposable {
    */
   public void steer(float delta, float input) {
     float clampedInput = MathUtils.clamp(input, -1, 1f);
-    body.turnWheels(delta, clampedInput * (float) Math.toRadians(type.maxSteerAngleDeg));
+    carBody.turnWheels(delta, clampedInput * (float) Math.toRadians(carType.maxSteerAngleDeg));
   }
 
   public void damage(int amount) {
@@ -100,11 +100,11 @@ public class Car implements Disposable {
   }
 
   public void repair(int amount) {
-    health = Math.min(type.maxHealth, health + amount);
+    health = Math.min(carType.maxHealth, health + amount);
   }
 
   public void refuel(float amount) {
-    fuel = Math.min(type.maxFuel, fuel + amount);
+    fuel = Math.min(carType.maxFuel, fuel + amount);
   }
 
   public int getHealth() {
@@ -116,10 +116,10 @@ public class Car implements Disposable {
   }
 
   public Vector2 getPosition() {
-    return body.getPosition().cpy();
+    return carBody.getPosition().cpy();
   }
 
   public void setUserData(UserData userData) {
-    body.setUserData(userData);
+    carBody.setUserData(userData);
   }
 }

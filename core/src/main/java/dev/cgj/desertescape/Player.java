@@ -21,7 +21,7 @@ public record Player(Car car, Inventory inventory, ScoreBoard scoreBoard) {
 
   public void update(float delta) {
     car.update(delta);
-    scoreBoard.updateDistance(car.body.getPosition().y);
+    scoreBoard.updateDistance(car.carBody.getPosition().y);
   }
 
   public void handleInput(float delta) {

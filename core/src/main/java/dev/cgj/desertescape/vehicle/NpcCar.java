@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.BodyUtils;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-public class NpcCar implements Disposable {
+public class NpcCar implements Npc {
 
   /**
    * Threshold within which a waypoint is considered to have been reached by the NPC.
@@ -33,16 +33,17 @@ public class NpcCar implements Disposable {
     this.car = new Car(carType, world);
   }
 
-  public void update(float delta) {
+  @Override
+  public void update(float delta, Player player) {
     car.update(delta);
-    Optional<Vector2> waypoint = waypoints.getNext(car.getPosition());
-    if (waypoint.isPresent()) {
-      updateSteering(delta, waypoint.get());
-    } else {
-      car.brake(1f);
-    }
+    clearWaypoints();
+    addWaypoints(Collections.singletonList(player.car().carBody.getPosition().cpy()));
+    waypoints.getNext(car.getPosition()).ifPresentOrElse(
+      waypoint -> updateSteering(delta, waypoint),
+      () -> car.brake(1f));
   }
 
+  @Override
   public void draw(SpriteBatch batch) {
     car.draw(batch);
   }
@@ -63,7 +64,7 @@ public class NpcCar implements Disposable {
    */
   private void updateSteering(float delta, Vector2 waypoint) {
     Vector2 targetHeading = waypoint.cpy().sub(car.getPosition()).nor();
-    Vector2 currentHeading = BodyUtils.getForwardNormal(car.body.carBody);
+    Vector2 currentHeading = BodyUtils.getForwardNormal(car.carBody.carBody);
     float angleBetween = angleBetween(currentHeading, targetHeading);
 
     // Facing in the wrong direction

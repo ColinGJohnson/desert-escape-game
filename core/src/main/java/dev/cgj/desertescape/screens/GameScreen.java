@@ -76,9 +76,9 @@ public class GameScreen extends ScreenAdapter {
   private void updateLogic(float delta) {
     player.update(delta);
     npcManager.update(delta, player);
-    tileManager.update(player.car().body.getPosition());
+    tileManager.update(player.car().carBody.getPosition());
 
-    if (player.car().body.getPosition().y > GOAL_DISTANCE) {
+    if (player.car().carBody.getPosition().y > GOAL_DISTANCE) {
       game.setScreen(new WinScreen(game));
     }
 
@@ -118,7 +118,7 @@ public class GameScreen extends ScreenAdapter {
   }
 
   private void updateCameraPosition() {
-    Vector2 carPosition = player.car().body.getPosition().cpy();
+    Vector2 carPosition = player.car().carBody.getPosition().cpy();
     carPosition.add(new Vector2(0, 5).clamp(0, 10));
     camera.position.set(carPosition, 0);
     camera.update();
@@ -126,8 +126,8 @@ public class GameScreen extends ScreenAdapter {
 
   private HudData getHudData(Player player) {
     return new HudData(CarType.SPORTS,
-      player.car().body.getForwardVelocity(),
-      player.car().body.getPosition().y,
+      player.car().carBody.getForwardVelocity(),
+      player.car().carBody.getPosition().y,
       player.car().getFuel(),
       player.car().getHealth(),
       player.inventory().getRockets(),
