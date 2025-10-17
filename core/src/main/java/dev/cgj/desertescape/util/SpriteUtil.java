@@ -12,14 +12,23 @@ import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 public class SpriteUtil {
 
   /**
+   * Convenience method to call {@link #getScaledSprite(Texture)} with a path instead of a texture.
+   *
+   * @param path The file path to the texture image for the sprite.
+   * @return A sprite scaled by {@link Constants#SPRITE_TO_WORLD}
+   */
+  public static Sprite getScaledSprite(String path) {
+    return getScaledSprite(new Texture(path));
+  }
+
+  /**
    * Creates and scales a sprite according to its pixel dimensions and the
    * {@link Constants#SPRITE_TO_WORLD} conversion factor.
    *
-   * @param path The file path to the texture image for the sprite.
-   * @return A Sprite object created from the texture at the provided path.
+   * @param texture The texture from which to create the sprite.
+   * @return A sprite scaled by {@link Constants#SPRITE_TO_WORLD}
    */
-  public static Sprite getScaledSprite(String path) {
-    Texture texture = new Texture(path);
+  public static Sprite getScaledSprite(Texture texture) {
     Sprite sprite = new Sprite(texture);
     sprite.setSize(texture.getWidth() * SPRITE_TO_WORLD,
       texture.getHeight() * SPRITE_TO_WORLD);

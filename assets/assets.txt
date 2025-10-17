@@ -5,11 +5,11 @@ fonts/Kenney Mini.ttf
 fonts/kenney_mini.fnt
 fonts/kenney_mini.png
 sprites/apollo.pal
-sprites/enemies/body1.png
-sprites/enemies/body2.png
-sprites/enemies/body3.png
-sprites/enemies/body4.png
-sprites/enemies/shot.jpg
+sprites/enemies/shot.png
+sprites/enemies/tankBody.png
+sprites/enemies/tread1.png
+sprites/enemies/tread2.png
+sprites/enemies/tread3.png
 sprites/enemies/turret.png
 sprites/obstacles/cactus.png
 sprites/obstacles/cone.png
