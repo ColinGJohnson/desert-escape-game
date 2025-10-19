@@ -31,6 +31,7 @@ public class Tank implements Disposable {
   public void update(float delta, Vector2 targetPosition) {
     tankBody.update(delta);
     tankTurret.update(delta, targetPosition);
+    updateTreads(delta);
   }
 
   public void draw(SpriteBatch batch) {

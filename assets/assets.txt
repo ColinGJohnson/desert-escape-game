@@ -5,8 +5,8 @@ fonts/Kenney Mini.ttf
 fonts/kenney_mini.fnt
 fonts/kenney_mini.png
 sprites/apollo.pal
-sprites/enemies/shot.png
 sprites/enemies/tankBody.png
+sprites/enemies/tankShell.png
 sprites/enemies/tread1.png
 sprites/enemies/tread2.png
 sprites/enemies/tread3.png
