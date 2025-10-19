@@ -9,7 +9,7 @@ import dev.cgj.desertescape.Constants;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
-public class SpriteUtil {
+public class SpriteUtils {
 
   /**
    * Convenience method to call {@link #getScaledSprite(Texture)} with a path instead of a texture.

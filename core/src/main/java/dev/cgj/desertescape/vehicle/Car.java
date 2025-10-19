@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.physics.CarBody;
 import dev.cgj.desertescape.physics.UserData;
 
-import static dev.cgj.desertescape.util.SpriteUtil.drawAtBodyPosition;
-import static dev.cgj.desertescape.util.SpriteUtil.getScaledSprite;
+import static dev.cgj.desertescape.util.SpriteUtils.drawAtBodyPosition;
+import static dev.cgj.desertescape.util.SpriteUtils.getScaledSprite;
 
 /**
  * A car entity with physics implementation.
@@ -38,7 +38,7 @@ public class Car implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
-    drawAtBodyPosition(batch, sprite, carBody.carBody);
+    drawAtBodyPosition(batch, sprite, carBody.body);
   }
 
   public void update(float delta) {

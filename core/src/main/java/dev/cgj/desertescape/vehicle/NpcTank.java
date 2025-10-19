@@ -14,7 +14,7 @@ public class NpcTank implements Npc {
 
   @Override
   public void update(float delta, Player player) {
-    tank.update(delta);
+    tank.update(delta, player.car().getPosition());
   }
 
   public void draw(SpriteBatch batch) {

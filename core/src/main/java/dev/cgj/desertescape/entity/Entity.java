@@ -10,8 +10,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import static dev.cgj.desertescape.util.SpriteUtil.drawAtBodyPosition;
-import static dev.cgj.desertescape.util.SpriteUtil.getScaledSprite;
+import static dev.cgj.desertescape.util.SpriteUtils.drawAtBodyPosition;
+import static dev.cgj.desertescape.util.SpriteUtils.getScaledSprite;
 
 public abstract class Entity implements Disposable {
   private final Sprite sprite;

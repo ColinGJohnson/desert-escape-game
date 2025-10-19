@@ -13,7 +13,7 @@ import java.util.List;
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
 public class CarBody {
-  public Body carBody;
+  public Body body;
   public WheelBody frontLeftWheel;
   public WheelBody frontRightWheel;
   public WheelBody rearLeftWheel;
@@ -24,19 +24,19 @@ public class CarBody {
   }
 
   public CarBody(World world) {
-    carBody = createCarBody(world);
+    body = createCarBody(world);
 
     frontLeftWheel = new WheelBody(world);
-    frontLeftWheel.joinToVehicle(new Vector2(-4, 4), carBody);
+    frontLeftWheel.joinToVehicle(new Vector2(-4, 4), body);
 
     frontRightWheel = new WheelBody(world);
-    frontRightWheel.joinToVehicle(new Vector2(4, 4), carBody);
+    frontRightWheel.joinToVehicle(new Vector2(4, 4), body);
 
     rearLeftWheel = new WheelBody(world);
-    rearLeftWheel.joinToVehicle(new Vector2(-4, -4), carBody);
+    rearLeftWheel.joinToVehicle(new Vector2(-4, -4), body);
 
     rearRightWheel = new WheelBody(world);
-    rearRightWheel.joinToVehicle(new Vector2(4, -4), carBody);
+    rearRightWheel.joinToVehicle(new Vector2(4, -4), body);
   }
 
   public void update(CarType type) {
@@ -46,7 +46,7 @@ public class CarBody {
   }
 
   public float getForwardVelocity() {
-    return BodyUtils.getForwardVelocity(carBody).len();
+    return BodyUtils.getForwardVelocity(body).len();
   }
 
   public void turnWheels(float delta, float desiredAngle) {
@@ -61,7 +61,7 @@ public class CarBody {
   }
 
   public Vector2 getPosition() {
-    return carBody.getPosition().cpy();
+    return body.getPosition().cpy();
   }
 
   public void brake(float maxImpulse) {
@@ -89,6 +89,6 @@ public class CarBody {
   }
 
   public void setUserData(UserData userData) {
-    carBody.setUserData(userData);
+    body.setUserData(userData);
   }
 }

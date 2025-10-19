@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.BodyUtils;
+import dev.cgj.desertescape.util.AnimationUtils;
+import dev.cgj.desertescape.util.VectorUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,8 +66,8 @@ public class NpcCar implements Npc {
    */
   private void updateSteering(float delta, Vector2 waypoint) {
     Vector2 targetHeading = waypoint.cpy().sub(car.getPosition()).nor();
-    Vector2 currentHeading = BodyUtils.getForwardNormal(car.carBody.carBody);
-    float angleBetween = angleBetween(currentHeading, targetHeading);
+    Vector2 currentHeading = BodyUtils.getForwardNormal(car.carBody.body);
+    float angleBetween = VectorUtils.angleBetween(currentHeading, targetHeading);
 
     // Facing in the wrong direction
     if (Math.abs(angleBetween) > MathUtils.HALF_PI) {
@@ -76,40 +78,11 @@ public class NpcCar implements Npc {
 
     // Facing in the right direction
     car.steer(delta, angleBetween / MathUtils.HALF_PI);
-    car.accelerate(lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
+    car.accelerate(AnimationUtils.lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
   }
-
 
   @Override
   public void dispose() {
     car.dispose();
-  }
-
-  /**
-   * Calculates the angle in radians between two 2D vectors. The angle is measured counter-clockwise
-   * from the first vector to the second.
-   * <ul>
-   *   <li>Positive result: b is counter-clockwise from a.</li>
-   *   <li>Negative result: b is clockwise from a</li>
-   * </ul>
-   *
-   * @param a The first vector.
-   * @param b The second vector.
-   * @return The angle in radians between the two vectors.
-   */
-  public static float angleBetween(Vector2 a, Vector2 b) {
-    return MathUtils.atan2(a.crs(b), a.dot(b));
-  }
-
-  /**
-   * Linearly interpolates between two values.
-   *
-   * @param start The starting value
-   * @param end   The ending value
-   * @param t     The interpolation factor in the range [0,1]
-   * @return The interpolated value
-   */
-  public static float lerp(float start, float end, float t) {
-    return start + (end - start) * t;
   }
 }
