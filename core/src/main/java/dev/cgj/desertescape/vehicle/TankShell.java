@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.entity.Entity;
 import dev.cgj.desertescape.physics.UserData;
+import dev.cgj.desertescape.terrain.WallTile;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
@@ -36,7 +37,13 @@ public class TankShell extends Entity {
 
     switch (entity) {
       case Player player -> {
-//        player.car().damage(1);
+        player.car().damage(1);
+        setDestroyed(true);
+      }
+      case NpcCar ignored1 -> {
+        setDestroyed(true);
+      }
+      case WallTile ignored -> {
         setDestroyed(true);
       }
       case null, default -> {
@@ -56,7 +63,7 @@ public class TankShell extends Entity {
     shape.setAsBox(hx, hy);
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.isSensor = true;
+    fixtureDef.density = 20f;
 
     body.createFixture(fixtureDef);
     return body;

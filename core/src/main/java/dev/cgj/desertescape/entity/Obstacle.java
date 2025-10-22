@@ -22,12 +22,10 @@ public class Obstacle extends Entity {
       return;
     }
 
-    switch (entity) {
-      case Player player -> {
-        player.car().damage(type.getDamage());
-        setDestroyed(true);
-      }
-      case null, default -> {}
+    if (entity instanceof Player player) {
+      player.car().damage(type.getDamage());
     }
+
+    setDestroyed(true);
   }
 }

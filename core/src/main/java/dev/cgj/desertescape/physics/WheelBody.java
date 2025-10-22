@@ -91,6 +91,7 @@ public class WheelBody {
     wheel.applyAngularImpulse(impulse, true);
   }
 
+  // TODO: Wheel bodies should not participate in collisions
   private Body createWheel(World world) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;

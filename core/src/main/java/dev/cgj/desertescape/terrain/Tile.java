@@ -70,11 +70,6 @@ public class Tile {
   }
 
   public void update() {
-    for (Entity entity : entities) {
-      if (entity.isDestroyed()) {
-        entity.dispose();
-      }
-    }
-    entities.removeIf(Entity::isDestroyed);
+    Entity.removeDestroyed(entities);
   }
 }

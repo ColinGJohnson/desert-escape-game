@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.BodyUtils;
+import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.util.AnimationUtils;
 import dev.cgj.desertescape.util.VectorUtils;
 
@@ -33,6 +34,7 @@ public class NpcCar implements Npc {
 
   public NpcCar(World world, CarType carType) {
     this.car = new Car(carType, world);
+    car.setUserData(UserData.dataOnly(this));
   }
 
   @Override

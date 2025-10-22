@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import dev.cgj.desertescape.physics.UserData;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class WallTile implements TileDefinition {
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = edgeShape;
     body.createFixture(fixtureDef);
+    body.setUserData(UserData.dataOnly(this));
 
     return List.of(body);
   }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.desertescape.entity.Entity;
 import dev.cgj.desertescape.physics.BodyUtils;
 import dev.cgj.desertescape.util.SpriteUtils;
 import dev.cgj.desertescape.util.VectorUtils;
@@ -58,6 +59,8 @@ public class TankTurret implements Disposable {
     for (TankShell shell : shells) {
       shell.update(delta);
     }
+
+    Entity.removeDestroyed(shells);
   }
 
   private void shoot() {

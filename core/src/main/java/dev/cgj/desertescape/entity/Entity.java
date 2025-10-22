@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 
+import java.util.List;
+
 import static dev.cgj.desertescape.util.SpriteUtils.drawAtBodyPosition;
 import static dev.cgj.desertescape.util.SpriteUtils.getScaledSprite;
 
@@ -46,5 +48,14 @@ public abstract class Entity implements Disposable {
 
   public void setDestroyed(boolean destroyed) {
     this.destroyed = destroyed;
+  }
+
+  public static void removeDestroyed(List<? extends Entity> entities) {
+    for (Entity entity : entities) {
+      if (entity.isDestroyed()) {
+        entity.dispose();
+      }
+    }
+    entities.removeIf(Entity::isDestroyed);
   }
 }
