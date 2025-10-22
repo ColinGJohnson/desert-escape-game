@@ -38,7 +38,7 @@ public class Car implements Disposable {
   }
 
   public void draw(SpriteBatch batch) {
-    drawAtBodyPosition(batch, sprite, carBody.body);
+    drawAtBodyPosition(batch, sprite, carBody.getBody());
   }
 
   public void update(float delta) {

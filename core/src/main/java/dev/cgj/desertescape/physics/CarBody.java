@@ -11,37 +11,34 @@ import dev.cgj.desertescape.vehicle.CarType;
 import java.util.List;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
+import static dev.cgj.desertescape.physics.WheelBody.createAndJoinWheel;
 
 public class CarBody {
-  public Body body;
-  public WheelBody frontLeftWheel;
-  public WheelBody frontRightWheel;
-  public WheelBody rearLeftWheel;
-  public WheelBody rearRightWheel;
+  private static final float WHEEL_FRICTION = 0.4f;
+
+  private final Body body;
+  private final WheelBody frontLeftWheel;
+  private final WheelBody frontRightWheel;
+  private final WheelBody rearLeftWheel;
+  private final WheelBody rearRightWheel;
+
+  public CarBody(World world) {
+    body = createCarBody(world);
+    frontLeftWheel = createAndJoinWheel(body, new Vector2(-4, 4));
+    frontRightWheel = createAndJoinWheel(body, new Vector2(4, 4));
+    rearLeftWheel = createAndJoinWheel(body, new Vector2(-4, -4));
+    rearRightWheel = createAndJoinWheel(body, new Vector2(4, -4));
+  }
 
   public List<WheelBody> getWheels() {
     return List.of(frontLeftWheel, frontRightWheel, rearLeftWheel, rearRightWheel);
   }
 
-  public CarBody(World world) {
-    body = createCarBody(world);
-
-    frontLeftWheel = new WheelBody(world);
-    frontLeftWheel.joinToVehicle(new Vector2(-4, 4), body);
-
-    frontRightWheel = new WheelBody(world);
-    frontRightWheel.joinToVehicle(new Vector2(4, 4), body);
-
-    rearLeftWheel = new WheelBody(world);
-    rearLeftWheel.joinToVehicle(new Vector2(-4, -4), body);
-
-    rearRightWheel = new WheelBody(world);
-    rearRightWheel.joinToVehicle(new Vector2(4, -4), body);
-  }
-
   public void update(CarType type) {
     for (WheelBody wheel : getWheels()) {
-      wheel.update(type);
+      wheel.applyFriction(WHEEL_FRICTION);
+      wheel.cancelLateralVelocity(type.maxLateralImpulse);
+      wheel.cancelAngularVelocity();
     }
   }
 
@@ -70,6 +67,10 @@ public class CarBody {
     }
   }
 
+  public void setUserData(UserData userData) {
+    body.setUserData(userData);
+  }
+
   private Body createCarBody(World world) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -88,7 +89,7 @@ public class CarBody {
     return car;
   }
 
-  public void setUserData(UserData userData) {
-    body.setUserData(userData);
+  public Body getBody() {
+    return body;
   }
 }

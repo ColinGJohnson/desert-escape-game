@@ -36,7 +36,7 @@ public class TankShell extends Entity {
 
     switch (entity) {
       case Player player -> {
-        player.car().damage(1);
+//        player.car().damage(1);
         setDestroyed(true);
       }
       case null, default -> {

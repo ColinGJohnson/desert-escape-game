@@ -66,7 +66,7 @@ public class NpcCar implements Npc {
    */
   private void updateSteering(float delta, Vector2 waypoint) {
     Vector2 targetHeading = waypoint.cpy().sub(car.getPosition()).nor();
-    Vector2 currentHeading = BodyUtils.getForwardNormal(car.carBody.body);
+    Vector2 currentHeading = BodyUtils.getForwardNormal(car.carBody.getBody());
     float angleBetween = VectorUtils.angleBetween(currentHeading, targetHeading);
 
     // Facing in the wrong direction

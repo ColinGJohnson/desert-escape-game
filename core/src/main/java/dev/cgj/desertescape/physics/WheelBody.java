@@ -17,7 +17,7 @@ import static dev.cgj.desertescape.physics.BodyUtils.getForwardVelocity;
 import static dev.cgj.desertescape.physics.BodyUtils.getLateralVelocity;
 
 public class WheelBody {
-  private static final float WHEEL_FRICTION = 0.4f;
+
 
   /**
    * Represents a wheel but doesn't spin. We simulate the effects of a spinning wheel by
@@ -30,14 +30,18 @@ public class WheelBody {
    */
   private RevoluteJoint joint;
 
+  public static WheelBody createAndJoinWheel(Body body, Vector2 anchor) {
+    WheelBody wheel = new WheelBody(body.getWorld());
+    wheel.joinToVehicle(anchor, body);
+    return wheel;
+  }
+
   public WheelBody(World world) {
     wheel = createWheel(world);
   }
 
   public void update(CarType type) {
-    applyFriction();
-    cancelLateralVelocity(type.maxLateralImpulse);
-    cancelAngularVelocity();
+
   }
 
   public void brake(float maxImpulse) {
@@ -72,17 +76,17 @@ public class WheelBody {
     joint = (RevoluteJoint) wheel.getWorld().createJoint(jointDef);
   }
 
-  private void applyFriction() {
-    //TODO: Vary friction depending on wheel+car mass
-    Vector2 friction = wheel.getLinearVelocity().cpy().nor().scl(-1 * WHEEL_FRICTION);
-    wheel.applyForceToCenter(friction, true);
+  public void applyFriction(float friction) {
+    // TODO: Vary friction depending on wheel+car mass
+    Vector2 frictionForce = wheel.getLinearVelocity().cpy().nor().scl(-1 * friction);
+    wheel.applyForceToCenter(frictionForce, true);
   }
 
-  private void cancelLateralVelocity(float maxLateralImpulse) {
+  public void cancelLateralVelocity(float maxLateralImpulse) {
     cancelVelocity(wheel, getLateralVelocity(wheel), maxLateralImpulse);
   }
 
-  private void cancelAngularVelocity() {
+  public void cancelAngularVelocity() {
     float impulse = -wheel.getAngularVelocity() * wheel.getInertia() * 1f;
     wheel.applyAngularImpulse(impulse, true);
   }
@@ -90,7 +94,6 @@ public class WheelBody {
   private Body createWheel(World world) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;
-    bodyDef.position.set(10, 10);
     Body wheel = world.createBody(bodyDef);
 
     PolygonShape shape = new PolygonShape();
