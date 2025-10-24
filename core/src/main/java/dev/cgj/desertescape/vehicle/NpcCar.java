@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.physics.BodyUtils;
 import dev.cgj.desertescape.physics.UserData;
-import dev.cgj.desertescape.util.AnimationUtils;
+import dev.cgj.desertescape.util.InterpolationUtils;
 import dev.cgj.desertescape.util.VectorUtils;
 
 import java.util.Collections;
@@ -80,7 +80,7 @@ public class NpcCar implements Npc {
 
     // Facing in the right direction
     car.steer(delta, angleBetween / MathUtils.HALF_PI);
-    car.accelerate(AnimationUtils.lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
+    car.accelerate(InterpolationUtils.lerp(MIN_ACCELERATION, MAX_ACCELERATION, 1 - angleBetween / MathUtils.HALF_PI));
   }
 
   @Override

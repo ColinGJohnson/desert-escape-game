@@ -1,6 +1,6 @@
 package dev.cgj.desertescape.util;
 
-public class AnimationUtils {
+public class InterpolationUtils {
   /**
    * Linearly interpolates between two values.
    *

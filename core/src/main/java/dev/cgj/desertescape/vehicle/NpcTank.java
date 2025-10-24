@@ -1,6 +1,7 @@
 package dev.cgj.desertescape.vehicle;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 
@@ -14,7 +15,14 @@ public class NpcTank implements Npc {
 
   @Override
   public void update(float delta, Player player) {
-    tank.update(delta, player.car().getPosition());
+    Vector2 target = player.car().getPosition();
+//    tank.setTarget(target);
+    tank.update(delta, target);
+
+//    float angleToTarget = tank.getAngleToTarget(target);
+//    if (angleToTarget < MathUtils.HALF_PI) {
+//      tank.tryShoot();
+//    }
   }
 
   public void draw(SpriteBatch batch) {

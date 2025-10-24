@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.entity.Entity;
 import dev.cgj.desertescape.physics.BodyUtils;
+import dev.cgj.desertescape.util.Delay;
+import dev.cgj.desertescape.util.LaggedFloat;
 import dev.cgj.desertescape.util.SpriteUtils;
 import dev.cgj.desertescape.util.VectorUtils;
 
@@ -17,14 +19,11 @@ import java.util.List;
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 
 public class TankTurret implements Disposable {
-
-  /**
-   * Minimum internal in seconds between firing.
-   */
+  private static final float TURRET_TURN_SPEED = 1f;
   private static final float MIN_SHOT_INTERVAL_MS = 1;
 
   /**
-   * The tank that this turret is mounted on.
+   * The tank that this turret is attached to.
    */
   private final Tank tank;
 
@@ -36,9 +35,9 @@ public class TankTurret implements Disposable {
   /**
    * Angle in radians of the tank's turret relative to the X-axis of the tank's body.
    */
-  private float angle;
+  private final LaggedFloat angle = new LaggedFloat(0, TURRET_TURN_SPEED);
 
-  private float shotDelay = MIN_SHOT_INTERVAL_MS;
+  private final Delay delay = new Delay(MIN_SHOT_INTERVAL_MS);
 
   private final List<TankShell> shells = new ArrayList<>();
 
@@ -48,13 +47,11 @@ public class TankTurret implements Disposable {
   }
 
   public void update(float delta, Vector2 targetPosition) {
-    faceTarget(targetPosition);
+    angle.setTarget(getTargetAngle(targetPosition));
+    angle.update(delta);
 
-    shotDelay -= delta;
-    if (shotDelay <= 0) {
-      shoot();
-      shotDelay = MIN_SHOT_INTERVAL_MS;
-    }
+    delay.update(delta);
+    delay.tryRun(this::shoot);
 
     for (TankShell shell : shells) {
       shell.update(delta);
@@ -63,7 +60,7 @@ public class TankTurret implements Disposable {
     Entity.removeDestroyed(shells);
   }
 
-  private void shoot() {
+  public void shoot() {
     Body body = tank.getBody();
     Vector2 direction = new Vector2(0, 1).setAngleRad(getWorldAngle() + MathUtils.PI / 2f);
     Vector2 position = body.getPosition().add(direction.cpy().scl(16f * SPRITE_TO_WORLD));
@@ -71,10 +68,10 @@ public class TankTurret implements Disposable {
     shells.add(new TankShell(body.getWorld(), position, velocity));
   }
 
-  public void faceTarget(Vector2 targetPosition) {
+  public float getTargetAngle(Vector2 targetPosition) {
     Vector2 targetHeading = targetPosition.cpy().sub(tank.getBody().getPosition()).nor();
     Vector2 currentHeading = BodyUtils.getForwardNormal(tank.getBody());
-    angle = VectorUtils.angleBetween(targetHeading, currentHeading);
+    return VectorUtils.angleBetween(targetHeading, currentHeading);
   }
 
   public void draw(SpriteBatch batch) {
@@ -93,7 +90,7 @@ public class TankTurret implements Disposable {
    * @return An angle in radians.
    */
   private float getWorldAngle() {
-    return tank.getBody().getAngle() - angle;
+    return tank.getBody().getAngle() - angle.getValue();
   }
 
   @Override

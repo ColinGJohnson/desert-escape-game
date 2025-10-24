@@ -16,6 +16,9 @@ public class NpcManager implements Disposable {
   public NpcManager(World world) {
     npcs = List.of(
       new NpcCar(world, CarType.VAN),
+      new NpcCar(world, CarType.SPORTS),
+      new NpcCar(world, CarType.SEDAN),
+      new NpcCar(world, CarType.TRUCK),
       new NpcTank(world)
     );
   }
