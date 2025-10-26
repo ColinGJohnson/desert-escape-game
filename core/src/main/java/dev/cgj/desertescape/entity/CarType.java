@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.entity;
 
 public enum CarType {
   SEDAN("sprites/vehicles/sedan.png", 14f, -10f, 2f, 18f, 0.9f, 18f, 1.0f, 100, 100f),

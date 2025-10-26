@@ -10,14 +10,14 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import dev.cgj.desertescape.DesertEscape;
 import dev.cgj.desertescape.Inventory;
 import dev.cgj.desertescape.KeyMap;
-import dev.cgj.desertescape.NpcManager;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.ScoreBoard;
+import dev.cgj.desertescape.entity.CarType;
+import dev.cgj.desertescape.npc.NpcManager;
 import dev.cgj.desertescape.physics.CollisionListener;
 import dev.cgj.desertescape.render.HudData;
 import dev.cgj.desertescape.render.HudRenderer;
 import dev.cgj.desertescape.terrain.TileManager;
-import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.Constants.GOAL_DISTANCE;
 import static dev.cgj.desertescape.Constants.POSITION_ITERATIONS;

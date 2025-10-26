@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.entity.tank;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.entity.Entity;
+import dev.cgj.desertescape.npc.NpcCar;
 import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.terrain.WallTile;
 
@@ -37,7 +38,7 @@ public class TankShell extends Entity {
 
     switch (entity) {
       case Player player -> {
-        player.car().damage(1);
+        player.car().damage(0);
         setDestroyed(true);
       }
       case NpcCar ignored1 -> {

@@ -6,12 +6,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import dev.cgj.desertescape.vehicle.CarType;
+import dev.cgj.desertescape.entity.CarType;
 
 import java.util.List;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
-import static dev.cgj.desertescape.physics.WheelBody.createAndJoinWheel;
 
 public class CarBody {
   private static final float WHEEL_FRICTION = 0.4f;
@@ -24,10 +23,10 @@ public class CarBody {
 
   public CarBody(World world) {
     body = createCarBody(world);
-    frontLeftWheel = createAndJoinWheel(body, new Vector2(-4, 4));
-    frontRightWheel = createAndJoinWheel(body, new Vector2(4, 4));
-    rearLeftWheel = createAndJoinWheel(body, new Vector2(-4, -4));
-    rearRightWheel = createAndJoinWheel(body, new Vector2(4, -4));
+    frontLeftWheel = new WheelBody(body, new Vector2(-4, 4));
+    frontRightWheel = new WheelBody(body, new Vector2(4, 4));
+    rearLeftWheel = new WheelBody(body, new Vector2(-4, -4));
+    rearRightWheel = new WheelBody(body, new Vector2(4, -4));
   }
 
   public List<WheelBody> getWheels() {

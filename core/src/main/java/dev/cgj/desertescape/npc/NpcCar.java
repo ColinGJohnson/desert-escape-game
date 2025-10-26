@@ -1,10 +1,12 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.npc;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
+import dev.cgj.desertescape.entity.Car;
+import dev.cgj.desertescape.entity.CarType;
 import dev.cgj.desertescape.physics.BodyUtils;
 import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.util.InterpolationUtils;

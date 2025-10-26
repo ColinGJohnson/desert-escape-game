@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.npc;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;

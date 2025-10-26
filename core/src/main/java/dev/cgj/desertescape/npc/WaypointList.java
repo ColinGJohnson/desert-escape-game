@@ -1,4 +1,4 @@
-package dev.cgj.desertescape.vehicle;
+package dev.cgj.desertescape.npc;
 
 import com.badlogic.gdx.math.Vector2;
 

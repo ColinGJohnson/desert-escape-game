@@ -1,12 +1,10 @@
-package dev.cgj.desertescape;
+package dev.cgj.desertescape.npc;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import dev.cgj.desertescape.vehicle.CarType;
-import dev.cgj.desertescape.vehicle.Npc;
-import dev.cgj.desertescape.vehicle.NpcCar;
-import dev.cgj.desertescape.vehicle.NpcTank;
+import dev.cgj.desertescape.Player;
+import dev.cgj.desertescape.entity.CarType;
 
 import java.util.List;
 

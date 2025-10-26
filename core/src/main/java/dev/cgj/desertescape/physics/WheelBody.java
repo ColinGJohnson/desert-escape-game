@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 import static dev.cgj.desertescape.Constants.spriteToWorld;
@@ -18,10 +17,9 @@ import static dev.cgj.desertescape.physics.BodyUtils.getLateralVelocity;
 
 public class WheelBody {
 
-
   /**
-   * Represents a wheel but doesn't spin. We simulate the effects of a spinning wheel by
-   * applying forces to this body.
+   * Represents a wheel or tread that can more forwards and backwards, but that resists lateral or
+   * angular skidding.
    */
   private final Body wheel;
 
@@ -30,18 +28,9 @@ public class WheelBody {
    */
   private RevoluteJoint joint;
 
-  public static WheelBody createAndJoinWheel(Body body, Vector2 anchor) {
-    WheelBody wheel = new WheelBody(body.getWorld());
-    wheel.joinToVehicle(anchor, body);
-    return wheel;
-  }
-
-  public WheelBody(World world) {
-    wheel = createWheel(world);
-  }
-
-  public void update(CarType type) {
-
+  public WheelBody(Body body, Vector2 anchor) {
+    wheel = createWheel(body.getWorld());
+    joinToVehicle(anchor, body);
   }
 
   public void brake(float maxImpulse) {
@@ -105,6 +94,10 @@ public class WheelBody {
     fixtureDef.density = 1f;
     wheel.createFixture(fixtureDef);
 
+    return wheel;
+  }
+
+  public Body getBody() {
     return wheel;
   }
 }

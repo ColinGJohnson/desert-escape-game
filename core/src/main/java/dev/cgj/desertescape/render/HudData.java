@@ -1,6 +1,6 @@
 package dev.cgj.desertescape.render;
 
-import dev.cgj.desertescape.vehicle.CarType;
+import dev.cgj.desertescape.entity.CarType;
 
 public record HudData(
   CarType carType,

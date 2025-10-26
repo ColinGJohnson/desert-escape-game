@@ -2,9 +2,9 @@ package dev.cgj.desertescape;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
+import dev.cgj.desertescape.entity.Car;
+import dev.cgj.desertescape.entity.CarType;
 import dev.cgj.desertescape.physics.UserData;
-import dev.cgj.desertescape.vehicle.Car;
-import dev.cgj.desertescape.vehicle.CarType;
 
 import static dev.cgj.desertescape.KeyMap.KeyBinding.ACCELERATE;
 import static dev.cgj.desertescape.KeyMap.KeyBinding.BRAKE_HAND;
