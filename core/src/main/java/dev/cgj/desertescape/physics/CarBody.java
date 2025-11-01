@@ -23,10 +23,10 @@ public class CarBody {
 
   public CarBody(World world) {
     body = createCarBody(world);
-    frontLeftWheel = new WheelBody(body, new Vector2(-4, 4));
-    frontRightWheel = new WheelBody(body, new Vector2(4, 4));
-    rearLeftWheel = new WheelBody(body, new Vector2(-4, -4));
-    rearRightWheel = new WheelBody(body, new Vector2(4, -4));
+    frontLeftWheel = new WheelBody(body, new Vector2(-4, 4), new Vector2(0.5f, 1.5f));
+    frontRightWheel = new WheelBody(body, new Vector2(4, 4), new Vector2(0.5f, 1.5f));
+    rearLeftWheel = new WheelBody(body, new Vector2(-4, -4), new Vector2(0.5f, 1.5f));
+    rearRightWheel = new WheelBody(body, new Vector2(4, -4), new Vector2(0.5f, 1.5f));
   }
 
   public List<WheelBody> getWheels() {

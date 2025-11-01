@@ -58,7 +58,7 @@ public class Tank implements Disposable {
     Body car = world.createBody(bodyDef);
 
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(12f * SPRITE_TO_WORLD, 12f * SPRITE_TO_WORLD);
+    shape.setAsBox(5f * SPRITE_TO_WORLD, 10f * SPRITE_TO_WORLD);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
@@ -66,5 +66,9 @@ public class Tank implements Disposable {
     car.createFixture(fixtureDef);
 
     return car;
+  }
+
+  public TankTurret getTurret() {
+    return tankTurret;
   }
 }

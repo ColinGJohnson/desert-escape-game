@@ -28,8 +28,8 @@ public class WheelBody {
    */
   private RevoluteJoint joint;
 
-  public WheelBody(Body body, Vector2 anchor) {
-    wheel = createWheel(body.getWorld());
+  public WheelBody(Body body, Vector2 anchor, Vector2 size) {
+    wheel = createWheel(body.getWorld(), size);
     joinToVehicle(anchor, body);
   }
 
@@ -81,13 +81,13 @@ public class WheelBody {
   }
 
   // TODO: Wheel bodies should not participate in collisions
-  private Body createWheel(World world) {
+  private Body createWheel(World world, Vector2 size) {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.DynamicBody;
     Body wheel = world.createBody(bodyDef);
 
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(0.5f * SPRITE_TO_WORLD, 1.5f * SPRITE_TO_WORLD);
+    shape.setAsBox(size.x * SPRITE_TO_WORLD, size.y * SPRITE_TO_WORLD);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;

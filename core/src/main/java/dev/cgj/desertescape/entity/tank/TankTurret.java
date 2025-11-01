@@ -49,15 +49,17 @@ public class TankTurret implements Disposable {
   public void update(float delta, Vector2 targetPosition) {
     angle.setTarget(getTargetAngle(targetPosition));
     angle.update(delta);
-
     delay.update(delta);
-    delay.tryRun(this::shoot);
 
     for (TankShell shell : shells) {
       shell.update(delta);
     }
 
     Entity.removeDestroyed(shells);
+  }
+
+  public void shootIfReloaded() {
+    delay.tryRun(this::shoot);
   }
 
   public void shoot() {

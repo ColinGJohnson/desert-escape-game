@@ -24,7 +24,7 @@ public class TankTread implements Disposable {
   private float stateTime = 0f;
 
   public TankTread(Body tankBody, Vector2 anchor) {
-    this.tread = new WheelBody(tankBody, anchor);
+    this.tread = new WheelBody(tankBody, anchor, new Vector2(2, 10));
     animation = createTreadAnimation();
     sprite = SpriteUtils.getScaledSprite(animation.getKeyFrame(stateTime));
   }
