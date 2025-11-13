@@ -42,10 +42,10 @@ public class GameScreen extends ScreenAdapter {
     camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
     world = new World(Vector2.Zero, true);
     world.setContactListener(new CollisionListener());
-    tileManager = new TileManager(world);
-    npcManager = new NpcManager(world);
-    hudRenderer = new HudRenderer();
     player = new Player(world, new Inventory(), new ScoreBoard());
+    tileManager = new TileManager(world);
+    npcManager = new NpcManager(this, world);
+    hudRenderer = new HudRenderer();
   }
 
   @Override
@@ -134,5 +134,9 @@ public class GameScreen extends ScreenAdapter {
       player.inventory().getNitro(),
       player.inventory().getShield(),
       player.scoreBoard().getScore());
+  }
+
+  public Player getPlayer() {
+    return player;
   }
 }

@@ -7,12 +7,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import dev.cgj.desertescape.Player;
 import dev.cgj.desertescape.entity.Car;
 import dev.cgj.desertescape.entity.CarType;
+import dev.cgj.desertescape.npc.pathfinding.NavigationStrategy;
 import dev.cgj.desertescape.physics.BodyUtils;
 import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.util.InterpolationUtils;
 import dev.cgj.desertescape.util.VectorUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 public class NpcCar implements Npc {
@@ -30,11 +30,14 @@ public class NpcCar implements Npc {
   private final Car car;
 
   /**
-   * Waypoint controller managing target points for this NPC.
+   * Queue of locations this NPC will try to visit.
    */
-  private final WaypointList waypoints = new WaypointList(REACH_THRESHOLD);
+  private final WaypointQueue waypoints = new WaypointQueue(REACH_THRESHOLD);
 
-  public NpcCar(World world, CarType carType) {
+  private final NavigationStrategy navigationStrategy;
+
+  public NpcCar(World world, CarType carType, NavigationStrategy navigationStrategy) {
+    this.navigationStrategy = navigationStrategy;
     this.car = new Car(carType, world);
     car.setUserData(UserData.dataOnly(this));
   }
@@ -42,8 +45,7 @@ public class NpcCar implements Npc {
   @Override
   public void update(float delta, Player player) {
     car.update(delta);
-    clearWaypoints();
-    addWaypoints(Collections.singletonList(player.car().carBody.getPosition().cpy()));
+    navigationStrategy.updateWaypoints(waypoints, car.getPosition());
     waypoints.getNext(car.getPosition()).ifPresentOrElse(
       waypoint -> updateSteering(delta, waypoint),
       () -> car.brake(1f));

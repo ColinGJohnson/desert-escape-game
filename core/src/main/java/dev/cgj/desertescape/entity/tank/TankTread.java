@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
@@ -14,6 +15,7 @@ import dev.cgj.desertescape.util.SpriteUtils;
 public class TankTread implements Disposable {
   private static final float TRACK_FRICTION = 0.4f;
   private static final float TRACK_MAX_LATERAL_IMPULSE = 30f;
+  private static final float TRACK_MAX_BRAKE_IMPULSE = 10f;
 
   // TODO: Calculate a realistic value for this based on the number of pixels advanced per frame
   private static final float ANIMATION_FRAME_DURATION = 0.1f;
@@ -70,5 +72,14 @@ public class TankTread implements Disposable {
     for (Texture tread : animation.getKeyFrames()) {
       tread.dispose();
     }
+  }
+
+  public void brake(float input) {
+    float clampedInput = MathUtils.clamp(input, 0, 1f);
+    tread.brake(clampedInput * TRACK_MAX_BRAKE_IMPULSE);
+  }
+
+  public void accelerate(float input) {
+    float clampedInput = MathUtils.clamp(input, -1, 1f);
   }
 }

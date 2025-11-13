@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import dev.cgj.desertescape.physics.UserData;
 import dev.cgj.desertescape.util.SpriteUtils;
 
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
@@ -68,7 +69,28 @@ public class Tank implements Disposable {
     return car;
   }
 
+  public void setUserData(UserData userData) {
+    body.setUserData(userData);
+  }
+
   public TankTurret getTurret() {
     return tankTurret;
+  }
+
+  public TankTread getLeftTread() {
+    return leftTread;
+  }
+
+  public TankTread getRightTread() {
+    return rightTread;
+  }
+
+  public void brake(float input) {
+    leftTread.brake(input);
+    rightTread.brake(input);
+  }
+
+  public Vector2 getPosition() {
+    return body.getPosition().cpy();
   }
 }
