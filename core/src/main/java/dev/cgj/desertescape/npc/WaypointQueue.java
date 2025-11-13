@@ -2,29 +2,42 @@ package dev.cgj.desertescape.npc;
 
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Queue;
 
 /**
  * Manages a sequence of Vector2 waypoints and provides the next target based on a caller-provided
  * current position.
  */
-public class WaypointList {
+public class WaypointQueue {
 
-  private final List<Vector2> waypoints = new LinkedList<>();
+  private final Queue<Vector2> waypoints = new ArrayDeque<>();
   private final float reachThreshold;
 
-  public WaypointList(float reachThreshold) {
+  public WaypointQueue(float reachThreshold) {
     this.reachThreshold = reachThreshold;
   }
 
-  public void addWaypoints(List<Vector2> points) {
+  public void addWaypoints(Collection<Vector2> points) {
     this.waypoints.addAll(points);
+  }
+
+  public void addWaypoint(Vector2 point) {
+    this.waypoints.offer(point);
   }
 
   public void clear() {
     this.waypoints.clear();
+  }
+
+  public boolean isEmpty() {
+    return waypoints.isEmpty();
+  }
+
+  public int size() {
+    return waypoints.size();
   }
 
   /**
@@ -36,9 +49,9 @@ public class WaypointList {
    */
   public Optional<Vector2> getNext(Vector2 position) {
     while (!waypoints.isEmpty()) {
-      Vector2 target = waypoints.getFirst();
+      Vector2 target = waypoints.peek();
       if (position.dst2(target) <= reachThreshold * reachThreshold) {
-        waypoints.removeFirst();
+        waypoints.poll();
       } else {
         return Optional.of(target);
       }
