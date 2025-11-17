@@ -8,7 +8,7 @@ import dev.cgj.desertescape.physics.UserData;
 import static dev.cgj.desertescape.physics.BodyUtils.createStaticBody;
 
 public class Powerup extends Entity {
-  public static final Vector2 SIZE = new Vector2(8f, 8f);
+  public static final Vector2 SIZE = new Vector2(16f, 16f);
   private final PowerupType type;
 
   public Powerup(PowerupType type, World world, Vector2 position) {

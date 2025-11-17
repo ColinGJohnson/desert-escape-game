@@ -14,6 +14,7 @@ sprites/enemies/turret.png
 sprites/obstacles/cactus.png
 sprites/obstacles/cone.png
 sprites/obstacles/skull.png
+sprites/powerups/crate.aseprite
 sprites/powerups/fuel.png
 sprites/powerups/health.png
 sprites/powerups/nitro.png
