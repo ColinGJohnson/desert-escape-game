@@ -44,9 +44,7 @@ public class NpcTank implements Npc {
     tank.update(delta, target);
 
     navigationStrategy.updateWaypoints(waypoints, tank.getPosition());
-    waypoints.getNext(tank.getPosition()).ifPresentOrElse(
-      waypoint -> updateSteering(delta, waypoint),
-      () -> tank.brake(1f));
+    waypoints.getNext(tank.getPosition()).ifPresentOrElse(this::updateSteering, () -> tank.brake(1f));
 
     float angleToTarget = tank.getTurret().getTargetAngle(target);
     if (Math.abs(angleToTarget) < MathUtils.HALF_PI) {
@@ -67,7 +65,7 @@ public class NpcTank implements Npc {
     this.waypoints.clear();
   }
 
-  private void updateSteering(float delta, Vector2 waypoint) {
+  private void updateSteering(Vector2 waypoint) {
     Vector2 targetHeading = waypoint.cpy().sub(tank.getPosition()).nor();
     Vector2 currentHeading = BodyUtils.getForwardNormal(tank.getBody());
     float angleBetween = VectorUtils.angleBetween(currentHeading, targetHeading);
@@ -80,8 +78,9 @@ public class NpcTank implements Npc {
     }
 
     // Facing in the right direction
-    tank.getRightTread().accelerate(1);
-    tank.getLeftTread().accelerate(1);
+    float turnStrength = angleBetween / MathUtils.HALF_PI; // -1 to 1
+    tank.getRightTread().accelerate(1 - turnStrength);
+    tank.getLeftTread().accelerate(1 + turnStrength);
   }
 
   @Override

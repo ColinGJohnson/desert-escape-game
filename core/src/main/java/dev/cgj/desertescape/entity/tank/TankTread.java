@@ -81,5 +81,8 @@ public class TankTread implements Disposable {
 
   public void accelerate(float input) {
     float clampedInput = MathUtils.clamp(input, -1, 1f);
+    float desiredSpeed = clampedInput < 0 ? 10f : 5f;
+    // tread.accelerateToSpeed(desiredSpeed, Math.abs(clampedInput) * 10f);
+    tread.applyForceForwards(5f * input);
   }
 }

@@ -44,6 +44,11 @@ public class WheelBody {
     joint.setLimits(newAngle, newAngle);
   }
 
+  public void applyForceForwards(float maxForce) {
+    Vector2 forwardNormal = wheel.getWorldVector(new Vector2(0, 1)).cpy();
+    wheel.applyForceToCenter(forwardNormal.scl(maxForce), true);
+  }
+
   public void accelerateToSpeed(float desiredSpeed, float maxDriveForce) {
     Vector2 forwardNormal = wheel.getWorldVector(new Vector2(0, 1)).cpy();
     float currentSpeed = getForwardVelocity(wheel).dot(forwardNormal);

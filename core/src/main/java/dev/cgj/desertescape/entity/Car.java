@@ -64,11 +64,8 @@ public class Car implements Disposable {
    */
   public void accelerate(float input) {
     float clampedInput = MathUtils.clamp(input, -1, 1f);
-    if (clampedInput < 0) {
-      carBody.accelerateToSpeed(carType.maxBackwardSpeed, Math.abs(clampedInput) * carType.maxDriveForce);
-    } else {
-      carBody.accelerateToSpeed(carType.maxForwardSpeed, clampedInput * carType.maxDriveForce);
-    }
+    float desiredSpeed = clampedInput < 0 ? carType.maxBackwardSpeed : carType.maxForwardSpeed;
+    carBody.accelerateToSpeed(desiredSpeed, Math.abs(clampedInput) * carType.maxDriveForce);
   }
 
   /**

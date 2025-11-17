@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import dev.cgj.desertescape.Player;
-import dev.cgj.desertescape.entity.CarType;
 import dev.cgj.desertescape.npc.pathfinding.FollowPlayerPath;
 import dev.cgj.desertescape.npc.pathfinding.NavigationStrategy;
 import dev.cgj.desertescape.screens.GameScreen;
@@ -19,10 +18,10 @@ public class NpcManager implements Disposable {
     this.gameScreen = gameScreen;
     NavigationStrategy navigationStrategy = new FollowPlayerPath(gameScreen.getPlayer());
     npcs = List.of(
-      new NpcCar(world, CarType.VAN, navigationStrategy),
-      new NpcCar(world, CarType.SPORTS, navigationStrategy),
-      new NpcCar(world, CarType.SEDAN, navigationStrategy),
-      new NpcCar(world, CarType.TRUCK, navigationStrategy),
+      // new NpcCar(world, CarType.VAN, navigationStrategy),
+      // new NpcCar(world, CarType.SPORTS, navigationStrategy),
+      // new NpcCar(world, CarType.SEDAN, navigationStrategy),
+      // new NpcCar(world, CarType.TRUCK, navigationStrategy),
       new NpcTank(world, navigationStrategy)
     );
   }
