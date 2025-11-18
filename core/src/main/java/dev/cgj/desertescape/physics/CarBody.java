@@ -33,11 +33,12 @@ public class CarBody {
     return List.of(frontLeftWheel, frontRightWheel, rearLeftWheel, rearRightWheel);
   }
 
-  public void update(CarType type) {
+  public void update(float delta, CarType type) {
     for (WheelBody wheel : getWheels()) {
       wheel.applyFriction(WHEEL_FRICTION);
       wheel.cancelLateralVelocity(type.maxLateralImpulse);
       wheel.cancelAngularVelocity();
+      wheel.update(delta);
     }
   }
 

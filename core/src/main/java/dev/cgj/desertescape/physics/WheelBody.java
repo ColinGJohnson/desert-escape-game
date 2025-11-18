@@ -9,6 +9,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static dev.cgj.desertescape.Constants.SPRITE_TO_WORLD;
 import static dev.cgj.desertescape.Constants.spriteToWorld;
 import static dev.cgj.desertescape.physics.BodyUtils.cancelVelocity;
@@ -16,6 +19,16 @@ import static dev.cgj.desertescape.physics.BodyUtils.getForwardVelocity;
 import static dev.cgj.desertescape.physics.BodyUtils.getLateralVelocity;
 
 public class WheelBody {
+
+  /**
+   * Frequency in milliseconds at which to update the position history.
+   */
+  private static final float POSITION_HISTORY_INTERVAL = 10f;
+
+  /**
+   * Maximum number of entries to keep in this wheel's position history.
+   */
+  private static final float POSITION_HISTORY_LENGTH = 100f;
 
   /**
    * Represents a wheel or tread that can more forwards and backwards, but that resists lateral or
@@ -28,9 +41,36 @@ public class WheelBody {
    */
   private RevoluteJoint joint;
 
+  /**
+   * History of wheel positions for tracking movement.
+   */
+  private final List<Vector2> positionHistory;
+
+  /**
+   * Timer to track when to record next position.
+   */
+  private float positionTimer;
+
   public WheelBody(Body body, Vector2 anchor, Vector2 size) {
     wheel = createWheel(body.getWorld(), size);
     joinToVehicle(anchor, body);
+    positionHistory = new ArrayList<>();
+    positionTimer = 0f;
+  }
+
+  public void update(float delta) {
+    positionTimer += delta;
+
+    if (positionTimer >= POSITION_HISTORY_INTERVAL) {
+      Vector2 currentPosition = wheel.getPosition().cpy();
+      positionHistory.add(currentPosition);
+
+      while (positionHistory.size() > POSITION_HISTORY_LENGTH) {
+        positionHistory.removeFirst();
+      }
+
+      positionTimer = 0f;
+    }
   }
 
   public void brake(float maxImpulse) {
